@@ -1,0 +1,118 @@
+
+# Clear sys messaages
+clearsysmsg
+
+# Setup some timers
+createtimer 'aid time'
+createtimer 'healpot time'
+createtimer 'anti pot spam'
+createtimer 'magery heal'
+createtimer 'low mana'
+createtimer 'stayalive spam'
+createtimer 'hidy'
+createtimer 'stealthy'
+hotkey 'Forensics'
+waitfortarget
+hotkey 'Target Self'
+
+
+# While alive, try to stay alive.
+while not dead
+    wait 100
+
+    # Display script running every 6 seconds. 
+    if timer 'stayalive spam' > 6000
+        overhead 'Stay Alive Running!' 66
+        settimer 'stayalive spam' 0
+    endif
+
+    # If hidden, skip
+    if hidden
+        continue
+    endif
+
+
+    # Tracking
+    if insysmsg 'Now tracking'
+        overhead 'Tracking Found!' 33
+    endif
+
+    # If paralyzed, attempt to pouch.
+    if insysmsg 'you cannot move'
+        overhead 'Paralyzed, attempting pouch escape' 88
+        say [pouch
+    endif
+
+    # Healing Survival
+    if skill 'Healing' > 1
+        if insysmsg 'You begin applying the bandages'
+            settimer 'aid time' 0
+        endif
+        if hits < maxhits and timer 'aid time' > 10250 
+            hotkey 'bandage self'
+            settimer 'aid time' 0
+        endif
+    endif
+
+    # Magery Survival
+    if skill 'Magery' > 1
+        # Spell interrupt warnings, pause to give a chance to run away
+        if insysmsg 'concentration is disturbed'
+            overhead 'Interrupted cast! Waiting 2 second' 33
+            wait 2000
+        endif
+
+        # Mana warnings
+        if mana < 40 and timer 'low mana' > 3000
+            overhead 'Low Mana' 88
+            settimer 'low mana' 0
+        elseif mana < 20  and timer 'low mana' > 3000
+            overhead 'OOM' 33
+            settimer 'low mana' 0
+        endif
+
+        # If hurt, attempt to heal
+        if hits < maxhits and timer 'magery heal' > 2000
+            # If casting something already, wait before attempting to heal.
+            if insysmsg 'already casting' or insysmsg 'frozen and cannot move'
+                overhead 'Already casting! Waiting 2 second' 33
+                wait 2000
+            endif
+
+            # If under 35 HP and we cant heal pot, quick heal and reset heal timer
+            # Interrupt and clearall targets before attempting to self-cast to avoid harming self
+            if hits < 35 and timer 'healpot time' < 10000 and timer 'anti pot spam' < 1000
+                interrupt
+                clearall
+                hotkey '> Mini-Heal/Cure Self'
+                settimer 'magery heal' 3001
+            elseif hits < maxhits and timer 'magery heal' > 2000
+                # Otherwise just use greater heal to heal up. 
+                interrupt
+                clearall
+                hotkey '> Greater Heal/Cure Self'
+                settimer 'magery heal' 0
+            endif
+        endif
+    endif
+
+    # Cure Survival
+    if poisoned 'self' and timer 'anti pot spam' > 1000
+        overhead 'Used: Cure Potion' 33
+        hotkey 'Drink Cure' 
+        settimer 'anti pot spam' 0
+    endif
+
+    # Heal Potion
+    if hits < 35 and timer 'healpot time' > 10000 and timer 'anti pot spam' > 1000
+        overhead 'Used: Heal Potion' 33
+        hotkey 'Drink Heal'
+        settimer 'healpot time' 0
+        settimer 'anti pot spam' 0
+    endif 
+
+endwhile
+
+if dead
+    stop
+endif

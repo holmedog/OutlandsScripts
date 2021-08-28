@@ -1,0 +1,19 @@
+
+createlist ItemTypes
+clearlist ItemTypes
+@pushlist 'ItemTypes' 'spellbook' //SpellBook
+
+foreach x in ItemTypes
+    overhead x
+    while findtype x as myFind
+        overhead 'Before Label'
+        getlabel myFind myLabel
+        overhead 'After Label'
+        if blessed in myLabel
+            overhead "Found Blessed"
+            overhead myLabel
+        endif
+    endwhile
+endfor
+
+overhead 'Done'

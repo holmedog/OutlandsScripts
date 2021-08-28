@@ -1,0 +1,45 @@
+if not timerexists "healpot"
+    createtimer "healpot"
+    settimer "healpot" 8000
+endif
+
+hotkey 'Forensics'
+waitfortarget
+hotkey 'Target Self'
+while not dead
+    if insysmsg 'you cannot move!'
+        overhead 'Paralyzed!' 34
+        say [pouch
+    endif
+
+    if not findtype "Yellow Potion" backpack
+        overhead 'Out of heal potions!' 34
+        wait 200
+    endif
+
+
+    if findtype "Orange Potion" backpack
+        if poisoned
+            overhead 'Drinking cures!'
+            potion "cure"
+            wait 200
+        endif
+    else 
+        overhead 'Out of cure potions!' 34
+        wait 200
+    endif
+
+    if hp < 35
+       if findtype "Yellow Potion" backpack
+           if timer "healpot" >= 8000
+                        overhead 'Drinking heal!'
+                        potion "heal"
+                        wait 200
+                        settimer "healpot" 0
+            endif
+         endif
+     endif
+           
+    wait 500
+    // if find (serial) [src] [hue] [qty] [range]
+endwhile
