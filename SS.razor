@@ -1,29 +1,42 @@
 # Clear sys messaages
 clearsysmsg
 
+#Change this to your Summoning Stone
+@setvar sumStone 0x4ABCDFE4
+
 if not timerexists "healpot"
     createtimer "healpot"
     settimer "healpot" 8000
 endif
 
+if not timerexists "shroomy"
+    createtimer "shroomy"
+    settimer "shroomy" 60000
+endif
 
-dclicktype '29012'
-wait 100
+
 hotkey 'Forensics'
 waitfortarget 1000
 hotkey 'Target Self'
 wait 700
 hotkey 'Spirit Speak'
 wait 350
-dclick '0x4ABCDFE4'
+dclick 'sumStone'
 waitfortarget  1050
-target '0x4ABCDFE4'
+target 'sumStone'
 
 
 while not dead
     if insysmsg 'you cannot move!'
         overhead 'Paralyzed!' 34
         say [pouch
+    endif
+    #Eat a magic mushroom if we have 
+    #25  less mana than full
+    if mana < maxmana - 25 and timer "shroomy" >= 60000
+        dclicktype '29012'
+        overhead 'Mushroom Power!'
+        settimer "shroomy" 0
     endif
 
     if not findtype "Yellow Potion" backpack
