@@ -171,62 +171,60 @@ foreach x in ItemTypes
     wait 200
     getlabel 'myVariable' myLabel
     if 'unidentified' in myLabel
-        sysmsg 'ID Time' 33
         skill 'itemidentification'
         waitfortarget
         target myVariable
         wait 425
     elseif 'blessed' in myLabel
-        #This is the keeper routine
-        sysmsg 'Blessed Item' 15
+        #ignore blessed and continue
         @ignore myVariable
     elseif 'supremely' in myLabel
         #This is the keeper routine
-        sysmsg 'Keeper Item' 23
+        sysmsg 'Keeper Item' 33
         lift myVariable 1
         drop goodBag -1 -1 0
     elseif 'exceedingly' in myLabel
         #This is the keeper routine
-        sysmsg 'Keeper Item' 23
+        sysmsg 'Keeper Item' 33
         lift myVariable 1
         drop goodBag -1 -1 0
     elseif 'invulnerability' in myLabel
         #This is the keeper routine
-        sysmsg 'Keeper Item' 23
+        sysmsg 'Keeper Item' 33
         lift myVariable 1
         drop goodBag -1 -1 0
     elseif 'fortification' in myLabel
         #This is the keeper routine
-        sysmsg 'Keeper Item' 23
+        sysmsg 'Keeper Item' 33
         lift myVariable 1
         drop goodBag -1 -1 0
     elseif 'vanquishing' in myLabel
         #This is the keeper routine
-        sysmsg 'Keeper Item' 23
+        sysmsg 'Keeper Item' 33
         lift myVariable 1
         drop goodBag -1 -1 0
     elseif 'enticement' in myLabel
         #This is the keeper routine
-        sysmsg 'Keeper Item' 23
+        sysmsg 'Keeper Item' 33
         lift myVariable 1
         drop goodBag -1 -1 0
     elseif 'power' in myLabel
         #This is the keeper routine
-        sysmsg 'Keeper Item' 23
+        sysmsg 'Keeper Item' 33
         lift myVariable 1
         drop goodBag -1 -1 0
     elseif 'slaying' in myLabel
         #This is the keeper routine
-        sysmsg 'Keeper Item' 23
+        sysmsg 'Keeper Item' 33
         lift myVariable 1
         drop goodBag -1 -1 0
     else
         #This stuff can be trashed
-        sysmsg 'Junker' 55
+        sysmsg 'Junker' 33
         lift myVariable 1
         drop junkBag -1 -1 0
     endif
-    sysmsg myLabel 65
+    sysmsg myLabel 85
     wait 600
   endwhile
 endfor
