@@ -1,7 +1,10 @@
 #Script by Brozan
 #Requires a dump bag
 #Searches for all unid items
-# and dumps them to dump bag
+# and IDs them and then sorts them
+# make sure to change the 
+# if/else logic below to include
+# keywords you care about
  
 
 ###Turn this on if you want to
@@ -202,6 +205,11 @@ foreach x in ItemTypes
         sysmsg 'Keeper Item' 23
         lift myVariable 1
         drop goodBag -1 -1 0
+    elseif 'enticement' in myLabel
+        #This is the keeper routine
+        sysmsg 'Keeper Item' 23
+        lift myVariable 1
+        drop goodBag -1 -1 0
     elseif 'power' in myLabel
         #This is the keeper routine
         sysmsg 'Keeper Item' 23
@@ -218,7 +226,7 @@ foreach x in ItemTypes
         lift myVariable 1
         drop junkBag -1 -1 0
     endif
-    sysmsg myLabel 43
+    sysmsg myLabel 65
     wait 600
   endwhile
 endfor

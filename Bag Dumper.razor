@@ -167,12 +167,14 @@ foreach x in ItemTypes
     @getlabel 'myVariable' myLabel
     if 'unidentified' in myLabel
         sysmsg 'Dumping: ' 33
-        sysmsg  myLabel
+    sysmsg  myLabel 65
         lift myVariable 1
         drop noidBag -1 -1 0 
-    else
-        @ignore myVariable
+    else 
+        sysmsg 'Skipping' 55
+    sysmsg  myLabel 65
     endif
+    @ignore myVariable
     wait 600
   endwhile
 endfor

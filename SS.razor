@@ -1,6 +1,12 @@
 # Clear sys messaages
 clearsysmsg
 
+if not timerexists "healpot"
+    createtimer "healpot"
+    settimer "healpot" 8000
+endif
+
+
 dclicktype '29012'
 wait 100
 hotkey 'Forensics'
@@ -12,3 +18,41 @@ wait 350
 dclick '0x492E46A4'
 waitfortarget  1050
 target '0x492E46A4'
+
+
+while not dead
+    if insysmsg 'you cannot move!'
+        overhead 'Paralyzed!' 34
+        say [pouch
+    endif
+
+    if not findtype "Yellow Potion" backpack
+        overhead 'Out of heal potions!' 34
+        wait 200
+    endif
+
+
+    if findtype "Orange Potion" backpack
+        if poisoned
+            overhead 'Drinking cures!'
+            potion "cure"
+            wait 200
+        endif
+    else 
+        overhead 'Out of cure potions!' 34
+        wait 200
+    endif
+
+    if hp < 35
+       if findtype "Yellow Potion" backpack
+           if timer "healpot" >= 8000
+                        overhead 'Drinking heal!'
+                        potion "heal"
+                        wait 200
+                        settimer "healpot" 0
+            endif
+         endif
+     endif
+           
+     wait 100
+endwhile
