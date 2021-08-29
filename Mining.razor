@@ -14,8 +14,8 @@ while not insysmsg 'You do not see any'
         wait 5000
         break
     endif
-    if weight >= 365
-        overhead 'Too fat'
+    if weight >= maxweight - 25
+        overhead 'Too fat - restart'
         break
     endif
     if insysmsg 'Harvesting is not'
@@ -31,18 +31,51 @@ while not insysmsg 'You do not see any'
     endif
     
     if timer "miner" >= 1000
-    hotkey 'use item in hand'
-    if insysmsg "begin applying"
+        hotkey 'use item in hand'
         settimer "miner" 0
         wait 200
-        endif
     endif
     
 endwhile
 
+
+#Dump ore if we have it
+
+if findtype 6585 'backpack'
+    random 4
+    wait 250
+    if insysmsg 'Random: 1'
+        organizer 15
+        while queued
+            wait 1000
+        endwhile
+    endif
+    if insysmsg 'Random: 2'
+        organizer 16
+        while queued
+            wait 1000
+        endwhile
+    endif
+    if insysmsg 'Random: 3'
+        organizer 17
+        while queued
+            wait 1000
+        endwhile
+    endif
+    if insysmsg 'Random: 4'
+        organizer 18
+        while queued
+            wait 1000
+        endwhile
+    endif
+endif
+
 clearsysmsg
 while not insysmsg 'ore'
-    overhead 'Tracking'
+    if timer "miner" >= 3000
+        overhead 'Tracking'
+        settimer miner 0
+    endif
     if insysmsg 'Now tracking'
         say 'Ah shit!!!'
         cast 'recall'
