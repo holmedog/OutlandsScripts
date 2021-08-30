@@ -1,44 +1,97 @@
-#Must set up organizer 15-18 as pack
-#horses.  
-#Need magery 60
+#Script by Brozan
+#Spot Miner with recall on Track
+# and dump to pack horse
+
+###
+// YOU MUST SET UP Organizer 15
+// To dump ore 
+// Before you Run This
+// Agents->Organizer 15->Add Target
+//    Then target a pile of ore
+###
+
+#Needs magery 60
+#Have a marked recall rune in pack
+# and regs and no unmarked
+
 #Need tracking turned on
-#Put a lute in your pack
-#  It will be annoying when done
-#  In case you are multitasking
-# and set to all hostile not in houses/party/guild
-#Have a marked recall rune in pack and regs
-#Equip a pickaxe or it will halt until you do
+# and set to all hostile 
+# not in houses/party/guild
 
-
-#Find our packhorse and store them
-#In variables
-
-#This must be organizer 15
-@setvar pack1 0xAD026 
-#This must be organizer 16
-@setvar pack2 0xAD025 
-#This must be organizer 17
-@setvar pack3 0xB198E 
-#This must be organizer 18
-@setvar pack4 0xB198F 
-
-if not timerexists "miner"
-    createtimer "miner"
-    settimer "miner" 1100
+#Check for reds in case it happened earlier
+if insysmsg 'Now tracking'
+    overhead  'Ah shit!!!'
+    cast 'recall'
+    waitfortarget
+    targettype '7956' backpack
+    wait 5000
+    overhead 'Turn off script'
+    stop
 endif
 
-clearsysmsg
+clearsysmsg 
+@createlist packAnimals
+
+if not timerexists "miner"
+    #Assign pack animals to variables
+    #On first launch of UO 
+    if list packAnimals <= 0
+        @clearlist packAnimals
+        @pushlist 'packAnimals' "p1"
+        @pushlist 'packAnimals' "p2"
+        @pushlist 'packAnimals' "p3"
+        @pushlist 'packAnimals' "p4"
+    endif    
+    #We use this as a first run loop to set vars
+    overhead 'First Run!'
+    createtimer "miner"
+    settimer "miner" 1100
+    # Setup pack variable
+    overhead 'If you have less than 4 pack animals'
+    overhead 'Just click the same ones for later animals'
+    wait 1000
+    overhead 'Select your pack1'
+    setvar! 'pack1'
+    wait 200
+    overhead 'Select your pack2'
+    setvar! 'pack2'
+    wait 200
+    overhead 'Select your pack3'
+    setvar! 'pack3'
+    wait 200
+    overhead 'Select your pack4'
+    setvar! 'pack4'
+    wait 200
+    
+    #sysmsg 'Using Follow Packies In Order' 23
+    #sysmsg pack1
+    #sysmsg pack2
+    #sysmsg pack3
+    #sysmsg pack4
+    say 'all follow me'
+    overhead 'Make Sure Tracking is on!'
+    sysmsg 'Make Sure Tracking is on!'
+endif
+
+
 overhead 'Starting'
+
+# Equip a pickaxe
+if rhandempty
+    dclicktype '3718'
+    wait 600
+endif
+
 while not insysmsg 'You do not see any'
     if insysmsg 'Now tracking'
-        say 'Ah shit!!!'
+        overhead  'Ah shit!!!'
         cast 'recall'
         waitfortarget
-        targettype '7956'backpack
+        targettype '7956' backpack
         wait 5000
         break
     endif
-    if weight >= maxweight - 25
+    if weight >= 365
         overhead 'Too fat - restart'
         break
     endif
@@ -63,59 +116,65 @@ while not insysmsg 'You do not see any'
 endwhile
 
 overhead 'Spot Done' 33
-overhead 'Spot Done' 33
-sysmsg  'Spot Done' 33
 sysmsg 'Spot Done' 33
-dclicktype 'lute'
+#dclicktype 'lute'
 
 #Dump ore if we have it
 
 
 
 if findtype 6585 'backpack'
-    if counttype 6585 pack1 <= 220
-        overhead 'Pack1' 15
-        organizer 15
-        while queued
-            wait 1000
-        endwhile
-    elseif counttype 6585 pack2 <= 220
-        overhead 'Pack2' 15
-        organizer 16
-        while queued
-            wait 1000
-        endwhile
-    elseif counttype 6585 pack3 <= 220
-        overhead 'Pack3' 15
-        organizer 17
-        while queued
-            wait 1000
-        endwhile
-    elseif counttype 6585 pack4 <= 220
-        overhead 'Pack4' 15
-        organizer 18
-        while queued
-            wait 1000
-        endwhile
-    else 
-        overhead 'Packs are full!' 33
-        overhead 'Packs are full!' 33
-        sysmsg  'Packs are full!' 33
-        sysmsg 'Packs are full!' 33
+    
+    #Check if we have used all packies
+    if list packAnimals <= 0
+        @clearlist packAnimals
+        @pushlist 'packAnimals' "p1"
+        @pushlist 'packAnimals' "p2"
+        @pushlist 'packAnimals' "p3"
+        @pushlist 'packAnimals' "p4"
     endif
+    
+    #Set Oragnizer 15 to whatever packie is next
+    if inlist 'packAnimals' 'p1'
+        overhead 'Pack 1 Dump!'
+        organizer 15 'pack1'
+        poplist 'packAnimals' 'front'
+    elseif inlist 'packAnimals' 'p2'
+        overhead 'Pack 2 Dump!'
+        organizer 15 'pack2'
+        poplist 'packAnimals' 'front'
+    elseif inlist 'packAnimals' 'p3'
+        overhead 'Pack 3 Dump!'
+        organizer 15 'pack3'
+        poplist 'packAnimals' 'front'
+    elseif inlist 'packAnimals' 'p4'
+        overhead 'Pack 4 Dump!'
+        organizer 15 'pack4'
+        poplist 'packAnimals' 'front'
+    else 
+        overhead 'Something done broke'
+    endif    
+    wait 100
+
+    #Organizer is now set, dump
+    organizer 15
+    while queued
+        wait 1000
+    endwhile
+        
+    #if counttype 6585 pack4 <= 200
 endif
 
 hotkey 'All Names'
 
-clearsysmsg
-while not insysmsg 'ore'
+while not dead
     if timer "miner" >= 3000
-        dclicktype 'lute'
+    #dclicktype 'lute'
         overhead 'Tracking'
         settimer miner 0
     endif
     if insysmsg 'Now tracking'
-        say 'Ah shit!!!'
+        overhead 'Ah shit!!!'
         cast 'recall'
         waitfortarget
         targettype '7956'
