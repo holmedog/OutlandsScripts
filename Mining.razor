@@ -82,14 +82,22 @@ if rhandempty
     wait 600
 endif
 
+#Hit it once
+if timer "miner" >= 1000
+    clearsysmsg 
+    hotkey 'use item in hand'
+    settimer "miner" 0
+    wait 200
+endif
+#Mining Loop
 while not insysmsg 'You do not see any'
+//while insysmsg 'Ore'
     if insysmsg 'Now tracking'
         overhead  'Ah shit!!!'
         cast 'recall'
         waitfortarget
         targettype '7956' backpack
-        wait 5000
-        break
+        stop
     endif
     if weight >= 365
         overhead 'Too fat - restart'
@@ -108,6 +116,7 @@ while not insysmsg 'You do not see any'
     endif
 
     if timer "miner" >= 1000
+        clearsysmsg 
         hotkey 'use item in hand'
         settimer "miner" 0
         wait 200
