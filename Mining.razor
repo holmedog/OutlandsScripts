@@ -137,19 +137,27 @@ if findtype 6585 'backpack'
     #Set Oragnizer 15 to whatever packie is next
     if inlist 'packAnimals' 'p1'
         overhead 'Pack 1 Dump!'
-        organizer 15 'pack1'
+        organizer 15 'set' 
+        wft 500
+        target 'pack1'
         poplist 'packAnimals' 'front'
     elseif inlist 'packAnimals' 'p2'
         overhead 'Pack 2 Dump!'
-        organizer 15 'pack2'
+        organizer 15 'set' 
+        wft 500
+        target 'pack2'
         poplist 'packAnimals' 'front'
     elseif inlist 'packAnimals' 'p3'
         overhead 'Pack 3 Dump!'
-        organizer 15 'pack3'
+        organizer 15 'set' 
+        wft 500
+        target 'pack3'
         poplist 'packAnimals' 'front'
     elseif inlist 'packAnimals' 'p4'
         overhead 'Pack 4 Dump!'
-        organizer 15 'pack4'
+        organizer 15 'set' 
+        wft 500
+        target 'pack4'
         poplist 'packAnimals' 'front'
     else 
         overhead 'Something done broke'
