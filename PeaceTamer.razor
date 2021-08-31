@@ -11,7 +11,7 @@ createtimer tamingTimer
 settimer tamingTimer 10000
 while not dead 
     wait 200
-    if timer 'peaceTimer' > 20000 and timer 'tamingTimer' > 11000
+    if timer 'peaceTimer' > 20000 and timer 'tamingTimer' >= 10500 and timer 'tamingTimer' <= 13000
         hotkey 'Peacemaking'
         wft 1000
         target 'tameTarget'
@@ -25,4 +25,3 @@ while not dead
         settimer 'tamingTimer' 0
     endif
 endwhile
-
