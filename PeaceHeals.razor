@@ -4,6 +4,9 @@ clearsysmsg
 #Change this to your Summoning Stone
 @setvar sumStone 0x4ABCDFE4
 
+hotkey 'Peacemaking' 
+wft
+
 if not timerexists "healpot"
     createtimer "healpot"
     settimer "healpot" 8000
@@ -11,38 +14,19 @@ endif
 
 if not timerexists "shroomy"
     createtimer "shroomy"
-    settimer "shroomy" 61000
+    settimer "shroomy" 60000
 endif
 
-hotkey 'Forensics'
-waitfortarget 1000
-hotkey 'Target Self'
-wait 700
-hotkey 'Spirit Speak'
-wait 350
-dclick 'sumStone'
-waitfortarget  1050
-target 'sumStone'
-
-
 while not dead
-        
-    # If hidden, skip
-    if hidden
-        continue
-    endif
-
-    
     if insysmsg 'you cannot move!'
         overhead 'Paralyzed!' 34
         say [pouch
     endif
-    
     #Eat a magic mushroom if we have 
     #25  less mana than full
     if mana < 60 and timer "shroomy" >= 60000
-        dclicktype '29012'
-        overhead 'Mushroom Power!'
+        //dclicktype '29012'
+    //overhead 'Mushroom Power!'
         settimer "shroomy" 0
     endif
 
@@ -50,9 +34,20 @@ while not dead
         overhead 'Out of heal potions!' 34
         wait 200
     endif
-    
-    //Heal drinker if below 40
-    if hp < 40
+
+
+    if findtype "Orange Potion" backpack
+        if poisoned
+            overhead 'Drinking cures!'
+            potion "cure"
+            wait 200
+        endif
+    else 
+        overhead 'Out of cure potions!' 34
+        wait 200
+    endif
+
+    if hp < 35
        if findtype "Yellow Potion" backpack
            if timer "healpot" >= 8000
                         overhead 'Drinking heal!'
@@ -62,23 +57,12 @@ while not dead
             endif
          endif
      endif
-    
-    //Caches Moongate Clicker  
-    if findtype 3948 'ground' 2822 1 2 as 'yellowmoongate'
-        dclick 'yellowmoongate'
-        waitforgump 3773199800
-        gumpresponse 14
-        waitforgump 3773199800
-        gumpresponse 2
-    endif
-
-    if findtype 3948 'ground' 2820 1 2  as 'redmoongate'
-        dclick 'redmoongate'
-        waitforgump 3773199800
-        gumpresponse 14
-        waitforgump 3773199800
-        gumpresponse 2
-    endif
-     
+           
      wait 100
+     if rhandempty 
+        if lhandempty
+            wait 3000
+            dress Stick
+        endif
+     endif
 endwhile

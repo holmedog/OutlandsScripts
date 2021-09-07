@@ -6,10 +6,13 @@ clearsysmsg
 overhead 'Select Taming Target'
 setvar! 'tameTarget'
 createtimer peaceTimer 
-settimer peaceTimer 20000
+settimer peaceTimer 5000
 createtimer tamingTimer 
-settimer tamingTimer 10000
+settimer tamingTimer 11000
 while not dead 
+    if insysmsg 'You fail'
+        settimer tamingTimer 15000
+    endif
     wait 200
     if timer 'peaceTimer' > 20000 and timer 'tamingTimer' >= 10500 and timer 'tamingTimer' <= 13000
         hotkey 'Peacemaking'

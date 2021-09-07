@@ -1,0 +1,25 @@
+clearsysmsg
+createtimer 'cast pause'
+unsetvar 'loretarget'
+
+overhead 'Select lore target'
+setvar! 'loretarget'
+settimer 'cast pause' 10000
+while skill 'Animal Lore' < 80
+    clearsysmsg
+    if find 'loretarget' 'ground' -1 1 -1 and timer 'cast pause' > 5000
+        clearall
+        interrupt
+        wait 500
+        if insysmsg 'concentration is disturbed'
+            overhead 'Pausing 5 sec for cast'
+            settimer 'cast pause' 0
+        else
+            hotkey 'Animal Lore'
+            waitfortarget 500
+            target 'loretarget'
+            pause 3000
+        endif 
+    endif
+endwhile
+ 

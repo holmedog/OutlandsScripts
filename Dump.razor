@@ -1,3 +1,8 @@
+dclick 0x468CD1B0
+wait 250
+dclick 0x41C46A67
+wait 1000
+
 organizer 1
 while queued
     wait 1000
@@ -10,6 +15,17 @@ organizer 3
 while queued
     wait 1000
 endwhile
+//dump all regs
+
+dclick 0x4083AF65
+waitforgump 3232825965
+gumpresponse 4
+waitfortarget
+target 0x40A40413
+waitforgump 3232825965
+gumpclose
+wait 1000
+
 organizer 4
 while queued
     wait 1000
@@ -34,12 +50,24 @@ organizer 9
 while queued
     wait 1000
 endwhile
-restock 1
-wft 1000
-target "0x41C46A68"
-while queued
-    wait 1000
-endwhile
+wait 1000
+
+
+//Target the resupply cabinet here
+overhead 'Restock' 25
+
+dclick 0x4083AF65
+wait 250
+waitforgump 3232825965
+wait 250
+gumpresponse 7
+wait 250
+waitforgump 3232825965
+gumpresponse 7
+waitforgump 3232825965
+gumpclose
+
+
 script 'Bag Dumper'
 while queued
     wait 1000

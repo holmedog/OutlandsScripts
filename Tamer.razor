@@ -1,0 +1,176 @@
+# Clear messages
+clearsysmsg 
+
+# Setup timers
+createtimer 'bandageTimer'
+createtimer 'tamingTimer'
+createtimer 'aid time'
+createtimer 'healpot time'
+createtimer 'anti pot spam'
+createtimer 'low mana'
+
+# Setup tank variable
+    overhead 'Select your tank pet'
+    setvar! 'tank'
+    say 'all follow me'
+
+# Unset any previous pets
+if varexist 'pet'
+    unsetvar 'pet'
+endif
+
+# Main Loop
+while not dead 
+    # Tracking
+    if insysmsg 'Now tracking'
+        overhead 'Tracking Found!' 33
+        overhead 'Recalling' 33
+        say 'all follow me'
+        ################################################
+        # CHANGE THIS SECTION TO YOUR RECALL MACRO
+        ################################################
+        dclick 0x40F706DE
+        waitforgump 1551740969
+        gumpresponse 5
+        ################################################
+    endif
+
+    # Setup target
+    if not varexist 'pet'
+        overhead 'Select the pet to tame'
+        setvar! 'pet'
+    endif
+
+    # Attempt to heal tank pet
+    if find 'tank' 'ground' -1 1 1
+        if timer 'bandageTimer' > 7250 and timer 'aid time' > 10250
+            hotkey 'Use Bandage (No Timer)'
+            pause 250
+            target 'tank'
+            pause 500
+            if insysmsg 'not damaged'
+                settimer 'bandageTimer' 4000
+            else
+                settimer 'bandageTimer' 0
+            endif
+        endif
+    else
+        overhead 'Cannot heal tank, too far away!' 33
+        pause 3000
+    endif
+    
+    # If hurt, send pet to aggro then heal self
+    if hits < maxhits
+        # Have pet guard to grab all aggro
+        say 'all guard me'
+        pause 3000
+        say 'all follow me'
+        warmode off
+
+        # Healing Survival
+        if skill 'Healing' > 1
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 0
+            endif
+            if hits < maxhits and timer 'aid time' > 10250 
+                hotkey 'bandage self'
+                settimer 'aid time' 0
+            endif
+        endif
+
+        # Magery Survival
+        if skill 'Magery' > 1
+            # Check if we have enough regs, skip loop if we dont.
+            if counttype 'garlic' < 1 or counttype "spider's silk" < 1 or counttype "ginseng" < 1 or counttype "Mandrake Root%s%" < 1
+                overhead "Not enough regs to heal" 33
+                pause 5000
+                continue
+            endif
+            # Spell interrupt warnings, pause to give a chance to run away
+            if insysmsg 'concentration is disturbed'
+                overhead 'Interrupted cast! Waiting 2 second' 33
+                wait 2000
+            endif
+
+            # Mana warnings
+            if mana < 40 and timer 'low mana' > 3000
+                overhead 'Low Mana' 88
+                settimer 'low mana' 0
+            elseif mana < 20  and timer 'low mana' > 3000
+                overhead 'OOM' 33
+                settimer 'low mana' 0
+            endif
+
+            # If hurt, attempt to heal
+            if hits < maxhits
+                # If casting something already, wait before attempting to heal.
+                if insysmsg 'already casting' or insysmsg 'frozen and cannot move'
+                    overhead 'Already casting! Waiting 2 second' 33
+                    wait 2000
+                endif
+
+                # If under 35 HP and we cant heal pot, quick heal and reset heal timer
+                # Interrupt and clearall targets before attempting to self-cast to avoid harming self
+                if hits < 35 and timer 'healpot time' < 10000 and timer 'anti pot spam' < 1000
+                    interrupt
+                    clearall
+                    hotkey 'Cancel current target'
+                    pause 250
+                    hotkey '> Mini-Heal/Cure Self'
+                    pause 250
+                    settimer 'magery heal' 3001
+                elseif hits < maxhits
+                    # Otherwise just use greater heal to heal up. 
+                    interrupt
+                    clearall
+                    hotkey 'Cancel current target'
+                    pause 250
+                    hotkey '> Greater Heal/Cure Self'
+                    pause 250
+                    settimer 'magery heal' 0
+                endif
+            endif
+        endif
+
+        # Cure Survival
+        if poisoned 'self' and timer 'anti pot spam' > 1000
+            overhead 'Used: Cure Potion' 33
+            hotkey 'Drink Cure' 
+            settimer 'anti pot spam' 0
+        endif
+
+        # Heal Potion
+        if hits < 35 and timer 'healpot time' > 10000 and timer 'anti pot spam' > 1000
+            overhead 'Used: Heal Potion' 33
+            hotkey 'Drink Heal'
+            settimer 'healpot time' 0
+            settimer 'anti pot spam' 0
+        endif
+    endif
+
+    # Warn if followers are full
+    if followers >= 5
+        overhead 'Clear up follower count to tame' 33
+        pause 5000
+        continue
+    endif
+    
+    # Attempt to tame pet
+    if find 'pet' 'ground' -1 1 4
+        if timer 'tamingTimer' > 13000
+            useskill 'Taming'
+            wft 1000
+            target 'pet'
+            settimer 'tamingTimer' 0
+        endif
+    else
+        overhead 'Too far away to tame, move closer.' 33
+        pause 5000
+    endif
+endwhile
+
+# Dead exit
+if dead
+    unsetvar 'tank'
+    stop
+endif

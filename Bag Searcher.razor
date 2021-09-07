@@ -16,7 +16,7 @@
 
 ###And turn this off or point
 ###It to your dump bag
-@setvar junkBag 0x511A31D4
+@setvar junkBag 0x40EF67C9
 @setvar goodBag 0x489BB916
 
 ###Start Script Here###
@@ -24,6 +24,8 @@ clearsysmsg
 clearignore 
 
 createlist ItemTypes
+//martial manual
+@pushlist 'ItemTypes' 22187
 //Shields
 @pushlist 'ItemTypes' 0x1b72 //BronzeShields
 @pushlist 'ItemTypes' 0x1b73 //Buckler
