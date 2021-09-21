@@ -3,6 +3,16 @@
 # wizards grimoire special spells
 #Does not do timers since they can be so variable
 
+if not timerexists "cycle"
+    createtimer "cycle"
+    settimer "cycle" 1000
+endif
+
+while timer "cycle" < 500
+    overhead 'Slow down cowboy'
+    wait 100
+endwhile
+
 @createlist spellCycle
 
 if list spellCycle <= 0
@@ -30,38 +40,32 @@ if find 'destoyIt' 'ground' -1 1 11
         cast 'Mana Drain'
         waitfortarget 
         target destoyIt 
-        poplist 'spellCycle' 'front'
-        wait 500        
+        poplist 'spellCycle' 'front'      
     elseif inlist 'spellCycle' 'p1a'
         cast 'Curse'
         waitfortarget 
         target destoyIt
-        poplist 'spellCycle' 'front'
-        wait 500    
+        poplist 'spellCycle' 'front'   
     elseif inlist 'spellCycle' 'p2'
         cast 'Magic Arrow'
         waitfortarget 
         target destoyIt
-        poplist 'spellCycle' 'front'
-        wait 500    
+        poplist 'spellCycle' 'front'    
     elseif inlist 'spellCycle' 'p3'
         cast 'Harm'
         waitfortarget 
         target destoyIt
-        poplist 'spellCycle' 'front'
-        wait 500   
+        poplist 'spellCycle' 'front' 
     elseif inlist 'spellCycle' 'p4'
         cast 'Fireball'
         waitfortarget 
         target destoyIt
         poplist 'spellCycle' 'front'
-        wait 500   
     elseif inlist 'spellCycle' 'p5'
         cast 'Lightning'
         waitfortarget 
         target destoyIt
-        poplist 'spellCycle' 'front'
-        wait 500   
+        poplist 'spellCycle' 'front'   
     else
         overhead 'Sequence done'
         unsetvar 'destoyIt'
@@ -120,7 +124,7 @@ while not dead
     endif
     
     //Heal drinker if below 40
-    if hp < 40
+    if hp < 55
        if findtype "Yellow Potion" backpack
            if timer "healpot" >= 8000
                         overhead 'Drinking heal!'

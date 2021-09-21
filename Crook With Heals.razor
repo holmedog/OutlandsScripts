@@ -1,5 +1,4 @@
-dclicktype '3713'
-wait 2000
+dclicktype "shepherd's crook" 'backpack' 'any' 'any' 2
 
 
 if not timerexists "healpot"
@@ -34,7 +33,7 @@ while not dead
     //Heal drinker if below 40
     if hp < 55
        if findtype "Yellow Potion" backpack
-           if timer "healpot" >= 8000
+        if timer "healpot" >= 10000
                         overhead 'Drinking heal!'
                         potion "heal"
                         wait 200

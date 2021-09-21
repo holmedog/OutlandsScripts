@@ -89,7 +89,7 @@ while not dead
         #  Drake red body
         pushlist 'petarray' '61'
         #  Acarid
-        # pushlist 'petarray' '385'
+        pushlist 'petarray' '385'
         
     # 110-115
     elseif skill 'Taming' < 115
@@ -206,7 +206,7 @@ while not dead
         warmode off
     endif
     if find 'tank' 'ground' -1 1 5
-        if timer 'bandageTimer' > 30000 
+        if timer 'bandageTimer' > 20000 
                     hotkey 'Use Bandage (No Timer)'
                     pause 250
                     target 'tank'
