@@ -10,7 +10,12 @@ if list spellCycle <= 0
         wait 100
 endif 
 
-if not varexist 'destoyIt'        
+if not varexist 'destoyIt' 
+    //Aquire a target
+    overhead 'New Target' 33
+    @setvar! 'destoyIt '
+    wait 100
+    
     //Load up the list
     @clearlist spellCycle
     @pushlist 'spellCycle' "Mana Drain"
@@ -20,10 +25,6 @@ if not varexist 'destoyIt'
     @pushlist 'spellCycle' "Fireball"
     @pushlist 'spellCycle' "Lightning"
     
-    //Aquire a target
-    overhead 'New Target' 33
-    @setvar! 'destoyIt '
-    wait 100
 endif
 
 if find 'destoyIt' 'ground' -1 1 11
@@ -64,8 +65,12 @@ if find 'destoyIt' 'ground' -1 1 11
         wait 100
     endif 
 else
-    overhead 'Through the list - Push again to retarget'
+    overhead 'Target not found, resetting'
     unsetvar 'destoyIt'
+    @unsetvar 'destoyIt'
+    @clearlist spellCycle
+    wait 200
+    
 endif
 
 wait 2000
