@@ -3,65 +3,56 @@
 # wizards grimoire special spells
 #Does not do timers since they can be so variable
 
-if not timerexists "cycle"
-    createtimer "cycle"
-    settimer "cycle" 1000
-endif
-
-while timer "cycle" < 500
-    overhead 'Slow down cowboy'
-    wait 100
-endwhile
-
 @createlist spellCycle
 
 if list spellCycle <= 0
-        @clearlist spellCycle
-        @pushlist 'spellCycle' "p1"
-        //Note how this is done to insert into existing cycle
-        @pushlist 'spellCycle' "p1a"
-        @pushlist 'spellCycle' "p2"
-        @pushlist 'spellCycle' "p3"
-        @pushlist 'spellCycle' "p4"
-        @pushlist 'spellCycle' "p5"
-        overhead 'Sequence done.  Push ESC to end or retarget to continue'
-        unsetvar 'destoyIt'
+        @unsetvar 'destoyIt'
         wait 100
 endif 
 
-if not varexist 'destoyIt'
-    clearsysmsg 
+if not varexist 'destoyIt'        
+    //Load up the list
+    @clearlist spellCycle
+    @pushlist 'spellCycle' "Mana Drain"
+    @pushlist 'spellCycle' "Curse"
+    @pushlist 'spellCycle' "Magic Arrow"
+    @pushlist 'spellCycle' "Harm"
+    @pushlist 'spellCycle' "Fireball"
+    @pushlist 'spellCycle' "Lightning"
+    
+    //Aquire a target
     overhead 'New Target' 33
-    setvar! 'destoyIt '
+    @setvar! 'destoyIt '
+    wait 100
 endif
 
 if find 'destoyIt' 'ground' -1 1 11
-    if inlist 'spellCycle' 'p1'
+    if inlist 'spellCycle' 'Mana Drain'
         cast 'Mana Drain'
         waitfortarget 
         target destoyIt 
         poplist 'spellCycle' 'front'      
-    elseif inlist 'spellCycle' 'p1a'
+    elseif inlist 'spellCycle' 'Curse'
         cast 'Curse'
         waitfortarget 
         target destoyIt
         poplist 'spellCycle' 'front'   
-    elseif inlist 'spellCycle' 'p2'
+    elseif inlist 'spellCycle' 'Magic Arrow'
         cast 'Magic Arrow'
         waitfortarget 
         target destoyIt
         poplist 'spellCycle' 'front'    
-    elseif inlist 'spellCycle' 'p3'
+    elseif inlist 'spellCycle' 'Harm'
         cast 'Harm'
         waitfortarget 
         target destoyIt
         poplist 'spellCycle' 'front' 
-    elseif inlist 'spellCycle' 'p4'
+    elseif inlist 'spellCycle' 'Fireball'
         cast 'Fireball'
         waitfortarget 
         target destoyIt
         poplist 'spellCycle' 'front'
-    elseif inlist 'spellCycle' 'p5'
+    elseif inlist 'spellCycle' 'Lightning'
         cast 'Lightning'
         waitfortarget 
         target destoyIt
@@ -69,14 +60,15 @@ if find 'destoyIt' 'ground' -1 1 11
     else
         overhead 'Sequence done'
         unsetvar 'destoyIt'
+        poplist 'spellCycle' 'front'   
         wait 100
     endif 
 else
-    overhead 'Target moved or is dead, restart' 33
+    overhead 'Through the list - Push again to retarget'
     unsetvar 'destoyIt'
-    @clearlist spellCycle
-    wait 100
 endif
+
+wait 2000
 
 overhead 'Passive Script Engaged' 33
 
