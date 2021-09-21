@@ -1,28 +1,22 @@
-# Clear sys messaages
-clearsysmsg
 
-#Change this to your Summoning Stone
-@setvar sumStone 0x45AE7FAA
+overhead 'Who we killin?'
+setvar! 'destoyIt'
+wait 200
+
+dclick 0x4B48BD83
+waitfortarget 
+target destoyIt
+wait 500
+//say 'All kill'
+//waitfortarget 
+//target destoyIt
+//wait 500
+
 
 if not timerexists "healpot"
     createtimer "healpot"
     settimer "healpot" 8000
 endif
-
-if not timerexists "shroomy"
-    createtimer "shroomy"
-    settimer "shroomy" 61000
-endif
-
-hotkey 'Forensics'
-waitfortarget 1000
-hotkey 'Target Self'
-wait 700
-hotkey 'Spirit Speak'
-wait 350
-dclick 'sumStone'
-waitfortarget  1050
-target 'sumStone'
 
 
 while not dead
@@ -38,13 +32,6 @@ while not dead
         say [pouch
     endif
     
-    #Eat a magic mushroom if we have 
-    #25  less mana than full
-    if mana < 60 and timer "shroomy" >= 61000
-        dclicktype '29012'
-        overhead 'Mushroom Power!'
-        settimer "shroomy" 0
-    endif
 
     if not findtype "Yellow Potion" backpack
         overhead 'Out of heal potions!' 34
@@ -52,7 +39,7 @@ while not dead
     endif
     
     //Heal drinker if below 40
-    if hp < 40
+    if hp < 55
        if findtype "Yellow Potion" backpack
            if timer "healpot" >= 8000
                         overhead 'Drinking heal!'

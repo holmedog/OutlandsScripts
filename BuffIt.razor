@@ -1,3 +1,10 @@
+dclicktype '3846'
+wait 599
+dclicktype '3849'
+wait 600
+dclicktype '3848'
+
+
 # Clear sys messaages
 clearsysmsg
 
@@ -10,9 +17,6 @@ createtimer 'low mana'
 createtimer 'stayalive spam'
 createtimer 'hidy'
 createtimer 'stealthy'
-
-hotkey  'Hiding'
-
 
 # While alive, try to stay alive.
 while not dead
@@ -29,17 +33,6 @@ while not dead
         continue
     endif
 
-    if insysmsg 'You begin to move'
-        overhead 'We Moved!' 33
-        settimer 'stealthy' 0
-    endif
-    if insysmsg 'You feel comfortable'
-        overhead 'Move it!' 33
-    endif
-    if timer 'stealthy' > 10000 and timer 'stealthy' < 15000 and timer 'hidy' > 1000
-        overhead 'Use a damn skill!' 66
-        settimer 'hidy' 0
-    endif
 
     # Tracking
     if insysmsg 'Now tracking'

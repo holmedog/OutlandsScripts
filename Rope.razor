@@ -1,3 +1,7 @@
+dclicktype '5370'
+
+wait 3000
+
 # Clear sys messaages
 clearsysmsg
 
@@ -10,8 +14,6 @@ createtimer 'low mana'
 createtimer 'stayalive spam'
 createtimer 'hidy'
 createtimer 'stealthy'
-
-hotkey  'Hiding'
 
 
 # While alive, try to stay alive.
@@ -29,17 +31,6 @@ while not dead
         continue
     endif
 
-    if insysmsg 'You begin to move'
-        overhead 'We Moved!' 33
-        settimer 'stealthy' 0
-    endif
-    if insysmsg 'You feel comfortable'
-        overhead 'Move it!' 33
-    endif
-    if timer 'stealthy' > 10000 and timer 'stealthy' < 15000 and timer 'hidy' > 1000
-        overhead 'Use a damn skill!' 66
-        settimer 'hidy' 0
-    endif
 
     # Tracking
     if insysmsg 'Now tracking'
@@ -113,7 +104,7 @@ while not dead
     endif
 
     # Heal Potion
-    if hits < 35 and timer 'healpot time' > 10000 and timer 'anti pot spam' > 1000
+    if hits < 55 and timer 'healpot time' > 10000 and timer 'anti pot spam' > 1000
         overhead 'Used: Heal Potion' 33
         hotkey 'Drink Heal'
         settimer 'healpot time' 0

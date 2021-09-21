@@ -1,0 +1,134 @@
+#Script by Brozan
+#Spell Cycler to be used with 
+# wizards grimoire special spells
+#Does not do timers since they can be so variable
+
+@createlist spellCycle
+
+if list spellCycle <= 0
+        @clearlist spellCycle
+        @pushlist 'spellCycle' "p1"
+        //Note how this is done to insert into existing cycle
+        @pushlist 'spellCycle' "p1a"
+        @pushlist 'spellCycle' "p2"
+        @pushlist 'spellCycle' "p3"
+        @pushlist 'spellCycle' "p4"
+        @pushlist 'spellCycle' "p5"
+        overhead 'Sequence done.  Push ESC to end or retarget to continue'
+        unsetvar 'destoyIt'
+        wait 100
+endif 
+
+if not varexist 'destoyIt'
+    clearsysmsg 
+    overhead 'New Target' 33
+    setvar! 'destoyIt '
+endif
+
+if find 'destoyIt' 'ground' -1 1 11
+    if inlist 'spellCycle' 'p1'
+        cast 'Mana Drain'
+        waitfortarget 
+        target destoyIt 
+        poplist 'spellCycle' 'front'
+        wait 500        
+    elseif inlist 'spellCycle' 'p1a'
+        cast 'Curse'
+        waitfortarget 
+        target destoyIt
+        poplist 'spellCycle' 'front'
+        wait 500    
+    elseif inlist 'spellCycle' 'p2'
+        cast 'Magic Arrow'
+        waitfortarget 
+        target destoyIt
+        poplist 'spellCycle' 'front'
+        wait 500    
+    elseif inlist 'spellCycle' 'p3'
+        cast 'Harm'
+        waitfortarget 
+        target destoyIt
+        poplist 'spellCycle' 'front'
+        wait 500   
+    elseif inlist 'spellCycle' 'p4'
+        cast 'Fireball'
+        waitfortarget 
+        target destoyIt
+        poplist 'spellCycle' 'front'
+        wait 500   
+    elseif inlist 'spellCycle' 'p5'
+        cast 'Lightning'
+        waitfortarget 
+        target destoyIt
+        poplist 'spellCycle' 'front'
+        wait 500   
+    else
+        overhead 'Sequence done'
+        unsetvar 'destoyIt'
+        wait 100
+    endif 
+else
+    overhead 'Target moved or is dead, restart' 33
+    unsetvar 'destoyIt'
+    @clearlist spellCycle
+    wait 100
+endif
+
+overhead 'Passive Script Engaged' 33
+
+
+if not timerexists "healpot"
+    createtimer "healpot"
+    settimer "healpot" 8000
+endif
+
+if not timerexists "shroomy"
+    createtimer "shroomy"
+    settimer "shroomy" 61000
+endif
+
+
+while not dead
+        
+    # If hidden, skip
+    if hidden
+        continue
+    endif
+
+    
+    if insysmsg 'you cannot move!'
+        overhead 'Paralyzed!' 34
+        overhead [pouch
+    endif
+    
+    #Eat a magic mushroom if we have 
+    #25  less mana than full
+    if mana < 60 and timer "shroomy" >= 61000
+        wait 500
+        //add this wait to avoid 
+        //eating a shroom on a refund
+            if mana < 60 
+                dclicktype '29012'
+                overhead 'Mushroom Power!'
+                settimer "shroomy" 0
+            endif
+    endif
+
+    if not findtype "Yellow Potion" backpack
+        overhead 'Out of heal potions!' 34
+        wait 200
+    endif
+    
+    //Heal drinker if below 40
+    if hp < 40
+       if findtype "Yellow Potion" backpack
+           if timer "healpot" >= 8000
+                        overhead 'Drinking heal!'
+                        potion "heal"
+                        wait 200
+                        settimer "healpot" 0
+            endif
+         endif
+     endif
+     wait 100
+endwhile

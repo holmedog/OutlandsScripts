@@ -1,6 +1,8 @@
 # Clear messages
 clearsysmsg 
 
+overhead 'Starting autotamer'
+
 # Setup timers
 createtimer 'bandageTimer'
 createtimer 'tamingTimer'
@@ -14,58 +16,108 @@ createtimer 'low mana'
     setvar! 'tank'
     say 'all follow me'
 
-# Unset any previous pets
-if varexist 'pet'
-    unsetvar 'pet'
-endif
+
+# Skip waiting the full cycle before Starting
+settimer 'bandageTimer' 20000 
+settimer 'tamingTimer' 20000 
+settimer 'healpot time' 20000 
+settimer 'anti pot spam' 20000
 
 # Main Loop
-while not dead 
-    # Tracking
-    if insysmsg 'Now tracking'
-        overhead 'Tracking Found!' 33
-        overhead 'Recalling' 33
-        say 'all follow me'
-        ################################################
-        # CHANGE THIS SECTION TO YOUR RECALL MACRO
-        ################################################
-        dclick 0x40F706DE
-        waitforgump 1551740969
-        gumpresponse 5
-        ################################################
-    endif
+while not dead
+    # Setup target list for each taming skill bracket.
+    # 0-50 = Buy Skill
+    # 50-60
+    removelist 'petarray'
+    createlist 'petarray'
+    if skill 'Taming' < 60
+        # Frog = 80
+        pushlist 'petarray' '80'
 
-    # Setup target
-    if not varexist 'pet'
-        overhead 'Select the pet to tame'
-        setvar! 'pet'
-    endif
-
-    # Attempt to heal tank pet
-    if find 'tank' 'ground' -1 1 1
-        if timer 'bandageTimer' > 7250 and timer 'aid time' > 10250
-            hotkey 'Use Bandage (No Timer)'
-            pause 250
-            target 'tank'
-            pause 500
-            if insysmsg 'not damaged'
-                settimer 'bandageTimer' 4000
-            else
-                settimer 'bandageTimer' 0
-            endif
-        endif
+    # 60-70
+    elseif skill 'Taming' < 70
+        # Cave Bear
+        pushlist 'petarray' '213'
+        
+    # 70-75
+    elseif skill 'Taming' < 75
+        # Scarab
+        pushlist 'petarray' '169'
+        
+    # 75-80
+    elseif skill 'Taming' < 80
+        #  Drake Whelp
+        pushlist 'petarray' '718'
+        
+    # 80-85
+    elseif skill 'Taming' < 85
+        #  Deep Crawler
+        pushlist 'petarray' '315'
+        
+    # 85-90
+    elseif skill 'Taming' < 90
+        #  Drake grey body
+        pushlist 'petarray' '60'
+        #  Drake red body
+        pushlist 'petarray' '61'
+        # dragon welp
+        pushlist 'petarray' '718'
+        
+    # 90-95
+    elseif skill 'Taming' < 95
+        #  Husk Crab
+        pushlist 'petarray' '729'
+        
+    # 95-100
+    elseif skill 'Taming' < 100
+        #  or Dragon grey body
+        pushlist 'petarray' '12'
+        #  or Dragon red body
+        pushlist 'petarray' '59'
+        #  Dragon whelp
+        # pushlist 'petarray' '718'
+        
+    # 100-105
+    elseif skill 'Taming' < 105
+        #  Snow Drift
+        pushlist 'petarray' '51'
+        
+    # 105-110
+    elseif skill 'Taming' < 110
+        #  Drake grey body
+        pushlist 'petarray' '60'
+        #  Drake red body
+        pushlist 'petarray' '61'
+        #  Acarid
+        # pushlist 'petarray' '385'
+        
+    # 110-115
+    elseif skill 'Taming' < 115
+        #  Aegis Minion
+        pushlist 'petarray' '776'
+        #  or Sphinx
+        pushlist 'petarray' '293'
+        
+    # 115-120
+    elseif skill 'Taming' < 120
+        #  Grey Dragon body value
+        pushlist 'petarray' '12'
+        #  Red Dragon body value
+        pushlist 'petarray' '59'
+        #  or Colossal Sandroach
+        pushlist 'petarray' '388'
+        
+    # 120+
     else
-        overhead 'Cannot heal tank, too far away!' 33
-        pause 3000
+        overhead 'Congratulations on 120 taming!'
+        unsetvar 'tank'
+        stop
     endif
     
     # If hurt, send pet to aggro then heal self
-    if hits < maxhits
+    if hits < 5
         # Have pet guard to grab all aggro
         say 'all guard me'
-        pause 3000
-        say 'all follow me'
-        warmode off
 
         # Healing Survival
         if skill 'Healing' > 1
@@ -82,6 +134,7 @@ while not dead
         if skill 'Magery' > 1
             # Check if we have enough regs, skip loop if we dont.
             if counttype 'garlic' < 1 or counttype "spider's silk" < 1 or counttype "ginseng" < 1 or counttype "Mandrake Root%s%" < 1
+                //'
                 overhead "Not enough regs to heal" 33
                 pause 5000
                 continue
@@ -146,27 +199,82 @@ while not dead
             settimer 'healpot time' 0
             settimer 'anti pot spam' 0
         endif
-    endif
 
-    # Warn if followers are full
-    if followers >= 5
-        overhead 'Clear up follower count to tame' 33
-        pause 5000
-        continue
+        # pause a few seconds to aggro
+        pause 3000
+        say 'all follow me'
+        warmode off
     endif
-    
-    # Attempt to tame pet
-    if find 'pet' 'ground' -1 1 4
-        if timer 'tamingTimer' > 13000
-            useskill 'Taming'
-            wft 1000
-            target 'pet'
-            settimer 'tamingTimer' 0
+    if find 'tank' 'ground' -1 1 5
+        if timer 'bandageTimer' > 30000 
+                    hotkey 'Use Bandage (No Timer)'
+                    pause 250
+                    target 'tank'
+                    pause 500
+                    if insysmsg 'not damaged'
+                        settimer 'bandageTimer' 4000
+                    else
+                        settimer 'bandageTimer' 0
+                    endif
         endif
     else
-        overhead 'Too far away to tame, move closer.' 33
-        pause 5000
+                    overhead 'Cannot heal tank, too far away!' 33
+                    pause 3000
     endif
+    # Search for pet to tame
+    foreach pettarget in petarray
+        # Tracking
+        if insysmsg 'Now tracking'
+            overhead 'Tracking Found!' 33
+            overhead 'Recalling' 33
+            say 'all follow me'
+            ################################################
+            # CHANGE THIS SECTION TO YOUR RECALL MACRO
+            ################################################
+            dclick 0x40F706DE
+            waitforgump 1551740969
+            gumpresponse 5
+            ################################################
+        endif
+
+        # Warn if followers are full
+        if followers >= 5
+            overhead 'Clear up follower count to tame' 33
+            pause 1000
+            //continue
+        endif
+        
+        # Attempt to tame pet
+        if findtype pettarget 'ground' -1 1 4 as 'mypettarget'
+            # Attempt to heal tank pet
+            
+
+            if noto 'mypettarget' = friend
+                interrupt
+                clearall
+                # If the mypetarget is already tamed, skip.
+                say 'all kill'
+                wft 250
+                target 'mypettarget'
+                pause 5000
+                say 'all follow me'
+            else
+                # Otherwise tame it.
+                warmode off
+                if timer 'tamingTimer' > 13000
+                    interrupt
+                    clearall
+                    useskill 'Taming'
+                    wft 1000
+                    target 'mypettarget'
+                    settimer 'tamingTimer' 0
+                endif
+            endif
+        else
+            pause 1000
+        endif
+        poplist petarray pettarget
+    endfor
 endwhile
 
 # Dead exit

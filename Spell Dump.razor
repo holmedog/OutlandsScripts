@@ -1,8 +1,37 @@
+
+overhead 'Who we killin?'
+setvar! 'destoyIt'
+
+cast 'Mana Drain'
+waitfortarget 
+target destoyIt
+wait 500
+
+cast 'Curse'
+waitfortarget 
+target destoyIt
+wait 500
+
+cast 'Magic Arrow'
+waitfortarget 
+target destoyIt
+wait 500
+
+cast 'Harm'
+waitfortarget 
+target destoyIt
+wait 500
+
+cast 'Lightning'
+waitfortarget 
+target destoyIt
+wait 500
+
 # Clear sys messaages
 clearsysmsg
 
 #Change this to your Summoning Stone
-@setvar sumStone 0x45AE7FAA
+@setvar sumStone 0x4116DA0F
 
 if not timerexists "healpot"
     createtimer "healpot"
@@ -13,16 +42,6 @@ if not timerexists "shroomy"
     createtimer "shroomy"
     settimer "shroomy" 61000
 endif
-
-hotkey 'Forensics'
-waitfortarget 1000
-hotkey 'Target Self'
-wait 700
-hotkey 'Spirit Speak'
-wait 350
-dclick 'sumStone'
-waitfortarget  1050
-target 'sumStone'
 
 
 while not dead
@@ -62,8 +81,5 @@ while not dead
             endif
          endif
      endif
-    
-
-     
      wait 100
 endwhile
