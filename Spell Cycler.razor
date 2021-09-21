@@ -7,7 +7,7 @@
 
 if list spellCycle <= 0
         @unsetvar 'destoyIt'
-        wait 100
+        wait 200
 endif 
 
 if not varexist 'destoyIt' 
@@ -27,7 +27,7 @@ if not varexist 'destoyIt'
     
 endif
 
-if find 'destoyIt' 'ground' -1 1 11
+if find 'destoyIt' 'any' 'any' 'any' 11
     if inlist 'spellCycle' 'Mana Drain'
         cast 'Mana Drain'
         waitfortarget 
