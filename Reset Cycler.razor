@@ -1,0 +1,22 @@
+#Script by Brozan
+#To be used with Spell Cycler
+# to reset script to first run state
+
+//reset variables
+@unsetvar 'destoyIt'
+@clearlist spellCycle
+
+//get new target 
+overhead 'Resetting Spell Cycler' 23
+overhead 'New Target' 33
+@setvar! 'destoyIt '
+wait 100
+
+//reload spell list
+@pushlist 'spellCycle' "Mana Drain"
+@pushlist 'spellCycle' "Curse"
+@pushlist 'spellCycle' "Magic Arrow"
+@pushlist 'spellCycle' "Harm"
+@pushlist 'spellCycle' "Fireball"
+@pushlist 'spellCycle' "Lightning"
+     

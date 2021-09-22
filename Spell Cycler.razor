@@ -27,7 +27,6 @@ if not varexist 'destoyIt'
     
 endif
 
-if find 'destoyIt' 'any' 'any' 'any' 11
     if inlist 'spellCycle' 'Mana Drain'
         cast 'Mana Drain'
         waitfortarget 
@@ -64,14 +63,6 @@ if find 'destoyIt' 'any' 'any' 'any' 11
         poplist 'spellCycle' 'front'   
         wait 100
     endif 
-else
-    overhead 'Target not found, resetting'
-    unsetvar 'destoyIt'
-    @unsetvar 'destoyIt'
-    @clearlist spellCycle
-    wait 200
-    
-endif
 
 wait 2000
 
