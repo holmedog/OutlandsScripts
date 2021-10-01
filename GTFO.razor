@@ -1,9 +1,16 @@
-cast 'recall'
-waitfortarget
-targettype '8901' backpack
-     if rhandempty 
+if skill magery > 1
+    cast 'recall'
+    waitfortarget
+    targettype '8901' backpack
+    if rhandempty 
         if lhandempty
             wait 3000
-            dress Stick
+            dress bow
         endif
      endif
+else 
+    dclicktype '8901'
+    waitforgump 1551740969
+    wait 255
+    gumpresponse 92
+endif

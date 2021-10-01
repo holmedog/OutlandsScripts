@@ -1,28 +1,10 @@
 
-@createlist packAnimals
 
-    if list packAnimals <= 0
-        @clearlist packAnimals
-        @pushlist 'packAnimals' "p1"
-        @pushlist 'packAnimals' "p2"
-        @pushlist 'packAnimals' "p3"
-        @pushlist 'packAnimals' "p4"
-    endif
-    
-    #Set Oragnizer 15 to whatever packie is next
-    if inlist 'packAnimals' 'p1'
-        overhead 'Pack 1 Dump!'
-        poplist 'packAnimals' 'front'
-    elseif inlist 'packAnimals' 'p2'
-        overhead 'Pack 2 Dump!'
-        poplist 'packAnimals' 'front'
-    elseif inlist 'packAnimals' 'p3'
-        overhead 'Pack 3 Dump!'
-        poplist 'packAnimals' 'front'
-    elseif inlist 'packAnimals' 'p4'
-        overhead 'Pack 4 Dump!'
-         poplist 'packAnimals' 'front'
-    else 
-        overhead 'Something done broke'
-    endif    
-    wait 100
+if findtype 3713  as found
+    overhead 'Found Crook'
+else 
+    overhead 'No damn crook'
+endif
+
+
+
