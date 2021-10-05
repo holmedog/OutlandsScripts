@@ -1,68 +1,29 @@
-while skill "magery" < 100
-// This will meditate and restock
-// regs using your restock 1 and 
-// your bank box. Set agent restock 
-// 1 in your agents tab before 
-// running this macro. 
-    pause 333
-    while hp < 60
-        wait 1500
-        cast 'greater heal' 
-        waitfortarget 
-        target "self"
-    endwhile
-    
-    while mana < 50
-        useskill 'spiritspeak'
-        wait 1000
-    endwhile
-    if count "garlic" < 1
-        restock 1
-        target "0x41C46A68"
-    elseif count "nightshade" < 1
-        restock 1
-        target "0x41C46A68"
-    elseif count "blood moss" < 1
-        restock 1
-        target "0x41C46A68"
-    elseif count "ginseng" < 1
-        restock 1
-        target "0x41C46A68"
-    elseif count "sulfurous ash" < 1
-        restock 1
-        target "0x41C46A68"
-    elseif count "black pearl" < 1
-        restock 1
-        target "0x41C46A68"
-    elseif count "mandrake root" < 1
-        restock 1
-        target "0x41C46A68"
-    elseif count "spider's silk" < 1
-        restock 1
-        target "0x41C46A68"
-    endif
-// For magery 40-60 stand in the 
-// corpser room in shelter island 
-// dungeon
-    if skill "magery" < 60
-        cast "lightning" 
-        waitfortarget
-        targettype "8"
-// Stay in shelter island dungeon 
-// until skill hits 70. Stand at 
-// bank or in home for 70-100.
-    elseif skill "magery" < 80 
-        cast "invisibility"
-        waitfortarget 
-        target "self"
-        // elseif skill "magery" < 80 
-       // cast "flamestrike"
-       //  waitfortarget 
-       //   target "self"
-    elseif skill "magery" < 100
-        cast "air elemental"
-        pause 3100
-        say "an air elemental release"
+ 
+if not timerexists "shroomy"
+    createtimer "shroomy"
+    settimer "shroomy" 61000
+endif
+
+while not dead 
+    if skill "magery" < 100
+        if mana > 49 
+            say "an air elemental release"
+            wait 300
+            cast "air elemental"
+            pause 2500
+            menu 0x4083AF65 1
+        endif
+    endif    
+    #Eat a magic mushroom if we have 
+    #25  less mana than full
+    if mana < 48 and skill 'Magery' > 1 
+        if timer "shroomy" >= 61000
+            dclicktype '29012'
+            overhead 'Mushroom Power!'
+            settimer "shroomy" 0
+        endif
+        skill 'meditation'
+        wait 3000
     endif
 endwhile
-say "congratulations, you have completed magery!"
+    

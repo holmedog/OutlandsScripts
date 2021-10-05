@@ -18,20 +18,16 @@ if not timerexists "shroomy"
     settimer "shroomy" 61000
 endif
 
-hotkey 'Forensics'
-waitfortarget 1000
-hotkey 'Target Self'
-wait 700
-if skill 'Spirit Speak' > 1
-    hotkey 'Spirit Speak'
-    wait 350
-    dclick 'sumStone'
-    waitfortarget  1050
-    target 'sumStone'
-endif
 
 while not dead
-        
+    hotkey 'Discordance'
+    wait 200
+    target ground 1332 495 5
+    wait 10500
+    hotkey 'Provocation'
+    target 0x0 1332 495 5
+    wait 10500
+       
     # If hidden, skip
     if hidden
         continue

@@ -114,6 +114,18 @@ while not insysmsg 'You do not see any'
     if insysmsg 'You have worn out your tool!'
         break
     endif
+    
+    if not insysmsg "do not see any" and not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
+        overhead 'Captcha break!' 34
+        for 30
+            overhead 'Awaiting Captcha...' 34
+            wait 1500
+            if insysmsg 'Captcha successful'
+                overhead 'Success - continue on!' 88
+                replay
+            endif
+        endfor
+    endif
 
     if timer "miner" >= 1000
         clearsysmsg 

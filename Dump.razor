@@ -3,6 +3,47 @@ wait 250
 dclick 0x41C46A67
 wait 1000
 
+
+
+//dump all regs
+
+dclick 0x4083AF65
+waitforgump 3232825965
+gumpresponse 4
+waitfortarget
+target self
+waitforgump 3232825965
+wait 500
+gumpclose
+wait 500
+
+//dump all resources
+dclick 0x4004288C
+waitforgump 1859005118
+gumpresponse 2
+waitfortarget
+waitforgump 1859005118
+target 'self'
+wait 500
+gumpclose
+wait 500
+
+
+//Target the resupply cabinet here
+overhead 'Restock' 25
+
+dclick 0x4083AF65
+wait 250
+waitforgump 3232825965
+wait 250
+gumpresponse 7
+wait 250
+waitforgump 3232825965
+gumpresponse 7
+waitforgump 3232825965
+gumpclose
+wait 1000
+
 organizer 1
 while queued
     wait 1000
@@ -39,32 +80,6 @@ organizer 9
 while queued
     wait 1000
 endwhile
-wait 1000
-
-//dump all regs
-
-dclick 0x4083AF65
-waitforgump 3232825965
-gumpresponse 4
-waitfortarget
-target self
-waitforgump 3232825965
-gumpclose
-wait 1000
-
-//Target the resupply cabinet here
-overhead 'Restock' 25
-
-dclick 0x4083AF65
-wait 250
-waitforgump 3232825965
-wait 250
-gumpresponse 7
-wait 250
-waitforgump 3232825965
-gumpresponse 7
-waitforgump 3232825965
-gumpclose
 wait 1000
 
 script 'Bag Dumper'

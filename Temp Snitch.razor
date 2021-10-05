@@ -1,0 +1,27 @@
+createtimer 'hiding'
+settimer 'hiding' 20000
+
+createtimer 'spam message'
+settimer 'spam message' 20000
+
+while not dead 
+    # If we are not hidden, dont do anything until hidden.
+    while not hidden
+        if timer 'hiding' > 10500
+            hotkey 'Hiding'
+            settimer 'hiding' 0
+        endif
+    endwhile
+    
+    # Tracking
+    if insysmsg 'Now tracking:'
+        if timer 'spam message' > 21000
+        guild 'PK Near Guild Bog Side!'
+            wait 3000
+            guild 'PK Near Guild Bog Side!'
+            wait 3000
+            settimer 'spam message' 0
+        endif
+        clearsysmsg
+    endif
+endwhile

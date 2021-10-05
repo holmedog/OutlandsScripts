@@ -1,0 +1,193 @@
+#Script by Brozan
+#Designed to recall to first 4 runes in a runebook
+# and search for non-green tracking targets
+
+# Unset any previous serial set
+unsetvar! 'myrunebook'
+unsetvar! 'mynewrunebook'
+
+# Setup runebook serial
+overhead 'Select runebook'
+setvar! 'myrunebook'
+
+createtimer 'hiding'
+settimer 'hiding' 20000
+
+createtimer 'stay'
+settimer 'stay' 20000
+
+createtimer 'spam message'
+settimer 'spam message' 20000
+
+while not dead  
+    
+    ######################
+    # Location 1-1
+    overhead 'Location 1-1'
+    dclick 'myrunebook'
+    waitforgump 1551740969
+    gumpresponse 5
+    wait 3000
+    
+    //This is the bank restock rune 
+    //Restock agent on self
+    say 'Guards!  Please open my bank!'
+    wait 500
+    restock 1
+    wait 500
+    target self
+    wait 5000
+    
+    ######################
+    # Location 1-2
+    overhead 'Location 1-2'
+    dclick 'myrunebook'
+    waitforgump 1551740969
+    gumpresponse 11
+    wait 3000
+    
+    
+    //We should be at new location, now hide
+    wait 200
+    if timer 'hiding' > 10000
+        hotkey 'Hiding'
+        settimer 'hiding' 0
+    endif    
+    
+    set timer stay 0
+    while timer 'stay' < 15000
+        overhead 'Parking it'       
+        # Tracking
+        if insysmsg 'Now tracking:'
+            if timer 'spam message' > 15000
+                guild 'PK Near Spot!!'
+                settimer 'spam message' 0
+                
+                //guild warned, now gtfo
+                dclick 'myrunebook'
+                waitforgump 1551740969
+                gumpresponse 5
+                wait 3000
+                guild 'PK Near Spot!! - Second call!!'
+                wait 3000
+                guild 'PK Near Spot!! - Last call!!'                
+            endif
+            clearsysmsg
+        endif
+        wait 500
+    endwhile
+    ######################
+    # Location 2-3
+    overhead 'Location 2-3'
+    dclick 'myrunebook'
+    waitforgump 1551740969
+    gumpresponse 17
+    wait 3000
+    
+    
+    //We should be at new location, now hide
+    wait 200
+    if timer 'hiding' > 10000
+        hotkey 'Hiding'
+        settimer 'hiding' 0
+    endif    
+    
+    set timer stay 0
+    while timer 'stay' < 15000
+        overhead 'Parking it'       
+        # Tracking
+        if insysmsg 'Now tracking:'
+            if timer 'spam message' > 15000
+                guild 'PK Near Spot!!'
+                settimer 'spam message' 0
+                
+                //guild warned, now gtfo
+                dclick 'myrunebook'
+                waitforgump 1551740969
+                gumpresponse 5
+                wait 3000
+                guild 'PK Near Spot!! - Second call!!'
+                wait 3000
+                guild 'PK Near Spot!! - Last call!!'                
+            endif
+            clearsysmsg
+        endif
+        wait 500
+    endwhile
+    ######################
+    # Location 2-4
+    overhead 'Location 3-4'
+    dclick 'myrunebook'
+    waitforgump 1551740969
+    gumpresponse 23
+    
+    
+    //We should be at new location, now hide
+    wait 200
+    if timer 'hiding' > 10000
+        hotkey 'Hiding'
+        settimer 'hiding' 0
+    endif    
+    
+    set timer stay 0
+    while timer 'stay' < 15000
+        overhead 'Parking it'       
+        # Tracking
+        if insysmsg 'Now tracking:'
+            if timer 'spam message' > 15000
+                guild 'PK Near Spot!!'
+                settimer 'spam message' 0
+                
+                //guild warned, now gtfo
+                dclick 'myrunebook'
+                waitforgump 1551740969
+                gumpresponse 5
+                wait 3000
+                guild 'PK Near Spot!! - Second call!!'
+                wait 3000
+                guild 'PK Near Spot!! - Last call!!'                
+            endif
+            clearsysmsg
+        endif
+        wait 500
+    endwhile
+    ######################
+    # Location 3-5
+    //This is our "park" location so we will stay here for a while
+    overhead 'Location 3-5'
+    dclick 'myrunebook'
+    waitforgump 1551740969
+    gumpresponse 29
+    wait 3000
+    
+    
+    //We should be at new location, now hide
+    wait 200
+    if timer 'hiding' > 10000
+        hotkey 'Hiding'
+        settimer 'hiding' 0
+    endif    
+    
+    set timer stay 0
+    while timer 'stay' < 120000
+        overhead 'Parking it'       
+        # Tracking
+        if insysmsg 'Now tracking:'
+            if timer 'spam message' > 15000
+                guild 'PK Near Spot!!'
+                settimer 'spam message' 0
+                
+                //guild warned, now gtfo
+                dclick 'myrunebook'
+                waitforgump 1551740969
+                gumpresponse 5
+                wait 3000
+                guild 'PK Near Spot!! - Second call!!'
+                wait 3000
+                guild 'PK Near Spot!! - Last call!!'                
+            endif
+            clearsysmsg
+        endif
+        wait 500
+    endwhile
+endwhile
