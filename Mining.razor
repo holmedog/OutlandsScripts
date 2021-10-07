@@ -29,7 +29,7 @@
 //    stop
 //endif
 
-clearsysmsg 
+#clearsysmsg 
 @createlist packAnimals
 
 if not timerexists "miner"
@@ -84,22 +84,16 @@ endif
 
 #Hit it once
 if timer "miner" >= 1000
-    clearsysmsg 
+    #clearsysmsg 
     hotkey 'use item in hand'
     settimer "miner" 0
     wait 200
 endif
+
 #Mining Loop
 while not insysmsg 'You do not see any'
 //while insysmsg 'Ore'
-    if insysmsg 'Now tracking'
-        overhead  'Ah shit!!!'
-        cast 'recall'
-        waitfortarget
-        targettype '7956' backpack
-        stop
-    endif
-    if weight >= 365
+     if weight >= 365
         overhead 'Too fat - restart'
         break
     endif
@@ -114,7 +108,7 @@ while not insysmsg 'You do not see any'
     if insysmsg 'You have worn out your tool!'
         break
     endif
-    
+    wait 1500  <------ (That makes it wait long enough for the mining action to actually generate a message to look for)
     if not insysmsg "do not see any" and not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
         overhead 'Captcha break!' 34
         for 30
@@ -126,9 +120,9 @@ while not insysmsg 'You do not see any'
             endif
         endfor
     endif
-
+    
     if timer "miner" >= 1000
-        clearsysmsg 
+        #clearsysmsg 
         hotkey 'use item in hand'
         settimer "miner" 0
         wait 200
