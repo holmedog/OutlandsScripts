@@ -19,7 +19,20 @@ settimer 'stay' 20000
 createtimer 'spam message'
 settimer 'spam message' 20000
 
+createtimer 'alls well'
+settimer 'spam message' 20000
+
+//guild 'Town Guard has been ACTIVATED'
 while not dead  
+    ######################
+    #The fun section
+    if timer 'alls well' > 900000
+        guild 'Detection Bot has lived for another 15 minutes!!!'
+        wait 500
+        guild 'alls well'
+        settimer 'alls well' 0
+    endif
+    
     
     ######################
     # Location 1-1
@@ -40,6 +53,7 @@ while not dead
     
     ######################
     # Location 1-2
+    #North Side
     overhead 'Location 1-2'
     dclick 'myrunebook'
     waitforgump 1551740969
@@ -54,13 +68,13 @@ while not dead
         settimer 'hiding' 0
     endif    
     
-    set timer stay 0
+    settimer stay 0
     while timer 'stay' < 15000
-        overhead 'Parking it'       
+        #overhead 'Parking it'       
         # Tracking
         if insysmsg 'Now tracking:'
             if timer 'spam message' > 15000
-                guild 'PK Near Spot!!'
+                guild 'PK Near North Side!!'
                 settimer 'spam message' 0
                 
                 //guild warned, now gtfo
@@ -68,9 +82,9 @@ while not dead
                 waitforgump 1551740969
                 gumpresponse 5
                 wait 3000
-                guild 'PK Near Spot!! - Second call!!'
+                guild 'PK Near  North Side!! - Second call!!'
                 wait 3000
-                guild 'PK Near Spot!! - Last call!!'                
+                guild 'PK Near  North Side!! - Last call!!'                
             endif
             clearsysmsg
         endif
@@ -78,6 +92,7 @@ while not dead
     endwhile
     ######################
     # Location 2-3
+    #Tul Rru
     overhead 'Location 2-3'
     dclick 'myrunebook'
     waitforgump 1551740969
@@ -92,13 +107,12 @@ while not dead
         settimer 'hiding' 0
     endif    
     
-    set timer stay 0
+    settimer stay 0
     while timer 'stay' < 15000
-        overhead 'Parking it'       
         # Tracking
         if insysmsg 'Now tracking:'
             if timer 'spam message' > 15000
-                guild 'PK Near Spot!!'
+                guild 'PK Near Tul Rru!!'
                 settimer 'spam message' 0
                 
                 //guild warned, now gtfo
@@ -106,9 +120,9 @@ while not dead
                 waitforgump 1551740969
                 gumpresponse 5
                 wait 3000
-                guild 'PK Near Spot!! - Second call!!'
+                guild 'PK Near Tul Rru!! - Second call!!'
                 wait 3000
-                guild 'PK Near Spot!! - Last call!!'                
+                guild 'PK Near Tul Rru!! - Last call!!'                
             endif
             clearsysmsg
         endif
@@ -116,6 +130,7 @@ while not dead
     endwhile
     ######################
     # Location 2-4
+    #Fallen Manor
     overhead 'Location 3-4'
     dclick 'myrunebook'
     waitforgump 1551740969
@@ -129,13 +144,13 @@ while not dead
         settimer 'hiding' 0
     endif    
     
-    set timer stay 0
+    settimer stay 0
     while timer 'stay' < 15000
-        overhead 'Parking it'       
+        #overhead 'Parking it'       
         # Tracking
         if insysmsg 'Now tracking:'
             if timer 'spam message' > 15000
-                guild 'PK Near Spot!!'
+                guild 'PK Near Fallen Manor!!'
                 settimer 'spam message' 0
                 
                 //guild warned, now gtfo
@@ -143,9 +158,9 @@ while not dead
                 waitforgump 1551740969
                 gumpresponse 5
                 wait 3000
-                guild 'PK Near Spot!! - Second call!!'
+                guild 'PK Near Fallen Manor!! - Second call!!'
                 wait 3000
-                guild 'PK Near Spot!! - Last call!!'                
+                guild 'PK Near Fallen Manor!! - Last call!!'                
             endif
             clearsysmsg
         endif
@@ -168,13 +183,13 @@ while not dead
         settimer 'hiding' 0
     endif    
     
-    set timer stay 0
+    settimer stay 0
     while timer 'stay' < 120000
-        overhead 'Parking it'       
+        #overhead  'Parking it'       
         # Tracking
         if insysmsg 'Now tracking:'
             if timer 'spam message' > 15000
-                guild 'PK Near Spot!!'
+                guild 'PK Near Bog Side!!'
                 settimer 'spam message' 0
                 
                 //guild warned, now gtfo
@@ -182,12 +197,20 @@ while not dead
                 waitforgump 1551740969
                 gumpresponse 5
                 wait 3000
-                guild 'PK Near Spot!! - Second call!!'
+                guild 'PK Near Bog Side!! - Second call!!'
                 wait 3000
-                guild 'PK Near Spot!! - Last call!!'                
+                guild 'PK Near Bog Side!! - Last call!!'                
             endif
             clearsysmsg
         endif
         wait 500
     endwhile
 endwhile
+
+wait 5000
+guild 'Someone ping Brozan on Discrod and tell him I am dead!'
+wait 900000
+guild 'Someone ping Brozan on Discrod and tell him I am dead!'
+wait 1800000
+guild 'Someone ping Brozan on Discrod and tell him I am dead!'
+    

@@ -1,18 +1,23 @@
-dclick 0x451BB7AB
-wait 250
-dclick 0x41C46A67
-wait 1000
+//open all the boxes
+//dclick 0x433D6209
+//wait 500
+//dclick 0x451BB7AB
+//wait 500
+//dclick 0x440C329C
+//wait 500
+//dclick 0x51E8CEEE
+//wait 500
+//dclick 0x4310EA76
+//wait 500
+//dclick 0x5245AE7A
+//wait 500
+//dclick 0x4E850FAC
+//wait 1000
 
-
-
-//dump all regs
-
-dclick 0x4083AF65
-waitforgump 3232825965
-gumpresponse 4
+//dump all supply shelf
+menu 0x4083AF65 0
 waitfortarget
-target self
-waitforgump 3232825965
+target 'self'
 wait 500
 gumpclose
 wait 500
@@ -31,18 +36,8 @@ wait 500
 
 //Target the resupply cabinet here
 overhead 'Restock' 25
-
-dclick 0x4083AF65
-wait 250
-waitforgump 3232825965
-wait 250
-gumpresponse 7
-wait 250
-waitforgump 3232825965
-gumpresponse 7
-waitforgump 3232825965
-gumpclose
-wait 1000
+menu 0x4083AF65 1
+wait 500
 
 organizer 1
 while queued
