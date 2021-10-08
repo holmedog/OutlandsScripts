@@ -1,9 +1,6 @@
 # Clear sys messaages
 clearsysmsg
 
-#Change this to your Summoning Stone
-@setvar sumStone 0x43BB89B4
-
 if not timerexists "healpot"
     createtimer "healpot"
     settimer "healpot" 8000
@@ -25,9 +22,6 @@ wait 700
 if skill 'Spirit Speak' > 1
     hotkey 'Spirit Speak'
     wait 350
-    dclick 'sumStone'
-    waitfortarget  1050
-    target 'sumStone'
 endif
 
 while not dead

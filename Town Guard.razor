@@ -2,13 +2,8 @@
 #Designed to recall to first 4 runes in a runebook
 # and search for non-green tracking targets
 
-# Unset any previous serial set
-unsetvar! 'myrunebook'
-unsetvar! 'mynewrunebook'
-
-# Setup runebook serial
-overhead 'Select runebook'
-setvar! 'myrunebook'
+//overhead 'Select runebook'
+@setvar! 'myrunebook' 0x51FC0368
 
 createtimer 'hiding'
 settimer 'hiding' 20000
@@ -21,8 +16,15 @@ settimer 'spam message' 20000
 
 createtimer 'alls well'
 settimer 'spam message' 20000
-
-guild 'Town Guard has been ACTIVATED'
+overhead 'Make sure tracking is on!'
+wait 500
+overhead 'Make sure tracking is on!'
+wait 500
+overhead 'Make sure tracking is on!'
+wait 500
+overhead 'Make sure tracking is on!'
+wait 500
+//guild 'Town Guard has been ACTIVATED'
 while not dead  
     ######################
     #The fun section
@@ -50,6 +52,7 @@ while not dead
     wait 500
     target self
     wait 5000
+    clearsysmsg 
     
     ######################
     # Location 1-2
@@ -59,6 +62,7 @@ while not dead
     waitforgump 1551740969
     gumpresponse 11
     wait 4000
+    clearsysmsg 
     
     
     //We should be at new location, now hide
@@ -98,6 +102,7 @@ while not dead
     waitforgump 1551740969
     gumpresponse 17
     wait 4000
+    clearsysmsg 
     
     
     //We should be at new location, now hide
@@ -136,6 +141,7 @@ while not dead
     waitforgump 1551740969
     gumpresponse 23
     wait 4000
+    clearsysmsg 
     
     
     //We should be at new location, now hide
@@ -175,6 +181,7 @@ while not dead
     waitforgump 1551740969
     gumpresponse 29
     wait 4000
+    clearsysmsg 
     
     
     //We should be at new location, now hide

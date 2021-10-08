@@ -18,18 +18,7 @@
 # and set to all hostile 
 # not in houses/party/guild
 
-#Check for reds in case it happened earlier
-//if insysmsg 'Now tracking'
-//    overhead  'Ah shit!!!'
-//    cast 'recall'
-//    waitfortarget
-//    targettype '7956' backpack
-//    wait 5000
-//    overhead 'Turn off script'
-//    stop
-//endif
-
-#clearsysmsg 
+clearsysmsg 
 @createlist packAnimals
 
 if not timerexists "miner"
@@ -83,20 +72,28 @@ if rhandempty
 endif
 
 #Hit it once
-if timer "miner" >= 1000
-    #clearsysmsg 
-    hotkey 'use item in hand'
-    settimer "miner" 0
-    wait 200
-endif
+hotkey 'use item in hand'
+settimer "miner" 0
+//long delay for lag and empty spot check
+wait 1250
 
 #Mining Loop
 while not insysmsg 'You do not see any'
 //while insysmsg 'Ore'
-     if weight >= 365
+  if insysmsg 'Now tracking'
+        overhead 'Ah shit!!!'
+        cast 'recall'
+        waitfortarget
+        targettype '7956'
+        break
+  endif    
+  if weight >= 365
         overhead 'Too fat - restart'
         break
-    endif
+  endif
+  
+  if timer "miner" >= 1000
+    #wait 100
     if insysmsg 'Harvesting is not'
         overhead 'Cant harvest'
         break
@@ -107,27 +104,23 @@ while not insysmsg 'You do not see any'
     endif
     if insysmsg 'You have worn out your tool!'
         break
-    endif
-    wait 1500  <------ (That makes it wait long enough for the mining action to actually generate a message to look for)
-    if not insysmsg "do not see any" and not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
-        overhead 'Captcha break!' 34
-        for 30
-            overhead 'Awaiting Captcha...' 34
-            wait 1500
-            if insysmsg 'Captcha successful'
-                overhead 'Success - continue on!' 88
-                replay
-            endif
-        endfor
-    endif
+    endif 
     
-    if timer "miner" >= 1000
-        #clearsysmsg 
-        hotkey 'use item in hand'
-        settimer "miner" 0
-        wait 200
+    //captcha check
+    if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
+        //pause and check again
+        wait 150
+        if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
+            overhead 'Captcha break or Done!' 34
+            break
+        endif
     endif
-    
+
+    #clearsysmsg 
+    hotkey 'use item in hand'
+    settimer "miner" 0
+    wait 100
+  endif
 endwhile
 
 overhead 'Spot Done' 33
