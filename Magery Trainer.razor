@@ -12,7 +12,7 @@
 
 #Needs magery 60
 #Have a marked recall rune in pack
-# and regs and no unmarked
+# and regs
 
 #Need tracking turned on
 # and set to all hostile 
@@ -75,17 +75,20 @@ if not timerexists "miner"
     wait 200
 endif
 
-#####Smart(ish) movement choser
+#####Smart(ish) movement choser######
 @createlist moveList
 overhead 'Target scissors for mountains on SSW (move up/right)'
 wait 500
 overhead 'Target dagger for mountains on NNE (move left/up)'
 wait 500
-overhead 'Target spellbook for mountains on NNW (move left/down)'
+overhead 'Target spellbook for mountains on NNW (move down/left)'
+wait 500
+overhead 'Target pick for mountains on S (move left/down)'
 wait 500
 setvar! 'moveQueuePicker'
 wait 250
 
+####Modify here if you want different movement options######
 #check label
 getlabel 'moveQueuePicker' 'seriallabel'
 if "scissors" in 'seriallabel'
@@ -100,7 +103,7 @@ if "scissors" in 'seriallabel'
 elseif "dagger" in 'seriallabel'
     overhead 'You chose moving left/up' 53  
     @clearlist moveList
-    for 5
+    for 3
         @pushlist 'moveList' "left"
     endfor
     for 8
@@ -110,12 +113,20 @@ elseif "book" in 'seriallabel'
     overhead 'You chose moving left/down' 53    
     @clearlist moveList
     for 5
+        @pushlist 'moveList' "down"
+    endfor
+    for 8
+        @pushlist 'moveList' "left"
+    endfor  
+elseif "pick" in 'seriallabel'
+    overhead 'You chose moving left/down' 53    
+    @clearlist moveList
+    for 5
         @pushlist 'moveList' "left"
     endfor
     for 8
         @pushlist 'moveList' "down"
     endfor  
-
 else
     overhead 'You broke something, restart script' 33
 endif   
@@ -134,7 +145,7 @@ while not dead
     hotkey 'use item in hand'
     settimer "miner" 0
     wait 1250
-    
+        
     #######Mining Loop####### 
     while not insysmsg 'You do not see any'
         

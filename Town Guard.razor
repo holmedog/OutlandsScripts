@@ -24,14 +24,12 @@ overhead 'Make sure tracking is on!'
 wait 500
 overhead 'Make sure tracking is on!'
 wait 500
-//guild 'Town Guard has been ACTIVATED'
+guild 'Town Guard has been ACTIVATED'
 while not dead  
     ######################
     #The fun section
-    if timer 'alls well' > 900000
-        guild 'Detection Bot has lived for another 15 minutes!!!'
-        wait 500
-        guild 'alls well'
+    if timer 'alls well' > 1800000
+        guild 'Detection Bot has lived for another 30 minutes and ALLS WELL'
         settimer 'alls well' 0
     endif
     
