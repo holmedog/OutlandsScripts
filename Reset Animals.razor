@@ -1,0 +1,50 @@
+    #Assign pack animals to variables
+    #On first launch of UO 
+    if list packAnimals <= 0
+        @clearlist packAnimals
+        @pushlist 'packAnimals' "p1"
+        @pushlist 'packAnimals' "p2"
+        @pushlist 'packAnimals' "p3"
+        @pushlist 'packAnimals' "p4"
+    endif    
+    #We use this as a first run loop to set vars
+    overhead 'First Run!'
+    createtimer "miner"
+    settimer "miner" 1100
+    createtimer "aid time"
+    settimer "aid time" 12100
+    createtimer 'healpot time'
+    settimer "healpot time" 12100
+    createtimer 'anti pot spam'
+    settimer "anti pot spam" 12100
+    createtimer 'hostility'
+    settimer "hostility" 12100
+    # Setup pack variable
+    overhead 'If you have less than 4 pack animals'
+    overhead 'Just click the same ones for later animals'
+    wait 1000
+    overhead 'Select your pack1'
+    setvar! 'pack1'
+    wait 200
+    overhead 'Select your pack2'
+    setvar! 'pack2'
+    wait 200
+    overhead 'Select your pack3'
+    setvar! 'pack3'
+    wait 200
+    overhead 'Select your pack4'
+    setvar! 'pack4'
+    wait 200        
+    overhead 'Select your escape rune/book'
+    setvar! 'escape'
+    wait 200        
+    say 'all follow me'
+    overhead 'Make Sure Tracking is on!'
+    sysmsg 'Make Sure Tracking is on!'
+    wait 200
+    overhead 'Make Sure Tracking is on!'
+    sysmsg 'Make Sure Tracking is on!'
+    wait 200
+    overhead 'Make Sure Tracking is on!'
+    sysmsg 'Make Sure Tracking is on!'
+    wait 200

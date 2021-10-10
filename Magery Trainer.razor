@@ -77,14 +77,16 @@ endif
 
 #####Smart(ish) movement choser######
 @createlist moveList
-overhead 'Target scissors for mountains on SSW (move up/right)'
-wait 500
-overhead 'Target dagger for mountains on NNE (move left/up)'
-wait 500
-overhead 'Target spellbook for mountains on NNW (move down/left)'
-wait 500
-overhead 'Target pick for mountains on S (move left/down)'
-wait 500
+overhead 'Scissors->Move up/right'
+wait 255
+overhead 'Dagger->Move left/up'
+wait 255
+overhead 'Book->Move down/left'
+wait 255
+overhead 'Pick->Move left/down'
+wait 255
+overhead 'Pouch->Move right/down'
+wait 255
 setvar! 'moveQueuePicker'
 wait 250
 
@@ -94,37 +96,46 @@ getlabel 'moveQueuePicker' 'seriallabel'
 if "scissors" in 'seriallabel'
     overhead 'You chose moving up/right' 53 
     @clearlist moveList
-    for 5
+    for 4
         @pushlist 'moveList' "up"
-    endfor
-    for 8
+    endfor      
+    for 6
         @pushlist 'moveList' "right"
     endfor  
 elseif "dagger" in 'seriallabel'
     overhead 'You chose moving left/up' 53  
     @clearlist moveList
-    for 3
+    for 4
         @pushlist 'moveList' "left"
-    endfor
-    for 8
+    endfor      
+    for 6
         @pushlist 'moveList' "up"
     endfor      
 elseif "book" in 'seriallabel'
-    overhead 'You chose moving left/down' 53    
+    overhead 'You chose moving down/left' 53    
     @clearlist moveList
+    for 4
+        @pushlist 'moveList' "down"
+    endfor      
+    for 6
+        @pushlist 'moveList' "left"
+    endfor  
+elseif "pouch" in 'seriallabel'
+    overhead 'You chose moving down/right' 53    
+    @clearlist moveList
+    for 6
+        @pushlist 'moveList' "right"
+    endfor      
     for 5
         @pushlist 'moveList' "down"
-    endfor
-    for 8
-        @pushlist 'moveList' "left"
     endfor  
 elseif "pick" in 'seriallabel'
     overhead 'You chose moving left/down' 53    
     @clearlist moveList
-    for 5
+    for 4
         @pushlist 'moveList' "left"
-    endfor
-    for 8
+    endfor      
+    for 6
         @pushlist 'moveList' "down"
     endfor  
 else
@@ -138,9 +149,10 @@ while not dead
             cast 'recall'
             waitfortarget
             target 'escape'
-            break
+            stop
     endif    
     
+    overhead 'Love Tap!' 23
     #Hit it once to start 
     hotkey 'use item in hand'
     settimer "miner" 0
@@ -180,7 +192,7 @@ while not dead
                 cast 'recall'
                 waitfortarget
                 target 'escape'
-                break
+                stop
         endif    
         
         #Weight check
@@ -211,13 +223,10 @@ while not dead
             endif 
             
             #captcha check
-            if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
-                #pause and check again
-                wait 1250
-                #Hit it again just to be 100%
-                hotkey 'use item in hand'
-                settimer "miner" 0
-                wait 1250
+			#captcha check
+			if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
+				//pause and check again
+				wait 150
                 if insysmsg 'You do not see any'
                     #finished spot, break
                     break
@@ -285,11 +294,6 @@ while not dead
     
         #Organizer is now set, dump
         organizer 15
-        while queued
-            wait 1000
-        endwhile
-            
-        #if counttype 6585 pack4 <= 200
     endif
     
     hotkey 'All Names'
