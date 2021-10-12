@@ -79,13 +79,17 @@ endif
 @createlist moveList
 overhead 'Scissors->Move up/right'
 wait 255
-overhead 'Dagger->Move left/up'
+overhead 'Heal Pot->Move Up/Left'
 wait 255
-overhead 'Book->Move down/left'
+overhead 'Dagger->Move left/up'
 wait 255
 overhead 'Pick->Move left/down'
 wait 255
+overhead 'Book->Move down/left'
+wait 255
 overhead 'Pouch->Move right/down'
+wait 255
+overhead 'Backpack->Move right/North'
 wait 255
 setvar! 'moveQueuePicker'
 wait 250
@@ -110,6 +114,15 @@ elseif "dagger" in 'seriallabel'
     endfor      
     for 6
         @pushlist 'moveList' "up"
+    endfor   
+elseif "Heal" in 'seriallabel'
+    overhead 'You chose moving up/left' 53  
+    @clearlist moveList
+    for 4
+        @pushlist 'moveList' "up"
+    endfor      
+    for 6
+        @pushlist 'moveList' "left"
     endfor      
 elseif "book" in 'seriallabel'
     overhead 'You chose moving down/left' 53    
@@ -138,6 +151,15 @@ elseif "pick" in 'seriallabel'
     for 6
         @pushlist 'moveList' "down"
     endfor  
+elseif "backpack" in 'seriallabel'
+    overhead 'You chose moving right/North' 53    
+    @clearlist moveList
+    for 4
+        @pushlist 'moveList' "right"
+    endfor      
+    for 6
+        @pushlist 'moveList' "north"
+    endfor      
 else
     overhead 'You broke something, restart script' 33
 endif   
@@ -223,10 +245,10 @@ while not dead
             endif 
             
             #captcha check
-			#captcha check
-			if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
-				//pause and check again
-				wait 150
+            #captcha check
+            if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
+                //pause and check again
+                wait 150
                 if insysmsg 'You do not see any'
                     #finished spot, break
                     break
