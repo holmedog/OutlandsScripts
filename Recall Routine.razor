@@ -13,16 +13,15 @@ while findtype 8901 'backpack' as 'runeBook'
     endif
     @ignore 'runeBook'
 endwhile
-while findtype 8901 'backpack' as 'recallRune'
-    getlabel 'recallRune' 'recallRuneLabel'
-    if 'Home' in 'recallRuneLabel'
-        setvar 'gfto' 'recallRune'
-        overhead 'Set recall to rune'
+while findtype 7956 'backpack' as 'runeBook'
+    getlabel 'runeBook' 'runeBookLabel'
+    if 'Home' in 'runeBookLabel'
+        setvar 'gtfo' 'runeBook'
+        overhead 'Set recall to rune book'
     endif
     @ignore 'runeBook'
 endwhile
   
-overhead 'Set now go'
 if not varexist 'gtfo'
     overhead 'You need a book or rune named Home' 33
     wait 500
@@ -50,7 +49,8 @@ elseif findtype 8012 'backpack'as recallScrolls
         gumpresponse 2    
     endif
 else
-    #Book scroll use
+    #Book use
+    overhead 'Book use'
     dclick 'gtfo'
     wait 250
     gumpresponse 2        

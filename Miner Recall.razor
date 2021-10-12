@@ -1,0 +1,191 @@
+#Script by Brozan
+#Make sure to have a runebook
+# or recall rune
+# named with Home in the name
+
+clearignore 
+unsetvar 'gfto'
+while findtype 8901 'backpack' as 'runeBook'
+    getlabel 'runeBook' 'runeBookLabel'
+    if 'Home' in 'runeBookLabel'
+        setvar 'gtfo' 'runeBook'
+        overhead 'Set recall to rune book'
+    endif
+    @ignore 'runeBook'
+endwhile
+while findtype 7956 'backpack' as 'runeBook'
+    getlabel 'runeBook' 'runeBookLabel'
+    if 'Home' in 'runeBookLabel'
+        setvar 'gtfo' 'runeBook'
+        overhead 'Set recall to rune book'
+    endif
+    @ignore 'runeBook'
+endwhile
+  
+if not varexist 'gtfo'
+    overhead 'You need a book or rune named Home' 33
+    wait 500
+    overhead 'You need a book or rune named Home' 33
+    wait 500
+    overhead 'You need a book or rune named Home' 33
+    wait 500
+    elseif skill magery > 60
+    overhead 'Spell Cast'
+    cast 'recall'
+    wft 5000
+    target 'gtfo'
+elseif findtype 8012 'backpack'as recallScrolls
+    if skill magery > 20
+        overhead 'Recall Scroll'
+        #We have magery but prefer scrolls
+        dclick 'recallScrolls'
+        wft 5000
+        target 'gtfo'
+    else 
+        overhead 'Book use'
+        #We have loose recalls but recall with book
+        dclick 'gtfo'
+        wait 250
+        gumpresponse 2    
+    endif
+else
+    #Book use
+    overhead 'Book use'
+    dclick 'gtfo'
+    wait 250
+    gumpresponse 2        
+endif
+
+#walk in one past doors so horses move
+while not position 3490 704 -10
+    walk 'North'
+    wait 150
+endwhile
+while not position 3490 705 -10
+    walk 'South'
+    wait 150
+endwhile
+#Slam the doors
+while findtype 1766 'ground' or findtype 1768 'ground' -1 -1 4
+    dclicktype 1766 'ground'
+    dclicktype 1768 'ground'
+    wait 150
+endwhile
+#walk to resource pile
+while not position 3490 699 -10
+    walk 'North'
+    wait 150
+endwhile
+#walk to corner
+while not position 3488 699 -10
+    walk 'West'
+    wait 150
+endwhile
+
+#open packhorses
+dclick pack1
+wait 500
+dclick pack2
+wait 500
+dclick pack3
+wait 500
+dclick pack4
+wait 500
+
+while findtype 6585 'pack1' as 'myingots'
+  dclick 'myingots'
+  wait 150
+endwhile
+while findtype 6585 'pack2' as 'myingots'
+  dclick 'myingots'
+  wait 150
+endwhile
+while findtype 6585 'pack3' as 'myingots'
+  dclick 'myingots'
+  wait 150
+endwhile
+while findtype 6585 'pack4' as 'myingots'
+  dclick 'myingots'
+  wait 150
+endwhile
+
+//open all the boxes
+//dclick 0x433D6209
+//wait 500
+//dclick 0x451BB7AB
+//wait 500
+//dclick 0x440C329C
+//wait 500
+//dclick 0x51E8CEEE
+//wait 500
+//dclick 0x4310EA76
+//wait 500
+//dclick 0x5245AE7A
+//wait 500
+//dclick 0x4E850FAC
+//wait 1000
+
+//dump all supply shelf
+menu 0x4083AF65 0
+waitfortarget
+target 'self'
+wait 500
+gumpclose
+wait 500
+
+//dump all resources
+dclick 0x4004288C
+waitforgump 1859005118
+gumpresponse 2
+waitfortarget
+waitforgump 1859005118
+target 'self'
+wait 500
+gumpclose
+wait 500
+
+
+//Target the resupply cabinet here
+overhead 'Restock' 25
+menu 0x4083AF65 1
+wait 500
+
+organizer 1
+while queued
+    wait 1000
+endwhile
+organizer 2
+while queued
+    wait 1000
+endwhile
+organizer 3
+while queued
+    wait 1000
+endwhile
+organizer 4
+while queued
+    wait 1000
+endwhile
+organizer 5
+while queued
+    wait 1000
+endwhile
+organizer 6
+while queued
+    wait 1000
+endwhile
+organizer 7
+while queued
+    wait 1000
+endwhile
+organizer 8
+while queued
+    wait 1000
+endwhile
+organizer 9
+while queued
+    wait 1000
+endwhile
+wait 1000
+
+script 'Bag Dumper'

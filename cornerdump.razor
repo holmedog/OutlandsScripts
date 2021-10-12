@@ -1,0 +1,80 @@
+//open all the boxes
+//dclick 0x433D6209
+//wait 500
+//dclick 0x451BB7AB
+//wait 500
+//dclick 0x440C329C
+//wait 500
+//dclick 0x51E8CEEE
+//wait 500
+//dclick 0x4310EA76
+//wait 500
+//dclick 0x5245AE7A
+//wait 500
+//dclick 0x4E850FAC
+//wait 1000
+
+//dump all supply shelf
+menu 0x4083AF65 0
+waitfortarget
+target 'self'
+wait 500
+gumpclose
+wait 500
+
+//dump all resources
+dclick 0x4004288C
+waitforgump 1859005118
+gumpresponse 2
+waitfortarget
+waitforgump 1859005118
+target 'self'
+wait 500
+gumpclose
+wait 500
+
+
+//Target the resupply cabinet here
+overhead 'Restock' 25
+menu 0x4083AF65 1
+wait 500
+
+organizer 1
+while queued
+    wait 1000
+endwhile
+organizer 2
+while queued
+    wait 1000
+endwhile
+organizer 3
+while queued
+    wait 1000
+endwhile
+organizer 4
+while queued
+    wait 1000
+endwhile
+organizer 5
+while queued
+    wait 1000
+endwhile
+organizer 6
+while queued
+    wait 1000
+endwhile
+organizer 7
+while queued
+    wait 1000
+endwhile
+organizer 8
+while queued
+    wait 1000
+endwhile
+organizer 9
+while queued
+    wait 1000
+endwhile
+wait 1000
+
+script 'Bag Dumper'

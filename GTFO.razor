@@ -1,100 +1,57 @@
-if skill magery > 1
-    cast 'recall'
-    waitfortarget
-    targettype '8901' backpack
-    if rhandempty 
-        if lhandempty
-            wait 3000
-            dress bow
-        endif
-     endif
-else 
-    dclicktype '8901'
-    waitforgump 1551740969
-    wait 255
-    gumpresponse 92
-endif
+#Script by Brozan
+#Make sure to have a runebook
+# or recall rune
+# named with Home in the name
 
-# Clear sys messaages
-clearsysmsg
-
-if not timerexists "healpot"
-    createtimer "healpot"
-    settimer "healpot" 8000
-endif
-if not timerexists "aid time"
-    createtimer "aid time"
-    settimer "aid time" 8000
-endif
- 
-if not timerexists "shroomy"
-    createtimer "shroomy"
-    settimer "shroomy" 61000
-endif
-
-while not dead
-    ###MODIFY THIS TO YOUR DOOR(S) POSITION
-    if position 3490 705 -10 or position 3491 705 -10
-        if findtype '1766' 'ground' as openDoor
-            overhead 'Shut the door'
-            dclick 'openDoor'
-            wait 100
-        endif
-        if findtype '1768' 'ground' as openDoor
-            overhead 'Shut the door'
-            dclick 'openDoor'
-            wait 100
-        endif
-    endif 
-    # If hidden, skip
-    if hidden
-        continue
+clearignore 
+unsetvar 'gfto'
+while findtype 8901 'backpack' as 'runeBook'
+    getlabel 'runeBook' 'runeBookLabel'
+    if 'Home' in 'runeBookLabel'
+        setvar 'gtfo' 'runeBook'
+        overhead 'Set recall to rune book'
     endif
-
-    
-    if insysmsg 'you cannot move!'
-        overhead 'Paralyzed!' 34
-        say [pouch
-    endif
-    
-    #Eat a magic mushroom if we have 
-    #25  less mana than full
-    if mana < 60 and skill 'Magery' > 1 and timer "shroomy" >= 61000
-        dclicktype '29012'
-        overhead 'Mushroom Power!'
-        settimer "shroomy" 0
-    endif
-
-    # Healing Survival
-    if skill 'Healing' > 1
-        if insysmsg 'You begin applying the bandages'
-            settimer 'aid time' 0
-        endif
-        if hits < maxhits and timer 'aid time' > 10250 
-            hotkey 'bandage self'
-            settimer 'aid time' 0
-        endif
-    endif
-
- 
-    if not findtype "Yellow Potion" backpack
-        overhead 'Out of heal potions!' 34
-        wait 200
-    endif
-    
-    //Heal drinker if below 55
-    if hp < 55
-       if findtype "Yellow Potion" backpack
-           if timer "healpot" >= 8000
-                        overhead 'Drinking heal!'
-                        potion "heal"
-                        wait 200
-                        settimer "healpot" 0
-            endif
-         endif
-     endif
-    
-
-     
-     wait 100
+    @ignore 'runeBook'
 endwhile
+while findtype 7956 'backpack' as 'runeBook'
+    getlabel 'runeBook' 'runeBookLabel'
+    if 'Home' in 'runeBookLabel'
+        setvar 'gtfo' 'runeBook'
+        overhead 'Set recall to rune book'
+    endif
+    @ignore 'runeBook'
+endwhile
+  
+if not varexist 'gtfo'
+    overhead 'You need a book or rune named Home' 33
+    wait 500
+    overhead 'You need a book or rune named Home' 33
+    wait 500
+    overhead 'You need a book or rune named Home' 33
+    wait 500
+    elseif skill magery > 60
+    overhead 'Spell Cast'
+    cast 'recall'
+    wft 5000
+    target 'gtfo'
+elseif findtype 8012 'backpack'as recallScrolls
+    if skill magery > 20
+        overhead 'Recall Scroll'
+        #We have magery but prefer scrolls
+        dclick 'recallScrolls'
+        wft 5000
+        target 'gtfo'
+    else 
+        overhead 'Book use'
+        #We have loose recalls but recall with book
+        dclick 'gtfo'
+        wait 250
+        gumpresponse 2    
+    endif
+else
+    #Book use
+    overhead 'Book use'
+    dclick 'gtfo'
+    wait 250
+    gumpresponse 2        
+endif
