@@ -1,4 +1,7 @@
-
+#Script by Brozan
+#Make sure to have a runebook
+# or recall rune
+# named with Home in the name
 
 clearignore 
 unsetvar 'gfto'
@@ -19,6 +22,7 @@ while findtype 8901 'backpack' as 'recallRune'
     @ignore 'runeBook'
 endwhile
   
+overhead 'Set now go'
 if not varexist 'gtfo'
     overhead 'You need a book or rune named Home' 33
     wait 500
@@ -26,16 +30,28 @@ if not varexist 'gtfo'
     wait 500
     overhead 'You need a book or rune named Home' 33
     wait 500
-elseif skill magery > 1
+    elseif skill magery > 60
+    overhead 'Spell Cast'
     cast 'recall'
     wft 5000
     target 'gtfo'
 elseif findtype 8012 'backpack'as recallScrolls
-    dclick 'recallScrolls'
-    wft 5000
-    target 'gtfo'
+    if skill magery > 20
+        overhead 'Recall Scroll'
+        #We have magery but prefer scrolls
+        dclick 'recallScrolls'
+        wft 5000
+        target 'gtfo'
+    else 
+        overhead 'Book use'
+        #We have loose recalls but recall with book
+        dclick 'gtfo'
+        wait 250
+        gumpresponse 2    
+    endif
 else
+    #Book scroll use
     dclick 'gtfo'
     wait 250
-    gumpresponse 2    
+    gumpresponse 2        
 endif
