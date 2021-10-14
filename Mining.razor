@@ -3,6 +3,13 @@
 # and dump to pack horse
 
 ###
+
+// REQUIRES script "Miner Recall"
+// If you do not want to set this up
+// create a script named above
+// and just have a recall routine in it
+
+###
 // YOU MUST SET UP Organizer 15
 // To dump ore 
 // Before you Run This
@@ -35,6 +42,8 @@ if not timerexists "miner"
     overhead 'First Run!'
     createtimer "miner"
     settimer "miner" 1100
+    hotkey 'Tracking'
+    wait 500
     # Setup pack variable
     overhead 'If you have less than 4 pack animals'
     overhead 'Just click the same ones for later animals'
@@ -80,46 +89,43 @@ wait 1250
 #Mining Loop
 while not insysmsg 'You do not see any'
 //while insysmsg 'Ore'
-	if insysmsg 'Now tracking'
-			overhead 'Ah shit!!!'
-			cast 'recall'
-			waitfortarget
-			targettype '7956'
-			break
-	endif    
-	if weight >= 365
-			overhead 'Too fat - restart'
-			break
-	endif
-	
-	if timer "miner" >= 1000
-		#wait 100
-		if insysmsg 'Harvesting is not'
-			overhead 'Cant harvest'
-			break
-		endif
-		if insysmsg 'recently travel'
-			overhead 'Just recalled'
-			break
-		endif
-		if insysmsg 'You have worn out your tool!'
-			break
-		endif 
-		
-		//captcha check
-		if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
-			//pause and check again
-			wait 150
-			if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
-				overhead 'Captcha break or Done!' 34
-				break
-			endif
-		endif
-	
-		#clearsysmsg 
-		hotkey 'use item in hand'
-		settimer "miner" 0
-		wait 100
+    if insysmsg 'Now tracking'
+            overhead 'Ah shit!!!'
+            script 'Miner Recall'
+    endif    
+    if weight >= 365
+            overhead 'Too fat - restart'
+            break
+    endif
+    
+    if timer "miner" >= 1000
+        #wait 100
+        if insysmsg 'Harvesting is not'
+            overhead 'Cant harvest'
+            break
+        endif
+        if insysmsg 'recently travel'
+            overhead 'Just recalled'
+            break
+        endif
+        if insysmsg 'You have worn out your tool!'
+            break
+        endif 
+        
+        //captcha check
+        if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
+            //pause and check again
+            wait 250
+            if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
+                overhead 'Captcha break or Done!' 34
+                break
+            endif
+        endif
+    
+        #clearsysmsg 
+        hotkey 'use item in hand'
+        settimer "miner" 0
+        wait 100
   endif
 endwhile
 
@@ -191,10 +197,7 @@ while not dead
     endif
     if insysmsg 'Now tracking'
         overhead 'Ah shit!!!'
-        cast 'recall'
-        waitfortarget
-        targettype '7956'
-        break
+        script 'Miner Recall'
     endif
     wait 500
     

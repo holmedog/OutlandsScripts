@@ -29,13 +29,13 @@ if not varexist 'gtfo'
     wait 500
     overhead 'You need a book or rune named Home' 33
     wait 500
-    elseif skill magery > 60
+    elseif skill magery >= 60
     overhead 'Spell Cast'
     cast 'recall'
     wft 5000
     target 'gtfo'
 elseif findtype 8012 'backpack'as recallScrolls
-    if skill magery > 20
+    if skill magery >= 20
         overhead 'Recall Scroll'
         #We have magery but prefer scrolls
         dclick 'recallScrolls'

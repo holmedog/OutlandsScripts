@@ -2,7 +2,10 @@
 clearsysmsg
 
 # Setup some timers
-createtimer 'aid time'
+if not timerexists 'aid time'
+    createtimer 'aid time'
+    set timer 'aid time' 20000
+endif    
 createtimer 'healpot time'
 createtimer 'anti pot spam'
 createtimer 'magery heal'
@@ -57,7 +60,10 @@ while not dead
         if insysmsg 'You begin applying the bandages'
             settimer 'aid time' 0
         endif
-        if hits < maxhits and timer 'aid time' > 10250 
+        if hits < 100 and timer 'aid time' > 10250 
+            hotkey 'bandage self'
+            settimer 'aid time' 0
+        elseif maxhits >= 119 and hits < 119
             hotkey 'bandage self'
             settimer 'aid time' 0
         endif

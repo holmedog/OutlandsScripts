@@ -10,17 +10,19 @@ while findtype 8901 'backpack' as 'runeBook'
     if 'Home' in 'runeBookLabel'
         setvar 'gtfo' 'runeBook'
         overhead 'Set recall to rune book'
+        break
     endif
     @ignore 'runeBook'
 endwhile
 while findtype 7956 'backpack' as 'runeBook'
-    getlabel 'runeBook' 'runeBookLabel'
-    if 'Home' in 'runeBookLabel'
-        setvar 'gtfo' 'runeBook'
-        overhead 'Set recall to rune book'
-    endif
-    @ignore 'runeBook'
-endwhile
+        getlabel 'runeBook' 'runeBookLabel'
+        if 'Home' in 'runeBookLabel'
+            setvar 'gtfo' 'runeBook'
+            overhead 'Set recall to rune book'
+            break
+        endif
+        @ignore 'runeBook'
+endwhile  
   
 if not varexist 'gtfo'
     overhead 'You need a book or rune named Home' 33
