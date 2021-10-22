@@ -24,20 +24,16 @@ clearlist regTypes
 @pushlist 'regTypes' 'Ginseng'
 @pushlist 'regTypes' 'Garlic'
 @pushlist 'regTypes' 'Sulfurous Ash'
-@pushlist 'regTypes' "Spider's Silk" //SS
+@pushlist 'regTypes' "Spider's Silk" //'
 @pushlist 'regTypes' 'Nightshade'
 @pushlist 'regTypes' 'Mandrake Root%s%' //MR
 
 
 foreach x in regTypes
   while findtype x backpack any any 1 as found
-    @hotkey 'set last target'
-    @target found
-    @setvar myVariable lasttarget
-    wait 100
-    lift myVariable 9999
+    lift found 9999
     drop noidBag -1 -1 0 
     @ignore myVariable
-    wait 500
+    wait 600
   endwhile
 endfor
