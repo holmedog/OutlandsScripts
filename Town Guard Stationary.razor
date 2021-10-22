@@ -1,0 +1,85 @@
+#Script by Brozan
+#Designed to recall to first 4 runes in a runebook
+# and search for non-green tracking targets
+
+//overhead 'Select runebook'
+@setvar! 'myrunebook' 0x51FC0368
+
+createtimer 'hiding'
+settimer 'hiding' 20000
+
+createtimer 'stay'
+settimer 'stay' 20000
+
+createtimer 'spam message'
+settimer 'spam message' 20000
+
+createtimer 'alls well'
+settimer 'spam message' 20000
+overhead 'Make sure tracking is on!'
+wait 500
+hotkey 'Tracking'
+overhead 'Make sure tracking is on!'
+wait 500
+overhead 'Make sure tracking is on!'
+wait 500
+overhead 'Make sure tracking is on!'
+wait 500
+guild 'Town Guard has been ACTIVATED'
+wait 2000
+while not dead  
+    ######################
+    #The fun section
+    if timer 'alls well' > 1800000
+        guild 'Detection Bot has lived for another 30 minutes and ALLS WELL'
+        settimer 'alls well' 0
+    endif
+    
+    
+    //We should be at new location, now hide
+    wait 200
+    if not hidden and timer 'hiding' > 10500
+        hotkey 'Hiding'
+        settimer 'hiding' 0
+    endif    
+    
+    # Tracking
+    if insysmsg 'Now tracking:'
+        guild 'PK Near Town Village!!'
+        settimer 'spam message' 0
+        //guild warned, now gtfo
+        dclick 'myrunebook'
+        waitforgump 1551740969
+        gumpresponse 5
+        wait 3000
+        guild 'PK Near Town Village !! - Second call!!'
+        wait 3000
+        guild 'PK Near Town Village!! - Last call!!'                
+        clearsysmsg
+        
+        #At bank, now restock 
+        wait 4000
+        say 'Guards!  Please open my bank!'
+        wait 500
+        restock 1
+        wait 500
+        target self
+        wait 5000
+        
+        #Restocked, wait 2 mins and go back
+        wait 120000
+        dclick 0x51FC0368
+        waitforgump 1551740969
+        gumpresponse 41
+    endif
+endwhile
+
+wait 5000
+guild 'Someone ping Brozan on Discrod and tell him I am dead!'
+wait 900000
+guild 'Someone ping Brozan on Discrod and tell him I am dead!'
+wait 1800000
+guild 'Someone ping Brozan on Discrod and tell him I am dead!'
+
+
+    
