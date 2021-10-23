@@ -10,11 +10,10 @@ while findtype 5356 backpack as found
         target found
         wait 500
         gumpresponse 4
-        waitforgump 2589357942
         wait 1500
         while not insysmsg "maximum accuracy"
+            #overhead 'here'
             gumpresponse  4
-            waitforgump 2589357942
             wait 1500
         endwhile
         ignore found
