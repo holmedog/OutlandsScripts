@@ -33,6 +33,43 @@ wait 500
 gumpclose
 wait 500
 
+clearignore 
+//dump pack llama
+while findtype 292 ground any any 2 as found
+    overhead 'Packhorse dump routine' 55
+    
+    dclick found
+    wait 500
+    //dump all supply shelf
+    menu 0x4083AF65 0
+    waitfortarget
+    target found
+    wait 500
+    gumpclose
+    wait 500
+
+    //dump all resources
+    dclick 0x4004288C
+    waitforgump 1859005118
+    gumpresponse 2
+    waitfortarget
+    waitforgump 1859005118
+    target found
+    wait 500
+    gumpclose
+    wait 500
+    
+    #dump gold
+    
+
+    while findtype 3821 'found' as 'myGold'
+        lift myGold 60000
+        drop '0x4022498C' -1 -1 0 
+        wait 600
+    endwhile
+
+    ignore found
+endwhile   
 
 //Target the resupply cabinet here
 overhead 'Restock' 25

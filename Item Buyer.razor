@@ -1,0 +1,13 @@
+overhead 'Search Where?' 77
+@setvar currentContainer
+dclick currentContainer
+wait 600
+###artisan 2096 
+###command 1428 
+###Lyric 2241
+if findtype 'aspect core' currentContainer 2241 any any as itemFound
+    sysmsg 'Item found!' 44
+    @setvar currentItem itemFound       
+    // BUY
+    menu itemFound 0
+endif 

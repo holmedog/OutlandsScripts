@@ -1,0 +1,25 @@
+clearsysmsg 
+clearignore 
+
+overhead 'Select drop tome' 33
+@setvar! dropTome
+
+while findtype 5356 backpack as found
+        dclicktype 5365
+        wft 500
+        target found
+        wait 500
+        gumpresponse 4
+        waitforgump 2589357942
+        wait 1500
+        while not insysmsg "maximum accuracy"
+            gumpresponse  4
+            waitforgump 2589357942
+            wait 1500
+        endwhile
+        ignore found
+        lift found 1
+        drop dropTome -1 -1 0 
+        wait 500
+ 
+endwhile
