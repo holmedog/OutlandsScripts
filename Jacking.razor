@@ -1,44 +1,111 @@
-clearsysmsg
+#Script by Brozan
+#Spot Jacker with recall on Track
+###
+
+// REQUIRES script "Miner Recall"
+// If you do not want to set this up
+// create a script named above
+// and just have a recall routine in it
+
+#Needs magery 60
+#Have a marked recall rune in pack
+# and regs and no unmarked
+
+#Need tracking turned on
+# and set to all hostile 
+# not in houses/party/guild
+
+clearsysmsg 
+@createlist packAnimals
+
+if not timerexists "miner"
+    #We use this as a first run loop to set vars
+    overhead 'First Run!'
+    createtimer "miner"
+    settimer "miner" 1100
+    hotkey 'Tracking'
+    wait 500
+    overhead 'Make Sure Tracking is on!'
+    sysmsg 'Make Sure Tracking is on!'
+endif
+
+
 overhead 'Starting'
+
+# Equip a axe
+if lhandempty
+    dclicktype '3908'
+    wait 600
+endif
+
+#Hit it once
+hotkey 'use item in left hand'
+waitfortarget 555
+target 'self'
+settimer "miner" 0
+//long delay for lag and empty spot check
+wait 500
+
+#Jacking Loop
 while not insysmsg 'You do not see any'
     if insysmsg 'Now tracking'
-        say 'Ah shit!!!'
-        cast 'recall'
-        waitfortarget
-        targettype '7956'
-        wait 5000
-        break
-    endif
+            overhead 'Ah shit!!!'
+            script 'Miner Recall'
+    endif    
     if weight >= 365
-        overhead 'Too fat'
-        break
+            overhead 'Too fat - restart'
+            break
     endif
-    if insysmsg 'Harvesting is not'
-        overhead 'Cant harvest'
-        break
-    endif
-    if insysmsg 'recently travel'
-        overhead 'Just recalled'
-        break
-    endif
-    if insysmsg 'You have worn out your tool!'
-        break
-    endif
-    hotkey 'use item in hand'
-    waitfortarget 
-    hotkey 'Target Self'
-    wait 3300
+    
+    if timer "miner" >= 4300
+        #wait 100
+        if insysmsg 'Harvesting is not'
+            overhead 'Cant harvest'
+            break
+        endif
+        if insysmsg 'recently travel'
+            overhead 'Just recalled'
+            break
+        endif
+        if insysmsg 'You have worn out your tool!'
+            break
+        endif 
+        
+        //captcha check
+        if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You chop' and not insysmsg 'You hack' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
+            //pause and check again
+        wait 3750
+            if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'Wolrd save complete' and not insysmsg 'You chop' and not insysmsg 'You hack' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
+                overhead 'Captcha break or Done!' 34
+                break
+            endif
+        endif
+    
+        #clearsysmsg 
+        hotkey 'use item in left hand'
+        waitfortarget 555
+        target 'self'
+        
+        settimer "miner" 0
+        wait 100
+  endif
+  wait 50
 endwhile
 
-clearsysmsg
-while not insysmsg 'logs'
-    overhead 'Tracking'
+overhead 'Spot Done' 33
+sysmsg 'Spot Done' 33
+
+hotkey 'All Names'
+
+while not dead
+    if timer "miner" >= 3000
+    #dclicktype 'lute'
+        overhead 'Tracking'
+        settimer miner 0
+    endif
     if insysmsg 'Now tracking'
-        say 'Ah shit!!!'
-        cast 'recall'
-        waitfortarget
-        targettype '7956'
-        break
+        overhead 'Ah shit!!!'
+        script 'Miner Recall'
     endif
     wait 500
     

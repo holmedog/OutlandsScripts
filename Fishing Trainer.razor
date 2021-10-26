@@ -1,0 +1,17 @@
+if lhandempty
+    dress 'Fishing'
+    wait 500
+endif
+hotkey 'Use item in hand'
+wait 8500
+loop
+
+if lhandempty ?? 0
+    dress 'Fishing'
+    wait 500
+endif
+hotkey 'Use Item in Hand'
+waitfortarget
+hotkey 'Target Self'
+wait 8500
+loop
