@@ -1,0 +1,21 @@
+while not dead
+    say '[RepairHull'
+    wait 1000
+    if insysmsg 'hull does not need'
+        say '[RepairSails'
+        wait 1000
+        if insysmsg 'sails do not need'
+            say '[RepairGuns'
+            wait 1000
+            if insysmsg 'guns do not need'
+                stop
+            endif
+        else
+            wait 1000
+        endif
+    else
+        wait 2000
+    endif
+    
+    wait 8000
+endwhile

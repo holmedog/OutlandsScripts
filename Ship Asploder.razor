@@ -1,0 +1,25 @@
+overhead 'Select ship to assault'
+setvar 'ship'
+wait 500
+
+overhead 'Starting to assault boat!'
+
+while not dead
+    say '[FireCannons'
+    wait 500
+    target 'ship'
+    wait 1000
+    
+    if insysmsg  'out of ammunition'
+        say '[Reload'
+        wait 7500
+    endif
+    
+    wait 2500
+    if insysmsg 'sinking a ship'
+        overhead 'Ship sunk!'
+        stop
+    endif
+    
+    wait 9500
+endwhile
