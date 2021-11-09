@@ -1,6 +1,5 @@
 # Training Camping Passively Alone by Jaseowns
 # UO Outlands
-# Requirements:  Kindling + Not being near other people's campfires
 if not findtype "kindling" backpack
     overhead "Need more kindling" 34
     wait 5000
@@ -12,5 +11,7 @@ if not findtype "campfire" true
     wait 2000
 endif
 wait 2000
-useskill 'hiding'
+if not hidden
+    useskill 'hiding'
+endif
 loop

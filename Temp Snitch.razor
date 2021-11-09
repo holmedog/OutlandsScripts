@@ -18,11 +18,10 @@ while not dead
     
     # Tracking
     if insysmsg 'Now tracking:'
-        if timer 'spam message' > 21000
-           guild 'PK Near Guild Village!'
+        if timer 'spam message' > 5000
+        guild 'Someone by idoc'
             wait 3000
-            guild 'PK Near Guild Village!'
-            wait 3000
+
             settimer 'spam message' 0
         endif
         clearsysmsg

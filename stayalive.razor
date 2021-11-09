@@ -1,0 +1,383 @@
+# Clear sys messaages
+clearsysmsg
+
+# Stay Alive Starting message
+overhead 'Stay Alive Starting!' 44
+
+# Setup some timers
+if not timerexists 'bandage time'
+    createtimer 'bandage time'
+    settimer 'bandage time' 20000
+endif
+if not timerexists 'curepot recovery'
+    createtimer 'curepot recovery'
+    settimer 'curepot recovery' 20000
+endif
+if not timerexists 'healpot recovery'
+    createtimer 'healpot recovery'
+    settimer 'healpot recovery' 20000
+endif
+if not timerexists 'potion recovery'
+    createtimer 'potion recovery'
+    settimer 'potion recovery' 20000
+endif
+if not timerexists 'castspell recovery'
+    createtimer 'castspell recovery'
+    settimer 'castspell recovery' 20000
+endif
+if not timerexists 'stayalive text'
+    createtimer 'stayalive text'
+endif
+if not timerexists 'low mana'
+    createtimer 'low mana'
+endif
+
+if not timerexists 'next free cure'
+    createtimer 'next free cure'
+    settimer 'next free cure' 60001
+endif
+
+# While alive, try to stay alive.
+while not dead
+    # Display script running every 10 seconds. 
+    if timer 'stayalive text' > 10000
+        overhead 'Stay Alive Running!' 66
+        settimer 'stayalive text' 0
+    endif
+
+    # Free Cure Potion Alert
+    if timer 'next free cure' > 30000
+        if timer 'next free cure' > 60000
+            #
+        else
+            overhead '[Free Cure Ready]'
+            settimer 'next free cure' 60001
+        endif
+    endif
+
+    ####################################################
+    # Swing Timers
+    ####################################################
+    if not timerexists 'swing timer'
+        createtimer 'swing timer'
+        settimer 'swing timer' 20000
+    endif
+
+    if insysmsg 'ArmsLore skillgain:'
+        settimer 'swing timer' 0
+    endif
+    
+    if timerexists 'swing timer'
+        if not timerexists 'bow spam'
+            createtimer 'bow spam'
+            settimer 'bow spam' 20000
+        endif
+
+        if not timerexists 'xbow spam'
+            createtimer 'xbow spam'
+            settimer 'xbow spam' 20000
+        endif
+
+        if not timerexists 'hally spam'
+            createtimer 'hally spam'
+            settimer 'hally spam' 20000
+        endif
+        if timer 'swing timer' >= 6500
+            #
+        elseif timer 'swing timer' >= 6000 and timer 'xbow spam' > 5000
+            overhead '[Xbow Ready]' 55
+            settimer 'xbow spam' 0
+        elseif timer 'swing timer' >= 4800 and timer 'hally spam' > 5000
+            overhead '[Hally Ready]' 55
+            settimer 'hally spam' 0
+        elseif timer 'swing timer' >= 3520 and timer 'bow spam' > 5000
+            overhead '[Bow Ready]' 55
+            settimer 'bow spam' 0
+        endif    
+    endif
+
+    ####################################################
+    # Rearm yourself from disarm
+    ####################################################
+    # Disarm Reequip Timer
+    if insysmsg 'Their attack disarms you'
+        overhead '[Disarmed!]' 33
+        clearsysmsg 
+    endif
+    
+    if insysmsg 'no longer disarmed'
+        overhead '[Reequip Weapon]' 44
+        if varexist 'reequip_weapon_left'
+            lift 'reequip_weapon_left' 'backpack'
+            drop self LeftHand      
+        elseif varexist 'reequip_weapon_right'
+            lift 'reequip_weapon_right'
+            drop self RightHand
+        endif
+        clearsysmsg
+    endif
+    
+    # Unset weapon so that its fresh each run.
+    if varexist 'reequip_weapon_left'
+        if findlayer self lefthand as 'reequip_weapon_left_serial'
+            if 'reequip_weapon_left' = 'reequip_weapon_left_serial'
+                # Wearing the setup weapon
+            else
+                # Wearing a new weapon, setup.
+                #overhead '[Setup Weapon Left]' 55
+                @setvar! 'reequip_weapon_left' 'reequip_weapon_left_serial'
+            endif
+        else
+            if find 'reequip_weapon_left' 'backpack'
+                # Weapon is in backpack.
+            else
+                # Unset weapon, not in backpack or wearing.
+                #overhead '[Removed Weapon Left]' 33
+                @unsetvar 'reequip_weapon_left'
+            endif
+        endif
+    endif
+    if varexist 'reequip_weapon_right'
+        if findlayer self righthand as 'reequip_weapon_right_serial'
+            if 'reequip_weapon_right' = 'reequip_weapon_right_serial'
+                # Wearing the setup weapon
+            else
+                # Wearing a new weapon, setup.
+                #overhead '[Setup Weapon Right]' 55
+                @setvar! 'reequip_weapon_right' 'reequip_weapon_right_serial'
+            endif
+        else
+            if find 'reequip_weapon_right' 'backpack'
+                # Weapon is in backpack.
+            else
+                # Unset weapon, not in backpack or wearing.
+                #overhead '[Removed Weapon Right]' 33
+                @unsetvar 'reequip_weapon_right'
+            endif
+        endif
+    endif
+
+    ####################################################
+    # Bandage Survival and non-revealing actions.
+    ####################################################
+    # Dex = Time to Heal
+    # 25 = 15
+    # 40 = 14
+    # 55 = 13
+    # 70 = 12
+    # 85 = 11
+    # 100 = 10
+    if skill 'Healing' >= 50
+        if not timerexists 'aid cure sync'
+            createtimer 'aid cure sync'
+            settimer 'aid cure sync' 20000
+        endif
+    
+        if insysmsg 'You begin applying the bandages'
+            # If we manually applied a bandage, reset timer.
+            settimer 'bandage time' 0
+            clearsysmsg
+        endif
+        if dex <= 40
+            # 15 second timer
+            if hits < maxhits and timer 'bandage time' >= 15000         
+                hotkey 'bandage self'
+                settimer 'bandage time' 0
+            endif
+            # Attempt to last second cure before aid tick, regardless of free cut timer.
+            if timer 'bandage time' < 15000 and timer 'bandage time' >= 14000
+                if poisoned 'self' and timer 'potion recovery' > 1000
+                    overhead '[Used: Cure Pot]' 68
+                    hotkey 'Drink Cure'
+                    # Set timer for free cure
+                    if insysmsg 'receive a free cure potion'
+                        settimer 'next free cure' 0
+                    endif
+                    settimer 'potion recovery' 0
+                endif
+            endif
+        elseif dex < 55
+            # 14 second timer
+            if hits < maxhits and timer 'bandage time' >= 14000
+                hotkey 'bandage self'
+                settimer 'bandage time' 0
+            endif
+            # Attempt to last second cure before aid tick, regardless of free cut timer.
+            if timer 'bandage time' < 14000 and timer 'bandage time' >= 13000
+                if poisoned 'self' and timer 'potion recovery' > 1000
+                    overhead '[Used: Cure Pot]' 68
+                    hotkey 'Drink Cure'
+                    # Set timer for free cure
+                    if insysmsg 'receive a free cure potion'
+                        settimer 'next free cure' 0
+                    endif
+                    settimer 'potion recovery' 0
+                endif
+            endif
+        elseif dex < 70
+            # 13 second timer
+            if hits < maxhits and timer 'bandage time' >= 13000 
+                hotkey 'bandage self'
+                settimer 'bandage time' 0
+            endif
+            # Attempt to last second cure before aid tick, regardless of free cut timer.
+            if timer 'bandage time' < 13000 and timer 'bandage time' >= 12000
+                if poisoned 'self' and timer 'potion recovery' > 1000
+                    overhead '[Used: Cure Pot]' 68
+                    hotkey 'Drink Cure'
+                    # Set timer for free cure
+                    if insysmsg 'receive a free cure potion'
+                        settimer 'next free cure' 0
+                    endif
+                    settimer 'potion recovery' 0
+                endif
+            endif
+        elseif dex < 85
+            # 12 second timer
+            if hits < maxhits and timer 'bandage time' >= 12000 
+                hotkey 'bandage self'
+                settimer 'bandage time' 0
+            endif
+            # Attempt to last second cure before aid tick, regardless of free cut timer.
+            if timer 'bandage time' < 12000 and timer 'bandage time' >= 11000
+                if poisoned 'self' and timer 'potion recovery' > 1000
+                    overhead '[Used: Cure Pot]' 68
+                    hotkey 'Drink Cure'
+                    # Set timer for free cure
+                    if insysmsg 'receive a free cure potion'
+                        settimer 'next free cure' 0
+                    endif
+                    settimer 'potion recovery' 0
+                endif
+            endif
+        elseif dex < 100
+            # 11 second timer
+            if hits < maxhits and timer 'bandage time' >= 11000 
+                hotkey 'bandage self'
+                settimer 'bandage time' 0
+            endif
+            # Attempt to last second cure before aid tick, regardless of free cut timer.
+            if timer 'bandage time' < 11000 and timer 'bandage time' >= 10000
+                if poisoned 'self' and timer 'potion recovery' > 1000
+                    overhead '[Used: Cure Pot]' 68
+                    hotkey 'Drink Cure'
+                    # Set timer for free cure
+                    if insysmsg 'receive a free cure potion'
+                        settimer 'next free cure' 0
+                    endif
+                    settimer 'potion recovery' 0
+                endif
+            endif
+        else
+            # 10 second timer
+            if hits < maxhits and timer 'bandage time' >= 10000
+                hotkey 'bandage self'
+                settimer 'bandage time' 0
+            endif
+            # Attempt to last second cure before aid tick, regardless of free cut timer.
+            if timer 'bandage time' < 10000 and timer 'bandage time' >= 9000
+                if poisoned 'self' and timer 'potion recovery' > 1000
+                    overhead '[Used: Cure Pot]' 68
+                    hotkey 'Drink Cure'
+                    # Set timer for free cure
+                    if insysmsg 'receive a free cure potion'
+                        settimer 'next free cure' 0
+                    endif
+                    settimer 'potion recovery' 0
+                endif
+            endif
+        endif
+    endif
+    
+    # If paralyzed, attempt to pouch.
+    if not targetexists any
+        if paralyzed
+            if findtype 3705 'backpack' 38
+                overhead '[Used: Pouch]' 33
+                say [pouch
+            endif
+        endif
+    endif
+    
+    ####################################################################
+    # Hidden check, will avoid any actions below this marker if hidden.
+    ####################################################################
+    if hidden
+        continue
+    endif
+    
+    # Magery Survival
+    if skill 'Magery' >= 60
+        # Mana warnings
+        if mana < 22  and timer 'low mana' > 3000 and mana > 10
+            overhead '1 GHeal Left' 55
+            settimer 'low mana' 0
+        elseif mana < 11  and timer 'low mana' > 3000
+            overhead '0 GHeals Left' 33
+            settimer 'low mana' 0
+        endif
+
+        # If hurt, attempt to heal
+        if hits < 65 and timer 'castspell recovery' > 1500
+            # If under 35 HP and we cant heal pot, quick heal and reset heal timer
+            # Interrupt and clearall targets before attempting to self-cast to avoid harming self
+            if hits < 35 and timer 'healpot recovery' < 10000 and timer 'potion recovery' < 1000 and mana > 3
+                overhead 'Miniheal' 33
+                interrupt    
+                hotkey 'Cancel Current Target'
+                hotkey 'Clear Target Queue'
+                hotkey '> Mini-Heal/Cure Self'
+                settimer 'castspell recovery' 0
+            elseif hits < maxhits and mana > 10
+                overhead 'Gheal' 33
+                # Otherwise just use greater heal to heal up.
+                interrupt
+                hotkey 'Cancel Current Target'
+                hotkey 'Clear Target Queue'
+                hotkey '> Greater Heal/Cure Self'
+                settimer 'castspell recovery' 0
+            endif
+        endif
+    endif
+
+    # Magic Resist Potion
+    #if not findbuff 'Magic Resist Potion' and timer 'potion recovery' > 1000
+    #    if findtype 3846 'backpack'
+    #        overhead '[Used: MR Potion]' 68
+    #        hotkey 'Drink Night Sight'
+    #        settimer 'potion recovery' 0
+    #    endif
+    #endif
+    
+    # Monitor for free cure pot
+    if insysmsg 'receive a free cure potion'
+        settimer 'next free cure' 0
+    endif
+
+    # Cure Survival
+    if not targetexists any
+        if poisoned 'self' and timer 'next free cure' >= 30000 and timer 'potion recovery' > 1000
+            overhead '[Used: Cure Pot]' 68
+            hotkey 'Drink Cure'
+            # Set timer for free cure
+            if insysmsg 'receive a free cure potion'
+                settimer 'next free cure' 0
+            endif
+            settimer 'potion recovery' 0
+        endif
+    endif
+    
+    # Heal Potion
+    if hits < 35 and timer 'healpot recovery' >= 10000 and timer 'potion recovery' > 1000
+        overhead '[Used: GHeal Pot]' 68
+        hotkey 'Drink Heal'
+        settimer 'healpot recovery' 0
+        settimer 'potion recovery' 0
+    endif
+    
+endwhile
+
+if dead
+    overhead 'Stay Alive Failed!'
+    stop
+endif

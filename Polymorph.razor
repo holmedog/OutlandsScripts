@@ -5,12 +5,15 @@ while skill 'magery' < 100
         wait 10000
     endwhile
 
-
+if not findtype "campfire" true
+    dclicktype "kindling" backpack
+    wait 2000
+endif
         if mana > 49 
-            say "an air elemental release"
+            say "an earth elemental release"
             wait 500
-            cast "air elemental"
-            wait 5100
+            cast "earth elemental"
+            wait 2500
             menu 0x4083AF65 1
         endif
 endwhile

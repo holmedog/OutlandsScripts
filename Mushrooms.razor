@@ -1,0 +1,10 @@
+clearsysmsg 
+while counttype 29012 backpack < 110
+     cast "create food"
+     wait 1000
+     if mana < 70 and insysmsg "use another magic"
+         dclicktype 29012
+     endif
+     menu 0x4083AF65 1
+endwhile
+ 
