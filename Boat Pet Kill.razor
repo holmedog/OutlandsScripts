@@ -1,0 +1,30 @@
+@unsetvar 'allkill_target'
+overhead '[All Kill]' 44
+@setvar! 'allkill_target'
+
+if varexist 'pet1' and find 'pet1' ground any any 12 
+    menu 'pet1' 1
+    wait 50
+    target 'allkill_target'
+else
+    overhead 'Select pet 2'
+    @setvar! 'pet1'
+    wait 150 
+    menu 'pet1' 1
+    wait 50
+    target 'allkill_target'
+endif
+
+
+if varexist 'pet2' and find 'pet2' ground any any 12 
+    menu 'pet2' 1
+    wait 50
+    target 'allkill_target'
+else
+    overhead 'Select pet 1'
+    @setvar! 'pet2'
+    wait 150 
+    menu 'pet1' 1
+    wait 50
+    target 'allkill_target'
+endif
