@@ -1,33 +1,47 @@
-@unsetvar 'allkill_target'
+unsetvar allkill_target
 overhead '[All Kill]' 44
 @setvar! 'allkill_target'
 
-if varexist 'pet1' and find 'pet1' ground any any 12 
-    menu 'pet1' 1
-    wait 50
-    target 'allkill_target'
-else
-    overhead 'Select pet 2'
-    @setvar! 'pet1'
-    wait 150 
-    menu 'pet1' 1
-    wft 1000
-    target 'allkill_target'
-endif
-
-
-if varexist 'pet2' and find 'pet2' ground any any 12 
-    menu 'pet2' 1
-    wait 50
-    target 'allkill_target'
-else
+#check if we targetted same pet
+if 'pet1' = 'pet2' 
+    #we targetted same pet at some point
     overhead 'Select pet 1'
+    @setvar! 'pet1'
+    wait 200
+    overhead 'Select pet 2'
     @setvar! 'pet2'
-    wait 150 
+    wait 200
+endif
+
+
+#check for pet 1
+if not varexist 'pet1'
+    overhead 'Select pet 1'
+    sysmsg 'Select pet 1'
+    @setvar! 'pet1' 
+elseif not find 'pet1' ground any any 12 
+    overhead 'Select pet 1'
+    @setvar! 'pet1' 
+endif
+
+#check for pet 2
+if not varexist 'pet2'
+    overhead 'Select pet 2'
+    sysmsg 'Select pet 2'
+    @setvar! 'pet2' 
+elseif not find 'pet2' ground any any 12 
+    overhead 'Select pet 2'
+    @setvar! 'pet2' 
+endif
+
+
+if varexist 'pet1' and varexist 'pet2'
     menu 'pet1' 1
     wft 1000
     target 'allkill_target'
+    menu 'pet2' 1
+    wft 1000
+    target 'allkill_target'
 endif
-
 
 script "stayalive"
