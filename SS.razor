@@ -1,20 +1,3 @@
-# Clear sys messaages
-clearsysmsg
-
-if not timerexists "healpot"
-    createtimer "healpot"
-    settimer "healpot" 8000
-endif
-if not timerexists "aid time"
-    createtimer "aid time"
-    settimer "aid time" 8000
-endif
- 
-if not timerexists "shroomy"
-    createtimer "shroomy"
-    settimer "shroomy" 61000
-endif
-
 hotkey 'Forensics'
 waitfortarget 1000
 hotkey 'Target Self'
@@ -24,57 +7,4 @@ if skill 'Spirit Speak' > 1
     wait 350
 endif
 
-while not dead
-        
-    # If hidden, skip
-    if hidden
-        continue
-    endif
-
-    
-    if insysmsg 'you cannot move!'
-        overhead 'Paralyzed!' 34
-        say [pouch
-    endif
-    
-    #Eat a magic mushroom if we have 
-    #25  less mana than full
-    if mana < 70 and skill 'Magery' > 1 and timer "shroomy" >= 61000
-        dclicktype '29012'
-        overhead 'Mushroom Power!'
-        settimer "shroomy" 0
-    endif
-
-    # Healing Survival
-    if skill 'Healing' > 1
-        if insysmsg 'You begin applying the bandages'
-            settimer 'aid time' 0
-        endif
-        if hits < maxhits and timer 'aid time' > 10250 
-            hotkey 'bandage self'
-            settimer 'aid time' 0
-        endif
-    endif
-
- 
-    if not findtype "Yellow Potion" backpack
-        overhead 'Out of heal potions!' 34
-        wait 200
-    endif
-    
-    //Heal drinker if below 40
-    if hp < 55
-       if findtype "Yellow Potion" backpack
-           if timer "healpot" >= 8000
-                        overhead 'Drinking heal!'
-                        potion "heal"
-                        wait 200
-                        settimer "healpot" 0
-            endif
-         endif
-     endif
-    
-
-     
-     wait 100
-endwhile
+script "stayalive"
