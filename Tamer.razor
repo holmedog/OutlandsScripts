@@ -206,13 +206,13 @@ while not dead
         warmode off
     endif
     if find 'tank' 'ground' -1 1 5
-        if timer 'bandageTimer' > 20000 
+        if timer 'bandageTimer' > 40000 
                     hotkey 'Use Bandage (No Timer)'
                     pause 250
                     target 'tank'
                     pause 500
                     if insysmsg 'not damaged'
-                        settimer 'bandageTimer' 4000
+                        settimer 'bandageTimer' 15000
                     else
                         settimer 'bandageTimer' 0
                     endif

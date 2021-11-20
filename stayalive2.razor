@@ -30,14 +30,14 @@ while not dead
     
     #Eat a magic mushroom if we have 
     #25  less mana than full
-    if mana < 70 and skill 'Magery' > 1 and timer "shroomy" >= 61000
+    if mana < 70 and skill 'Magery' > 50 and timer "shroomy" >= 61000
         dclicktype '29012'
         overhead 'Mushroom Power!'
         settimer "shroomy" 0
     endif
 
     # Healing Survival
-    if skill 'Healing' > 1
+    if skill 'Healing' > 1 and skill 'veterinary' < 1
         if insysmsg 'You begin applying the bandages'
             settimer 'aid time' 0
         endif

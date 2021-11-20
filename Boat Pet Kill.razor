@@ -2,6 +2,11 @@ unsetvar allkill_target
 overhead '[All Kill]' 44
 @setvar! 'allkill_target'
 
+if skill 'begging' > 50
+    skill 'begging' 
+    wait 500
+endif
+
 #check if we targetted same pet
 if 'pet1' = 'pet2' 
     #we targetted same pet at some point
@@ -18,7 +23,9 @@ endif
 if not varexist 'pet1'
     overhead 'Select pet 1'
     sysmsg 'Select pet 1'
+    wait 500
     @setvar! 'pet1' 
+    wait 500
 elseif not find 'pet1' ground any any 12 
     overhead 'Select pet 1'
     @setvar! 'pet1' 
@@ -28,7 +35,9 @@ endif
 if not varexist 'pet2'
     overhead 'Select pet 2'
     sysmsg 'Select pet 2'
+    wait 500
     @setvar! 'pet2' 
+    wait 500
 elseif not find 'pet2' ground any any 12 
     overhead 'Select pet 2'
     @setvar! 'pet2' 
