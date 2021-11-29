@@ -1,0 +1,12 @@
+removelist 'vendorId'
+createlist 'vendorId'
+pushlist 'vendorId' 715631
+
+while not dead
+    hotkey 'Next Humanoid Target'
+    setvar! myLittleStinkyVar lasttarget 
+    if inlist 'vendorId' myLittleStinkyVar
+        dclick lasttarget
+        break
+    endif
+endwhile

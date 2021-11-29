@@ -1,0 +1,17 @@
+
+if not timerexists "fishy"
+    createtimer "fishy"
+    settimer "fishy" 61000
+endif
+
+while not dead 
+    if lhandempty
+        dress 'Fishing'
+        wait 500
+    endif
+    
+    if timer "fishy" > 7550
+        hotkey 'Use item in hand'
+        settimer "fishy" 0
+    endif
+endwhile

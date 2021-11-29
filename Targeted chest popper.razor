@@ -1,6 +1,8 @@
 clearsysmsg
 clearignore 
-while findtype 3712 backpack as found
+
+overhead 'Pick Chest'
+setvar! found
     dclick found
     #remove traps
     while not insysmsg "successfully"
@@ -20,5 +22,4 @@ while findtype 3712 backpack as found
         gumpresponse 4
         wait 3500
     endwhile
-    ignore found
-endwhile
+    

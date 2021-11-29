@@ -110,7 +110,7 @@ while not dead
                 sysmsg seriallabel
                 dclick 'foundBackpack'
                 @ignore 'foundBackpack'
-                wait 600
+                wait 250
                 #Now we dig
                 #List items in top layer
                 foreach searchItem in 'item_graphic_ids'
@@ -122,12 +122,13 @@ while not dead
                         @ignore foundItem
                     endwhile
                 endfor
+                wait 250
                 
                 #Start container part
                 foreach searchContainer in 'container_graphic_ids'
                     while findtype searchContainer 'foundBackpack' as foundContainer
                         dclick foundContainer
-                        wait 600
+                        wait 250
                         @getlabel 'foundContainer' foundContainerLabel
                         #output container label for bulk sells
                         sysmsg foundContainerLabel 33
@@ -142,7 +143,7 @@ while not dead
                                 @ignore foundItem
                             endwhile
                         endfor
-                        
+                        wait 250
                         @ignore foundContainer
                     endwhile
                 endfor

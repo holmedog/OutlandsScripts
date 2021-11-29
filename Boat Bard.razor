@@ -1,0 +1,94 @@
+
+createtimer 'discoTimer'
+settimer 'discoTimer' 5000
+    
+createtimer 'buffDisco'
+settimer 'buffDisco' 300000
+    
+createtimer 'buffProvo'
+settimer 'buffProvo' 300000
+    
+createtimer 'buffPeace'
+settimer 'buffPeace' 300000
+    
+createtimer 'buffMage'
+settimer 'buffMage' 300000 
+    
+createtimer 'bardLock'
+settimer 'bardLock' 10000
+
+#set up a last var so we dont spam disco after all dead 
+@setvar 'checkDead' self
+while not dead
+    #dont let this guy die
+    if hp < 45 
+        overhead 'Drinking heal!'
+        potion "heal"
+        wait 200
+    endif
+    if hp < 65
+        cast "greater heal"
+        wft 3500
+        target self
+        wait 650
+     endif
+        
+    #put in a pause so we dont spam
+    wait 1000
+    if timer "bardLock" > 10000 and timer "buffDisco" > 300000
+        overhead "Disco Buff"
+        skill "discordance" 
+        wft 2500
+        targettype "backpack"
+        settimer "buffDisco" 0
+        settimer "bardLock" 0
+    endif
+    if timer "bardLock" > 10000 and timer "buffProvo" > 300000
+        overhead "Provo Buff"
+        skill "provocation" 
+        wft 2500
+        targettype "backpack"
+        settimer "buffProvo" 0
+        settimer "bardLock" 0
+    endif
+    if timer "bardLock" > 10000 and timer "buffPeace" > 300000
+        overhead "Peace Buff"
+        skill "peacemaking" 
+        wft 2500
+        targettype "backpack"
+        settimer "buffPeace" 0
+        settimer "bardLock" 0
+    endif
+    if timer "bardLock" > 10000 and timer "buffMage" > 300000
+        overhead "Mage Buff"
+        cast 'Bless'
+        waitfortarget 2500
+        target 'self'
+        wait 750
+        cast 'Arch Protection'
+        waitfortarget 2500
+        target 'self'
+        settimer "buffMage" 0
+    endif
+    #disco routine
+    if timer "bardLock" > 2000 and timer "discoTimer" > 5150 
+        #acquire target
+        hotkey "Next Non-Friendly Target"
+        wait 250
+        @setvar! 'lastserial' lasttarget
+        
+        if 'checkDead' = 'lastserial'
+            settimer "discoTimer" 0
+        elseif noto 'lastserial' = hostile
+            overhead "Disco Target!" 33
+            skill "discordance" 
+            wft 2500
+            target 'lastserial'
+            wait 350
+            @setvar 'checkDead' 'lastserial'
+            settimer "discoTimer" 0
+            settimer "bardLock" 5000
+        endif
+    endif
+        
+endwhile   
