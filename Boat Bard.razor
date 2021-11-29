@@ -14,6 +14,9 @@ settimer 'buffPeace' 300000
 createtimer 'buffMage'
 settimer 'buffMage' 300000 
     
+createtimer 'buffBeg'
+settimer 'buffBeg' 300000 
+    
 createtimer 'bardLock'
 settimer 'bardLock' 10000
 
@@ -42,6 +45,12 @@ while not dead
         targettype "backpack"
         settimer "buffDisco" 0
         settimer "bardLock" 0
+    endif
+    if timer "bardLock" > 10000 and timer "buffBeg" > 60000
+        overhead "Begging Buff"
+        skill "begging" 
+        settimer "buffBeg" 0
+        settimer "bardLock" 5000
     endif
     if timer "bardLock" > 10000 and timer "buffProvo" > 300000
         overhead "Provo Buff"
