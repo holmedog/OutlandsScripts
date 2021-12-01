@@ -19,13 +19,6 @@ while not dead
     endif
     
     if timer "fishy" > 8550
-        if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'World save complete' and not insysmsg 'You fish' and not insysmsg 'You catch' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
-        wait 3750
-            if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'World save complete' and not insysmsg 'You fish' and not insysmsg 'You catch' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
-                overhead 'Captcha break or Done!' 34
-                break
-            endif
-        endif
         hotkey 'Use item in hand'
         settimer "fishy" 0
     endif

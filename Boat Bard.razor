@@ -1,6 +1,9 @@
 
+
 createtimer 'discoTimer'
 settimer 'discoTimer' 5000
+createtimer 'repairBoat'
+settimer 'repairBoat' 8000
     
 createtimer 'buffDisco'
 settimer 'buffDisco' 300000
@@ -74,6 +77,11 @@ while not dead
         waitfortarget 2500
         target 'self'
         wait 750
+        cast 'Bless'
+        waitfortarget 2500
+        target '0x348287'
+        wait 750
+        
         cast 'Arch Protection'
         waitfortarget 2500
         target 'self'
@@ -99,5 +107,19 @@ while not dead
             settimer "bardLock" 5000
         endif
     endif
-        
+    if timer "repairBoat" > 8000
+        say '[RepairHull'
+        wait 1000
+        if insysmsg 'hull does not need'
+            say '[RepairSails'
+            wait 1000
+            if insysmsg 'sails do not need'
+                say '[RepairGuns'
+                wait 1000
+            endif
+        else
+            wait 1000
+        endif
+        settimer "repairBoat" 0
+    endif    
 endwhile   
