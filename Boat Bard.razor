@@ -142,7 +142,7 @@ if  skill "poisoning" > 50 timer "bardLock" > 2000 and timer "discoTimer" > 5150
             settimer "bardLock" 5000
         endif
     endif
-    if skill "spirit speak" > 80
+    if skill "necromancy" > 80 or skill "spirit speak" > 80
         if followers < 5
             #Lost a fire elem, resummon
             cast 'Fire Elemental'
