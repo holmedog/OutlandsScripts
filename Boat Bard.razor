@@ -1,3 +1,6 @@
+#Update this var to your captain
+@setvar 'captainGuy' 0x348287
+
 if not timerexists "bardLock"
     createtimer 'discoTimer'
     settimer 'discoTimer' 5000
@@ -88,7 +91,7 @@ while not dead
         wait 750
         cast 'Bless'
         waitfortarget 2500
-        target '0x348287'
+        target 'captainGuy'
         wait 750
         
         cast 'Arch Protection'
