@@ -148,6 +148,10 @@ if  skill "poisoning" > 50 timer "bardLock" > 2000 and timer "discoTimer" > 5150
     if skill "necromancy" > 80 or skill "spirit speak" > 80
         if followers < 5
             #Lost a fire elem, resummon
+            if skill "necromancy" > 80
+                say "[VengefulSpirit"
+                wait 1000
+            endif
             cast 'Fire Elemental'
             wait 6000
             say "All Guard Me"
