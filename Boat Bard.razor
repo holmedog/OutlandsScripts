@@ -1,31 +1,34 @@
-
-
-createtimer 'discoTimer'
-settimer 'discoTimer' 5000
-createtimer 'repairBoat'
-settimer 'repairBoat' 8000
+if not timerexists "bardLock"
+    createtimer 'discoTimer'
+    settimer 'discoTimer' 5000
+    createtimer 'repairBoat'
+    settimer 'repairBoat' 8000
+    createtimer "shroomy"
+    settimer "shroomy" 61000
+    createtimer 'buffDisco'
+    settimer 'buffDisco' 300000
+    createtimer 'buffProvo'
+    settimer 'buffProvo' 300000
+    createtimer 'buffPeace'
+    settimer 'buffPeace' 300000
+    createtimer 'buffMage'
+    settimer 'buffMage' 300000 
+    createtimer 'buffBeg'
+    settimer 'buffBeg' 300000 
+    createtimer 'bardLock'
+    settimer 'bardLock' 10000
+endif
     
-createtimer 'buffDisco'
-settimer 'buffDisco' 300000
-    
-createtimer 'buffProvo'
-settimer 'buffProvo' 300000
-    
-createtimer 'buffPeace'
-settimer 'buffPeace' 300000
-    
-createtimer 'buffMage'
-settimer 'buffMage' 300000 
-    
-createtimer 'buffBeg'
-settimer 'buffBeg' 300000 
-    
-createtimer 'bardLock'
-settimer 'bardLock' 10000
-
 #set up a last var so we dont spam disco after all dead 
 @setvar 'checkDead' self
 while not dead
+    #we cast arch here bc it probably hit whole crew
+    if poisoned 'self'
+        cast 'Arch Cure'
+        waitfortarget 1755
+        target 'self'
+        wait 666
+    endif
     #dont let this guy die
     if hp < 45 
         overhead 'Drinking heal!'
@@ -37,11 +40,17 @@ while not dead
         wft 3500
         target self
         wait 650
-     endif
-        
+    endif
+    #Eat a magic mushroom if we have 
+    #25  less mana than full
+    if mana < 70 and skill 'Magery' > 1 and timer "shroomy" >= 61000
+        dclicktype '29012'
+        overhead 'Mushroom Power!'
+        settimer "shroomy" 0
+    endif
     #put in a pause so we dont spam
     wait 1000
-    if timer "bardLock" > 10000 and timer "buffDisco" > 300000
+    if skill "discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 300000
         overhead "Disco Buff"
         skill "discordance" 
         wft 2500
@@ -55,7 +64,7 @@ while not dead
         settimer "buffBeg" 0
         settimer "bardLock" 5000
     endif
-    if timer "bardLock" > 10000 and timer "buffProvo" > 300000
+    if skill "provocation" > 50 and timer "bardLock" > 10000 and timer "buffProvo" > 300000
         overhead "Provo Buff"
         skill "provocation" 
         wft 2500
@@ -63,7 +72,7 @@ while not dead
         settimer "buffProvo" 0
         settimer "bardLock" 0
     endif
-    if timer "bardLock" > 10000 and timer "buffPeace" > 300000
+    if skill "peacemaking" > 50 and timer "bardLock" > 10000 and timer "buffPeace" > 300000
         overhead "Peace Buff"
         skill "peacemaking" 
         wft 2500
@@ -71,7 +80,7 @@ while not dead
         settimer "buffPeace" 0
         settimer "bardLock" 0
     endif
-    if timer "bardLock" > 10000 and timer "buffMage" > 300000
+    if skill "magery" > 50 and timer "bardLock" > 10000 and timer "buffMage" > 150000
         overhead "Mage Buff"
         cast 'Bless'
         waitfortarget 2500
@@ -88,7 +97,7 @@ while not dead
         settimer "buffMage" 0
     endif
     #disco routine
-    if timer "bardLock" > 2000 and timer "discoTimer" > 5150 
+    if  skill "discordance" > 50 timer "bardLock" > 2000 and timer "discoTimer" > 5150 
         #acquire target
         hotkey "Next Non-Friendly Target"
         wait 250
@@ -102,10 +111,44 @@ while not dead
             wft 2500
             target 'lastserial'
             wait 350
+            if skill 'poisoning' > 50
+                cast "Poison"
+                wft 1500
+                target 'lastserial'
+                wait 350
+            endif
             @setvar 'checkDead' 'lastserial'
             settimer "discoTimer" 0
             settimer "bardLock" 5000
         endif
+    endif
+    #poison routine if no disco
+if  skill "poisoning" > 50 timer "bardLock" > 2000 and timer "discoTimer" > 5150 
+        #acquire target
+        hotkey "Next Non-Friendly Target"
+        wait 250
+        @setvar! 'lastserial' lasttarget
+        
+        if 'checkDead' = 'lastserial'
+            settimer "discoTimer" 0
+        elseif noto 'lastserial' = hostile
+            overhead "Disco Target!" 33
+            cast "Poison"
+            wft 1500
+            target 'lastserial'
+            wait 350
+            @setvar 'checkDead' 'lastserial'
+            settimer "discoTimer" 0
+            settimer "bardLock" 5000
+        endif
+    endif
+    if skill "spirit speak" > 80
+        if followers < 5
+            #Lost a fire elem, resummon
+            cast 'Fire Elemental'
+            wait 6000
+            say "All Guard Me"
+        endif 
     endif
     if timer "repairBoat" > 8000
         say '[RepairHull'
