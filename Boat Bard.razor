@@ -61,7 +61,7 @@ while not dead
         settimer "buffDisco" 0
         settimer "bardLock" 0
     endif
-    if timer "bardLock" > 10000 and timer "buffBeg" > 60000
+    if skill "begging" > 50  and timer "bardLock" > 10000 and timer "buffBeg" > 60000
         overhead "Begging Buff"
         skill "begging" 
         settimer "buffBeg" 0
@@ -100,7 +100,7 @@ while not dead
         settimer "buffMage" 0
     endif
     #disco routine
-    if  skill "discordance" > 50 timer "bardLock" > 2000 and timer "discoTimer" > 5150 
+    if  skill "discordance" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5150 
         #acquire target
         hotkey "Next Non-Friendly Target"
         wait 250
@@ -120,13 +120,19 @@ while not dead
                 target 'lastserial'
                 wait 350
             endif
+            if skill 'spirit speak' > 80
+                say "All Kill"
+                wft 1500
+                target 'lastserial'
+                wait 350
+            endif
             @setvar 'checkDead' 'lastserial'
             settimer "discoTimer" 0
             settimer "bardLock" 5000
         endif
     endif
     #poison routine if no disco
-if  skill "poisoning" > 50 timer "bardLock" > 2000 and timer "discoTimer" > 5150 
+    if skill "discordance" < 50 and skill "poisoning" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5150 
         #acquire target
         hotkey "Next Non-Friendly Target"
         wait 250
@@ -135,10 +141,29 @@ if  skill "poisoning" > 50 timer "bardLock" > 2000 and timer "discoTimer" > 5150
         if 'checkDead' = 'lastserial'
             settimer "discoTimer" 0
         elseif noto 'lastserial' = hostile
-            overhead "Disco Target!" 33
+            overhead "Poison Target!" 33
             cast "Poison"
             wft 1500
             target 'lastserial'
+            wait 350
+            @setvar 'checkDead' 'lastserial'
+            settimer "discoTimer" 0
+            settimer "bardLock" 5000
+        endif
+    endif
+    
+    #attack routine if tactics
+    if skill "tactics" > 50 and skill "arms lore" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5150 
+        #acquire target
+        hotkey "Next Non-Friendly Target"
+        wait 250
+        @setvar! 'lastserial' lasttarget
+        
+        if 'checkDead' = 'lastserial'
+            settimer "discoTimer" 0
+        elseif noto 'lastserial' = hostile
+            overhead "Attack Target!" 33
+            attack  'lastserial'
             wait 350
             @setvar 'checkDead' 'lastserial'
             settimer "discoTimer" 0
