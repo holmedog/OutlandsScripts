@@ -1,82 +1,171 @@
-# Clear sys messaages
 clearsysmsg
 
-#Change this to your Summoning Stone
-@setvar sumStone 0x43BB89B4
+#Make sure list exists
+createlist 'IgnoreNPC'
 
-if not timerexists "healpot"
-    createtimer "healpot"
-    settimer "healpot" 8000
-endif
-if not timerexists "aid time"
-    createtimer "aid time"
-    settimer "aid time" 8000
-endif
- 
-if not timerexists "shroomy"
+clearsysmsg 
+if not timerexists "bardLock" or not timerexists "buffTaste"
+    createtimer 'discoTimer'
+    settimer 'discoTimer' 5000
+    createtimer 'repairBoat'
+    settimer 'repairBoat' 8000
     createtimer "shroomy"
     settimer "shroomy" 61000
+    createtimer 'buffDisco'
+    settimer 'buffDisco' 300000
+    createtimer 'buffProvo'
+    settimer 'buffProvo' 300000
+    createtimer 'buffPeace'
+    settimer 'buffPeace' 300000
+    createtimer 'buffMage'
+    settimer 'buffMage' 300000 
+    createtimer 'buffBeg'
+    settimer 'buffBeg' 300000 
+    createtimer 'bardLock'
+    settimer 'bardLock' 10000
+    createtimer 'campLock'
+    settimer 'campLock' 900000
+    createtimer "aid time"
+    settimer "aid time" 8000
+    createtimer 'buffTaste'
+    settimer 'buffTaste' 300000 
 endif
-
-
-while not dead
-    hotkey 'Discordance'
-    wait 200
-    target ground 1332 495 5
-    wait 10500
-    hotkey 'Provocation'
-    target 0x0 1332 495 5
-    wait 10500
-       
-    # If hidden, skip
-    if hidden
-        continue
-    endif
-
-    
-    if insysmsg 'you cannot move!'
-        overhead 'Paralyzed!' 34
-        say [pouch
-    endif
-    
-    #Eat a magic mushroom if we have 
-    #25  less mana than full
-    if mana < 60 and skill 'Magery' > 1 and timer "shroomy" >= 61000
-        dclicktype '29012'
-        overhead 'Mushroom Power!'
-        settimer "shroomy" 0
-    endif
-
-    # Healing Survival
-    if skill 'Healing' > 1
-        if insysmsg 'You begin applying the bandages'
-            settimer 'aid time' 0
-        endif
-        if hits < maxhits and timer 'aid time' > 10250 
-            hotkey 'bandage self'
-            settimer 'aid time' 0
-        endif
-    endif
-
  
-    if not findtype "Yellow Potion" backpack
-        overhead 'Out of heal potions!' 34
-        wait 200
-    endif
-    
-    //Heal drinker if below 40
-    if hp < 55
-       if findtype "Yellow Potion" backpack
-           if timer "healpot" >= 8000
-                        overhead 'Drinking heal!'
-                        potion "heal"
-                        wait 200
-                        settimer "healpot" 0
-            endif
-         endif
-     endif
-    
 
-     
-     wait 100
+unsetvar 'daggerlyDagger'
+#set up dagger variable
+if findtype 3922 'backpack' as 'mydagger'
+    overhead 'Dagger Set'
+    @setvar 'daggerlyDagger' 'mydagger'
+else 
+    overhead 'No dagger found in pack, need one'
+    stop
+endif        
+
+while not dead 
+    hotkey 'Next Friendly Humanoid Target'
+    wait 350
+    @setvar! 'lastserial' lasttarget
+    
+    #found a target now dagger
+    dclick 'daggerlyDagger'
+    wft 1500
+    target 'lastserial'
+    #Pause so sysmsg can populate
+    wait 350
+    if insysmsg 'use a bladed item on that'
+        #acquired a target that is close
+        #dont let this guy die
+        if hp < 45 
+            overhead 'Drinking heal!'
+            potion "heal"
+            wait 200
+        endif
+        if skill "Magery" > 50
+            #we cast arch here bc it probably hit whole crew
+            if poisoned 'self'
+                cast 'Arch Cure'
+                waitfortarget 1755
+                target 'self'
+                wait 666
+            endif
+            if hp < 65
+                cast "greater heal"
+                wft 3500
+                target self
+                wait 650 
+            endif   
+            #Eat a magic mushroom if we have 
+            #25  less mana than full
+            if mana < 70 and timer "shroomy" >= 61000
+                dclicktype '29012'
+                overhead 'Mushroom Power!'
+                settimer "shroomy" 0
+            endif
+        endif
+
+        # Healing Survival
+        if skill 'Healing' > 50
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 0
+            endif
+            if hits < maxhits and timer 'aid time' > 10250 
+                hotkey 'bandage self'
+                settimer 'aid time' 0
+            endif
+        endif
+
+        #camping buff
+        if skill "camping" > 50 and timer "campLock" > 600000 
+            if not findtype "kindling" backpack
+                overhead "Need more kindling" 34
+                wait 355
+            endif
+    
+            if not findtype "campfire" true
+                dclicktype "kindling" backpack
+                wait 350
+                while insysmsg "You fail to ignite"
+                    wait 3000    
+                    dclicktype "kindling" backpack
+                    wait 350
+                endwhile
+                settimer 'campLock' 0
+            endif
+            wait 2000
+        endif
+        if skill "discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 45000
+            overhead "Disco Buff"
+            skill "discordance" 
+            wft 2500
+            targettype "backpack"
+            settimer "buffDisco" 0
+            settimer "bardLock" 0
+        endif
+        if skill "begging" > 50  and timer "bardLock" > 10000 and timer "buffBeg" > 60000
+            overhead "Begging Buff"
+            skill "begging" 
+            settimer "buffBeg" 0
+            settimer "bardLock" 5000
+        endif
+        if skill "provocation" > 50 and timer "bardLock" > 10000 and timer "buffProvo" > 45000
+            overhead "Provo Buff"
+            skill "provocation" 
+            wft 2500
+            targettype "backpack"
+            settimer "buffProvo" 0
+            settimer "bardLock" 0
+        endif
+        if skill "peacemaking" > 50 and timer "bardLock" > 10000 and timer "buffPeace" > 45000
+            overhead "Peace Buff"
+            skill "peacemaking" 
+            wft 2500
+            targettype "backpack"
+            settimer "buffPeace" 0
+            settimer "bardLock" 0
+        endif
+        if skill "tasteidentification" > 50 and timer "bardLock" > 10000 and timer "buffTaste" > 45000
+            overhead "tasteidentification Buff"
+            skill "tasteidentification" 
+            wft 2500
+            targettype "backpack"
+            settimer "buffPeace" 0
+            settimer "bardLock" 0
+        endif
+        #mage buffs
+        if skill "magery" > 50 and timer "bardLock" > 5000 and timer "buffMage" > 15000
+            overhead "Mage Buff"
+            cast 'Bless'
+            waitfortarget 2500
+            target 'lastserial'
+            wait 750 
+            cast 'Arch Protection'
+            waitfortarget 2500
+            target 'lastserial'
+            settimer "buffMage" 0
+        endif
+    else
+        overhead "Not close"
+    endif
+    wait 1000
 endwhile
