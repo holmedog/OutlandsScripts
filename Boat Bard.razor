@@ -1,6 +1,7 @@
 #Update this var to your captain
 @setvar 'captainGuy' 0x348287
 
+clearsysmsg 
 if not timerexists "bardLock"
     createtimer 'discoTimer'
     settimer 'discoTimer' 5000
@@ -20,39 +21,78 @@ if not timerexists "bardLock"
     settimer 'buffBeg' 300000 
     createtimer 'bardLock'
     settimer 'bardLock' 10000
+    createtimer 'campLock'
+    settimer 'campLock' 900000
+    createtimer "aid time"
+    settimer "aid time" 8000
+endif
+ 
 endif
     
 #set up a last var so we dont spam disco after all dead 
 @setvar 'checkDead' self
 while not dead
-    #we cast arch here bc it probably hit whole crew
-    if poisoned 'self'
-        cast 'Arch Cure'
-        waitfortarget 1755
-        target 'self'
-        wait 666
-    endif
     #dont let this guy die
     if hp < 45 
         overhead 'Drinking heal!'
         potion "heal"
         wait 200
     endif
-    if hp < 65
-        cast "greater heal"
-        wft 3500
-        target self
-        wait 650
+    if skill "Magery" > 50
+        #we cast arch here bc it probably hit whole crew
+        if poisoned 'self'
+            cast 'Arch Cure'
+            waitfortarget 1755
+            target 'self'
+            wait 666
+        endif
+        if hp < 65
+            cast "greater heal"
+            wft 3500
+            target self
+            wait 650 
+        endif   
+        #Eat a magic mushroom if we have 
+        #25  less mana than full
+        if mana < 70 and timer "shroomy" >= 61000
+            dclicktype '29012'
+            overhead 'Mushroom Power!'
+            settimer "shroomy" 0
+        endif
     endif
-    #Eat a magic mushroom if we have 
-    #25  less mana than full
-    if mana < 70 and skill 'Magery' > 1 and timer "shroomy" >= 61000
-        dclicktype '29012'
-        overhead 'Mushroom Power!'
-        settimer "shroomy" 0
+
+    # Healing Survival
+    if skill 'Healing' > 50
+        if insysmsg 'You begin applying the bandages'
+            settimer 'aid time' 0
+        endif
+        if hits < maxhits and timer 'aid time' > 10250 
+            hotkey 'bandage self'
+            settimer 'aid time' 0
+        endif
     endif
+
     #put in a pause so we dont spam
     wait 1000
+    #camping buff
+    if skill "camping" > 50 and timer "campLock" > 900000 
+        if not findtype "kindling" backpack
+            overhead "Need more kindling" 34
+            wait 355
+        endif
+    
+        if not findtype "campfire" true
+            dclicktype "kindling" backpack
+            wait 350
+            while insysmsg "You fail to ignite"
+                wait 3000    
+                dclicktype "kindling" backpack
+                wait 350
+            endwhile
+            settimer 'campLock' 0
+        endif
+        wait 2000
+    endif
     if skill "discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 300000
         overhead "Disco Buff"
         skill "discordance" 
@@ -131,8 +171,9 @@ while not dead
             settimer "bardLock" 5000
         endif
     endif
+    
     #poison routine if no disco
-    if skill "discordance" < 50 and skill "poisoning" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5150 
+    if  skill "poisoning" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5150 
         #acquire target
         hotkey "Next Non-Friendly Target"
         wait 250
@@ -141,7 +182,7 @@ while not dead
         if 'checkDead' = 'lastserial'
             settimer "discoTimer" 0
         elseif noto 'lastserial' = hostile
-            overhead "Poison Target!" 33
+            overhead "Disco Target!" 33
             cast "Poison"
             wft 1500
             target 'lastserial'
@@ -152,9 +193,10 @@ while not dead
         endif
     endif
     
-    #attack routine if tactics
-    if skill "tactics" > 50 and skill "arms lore" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5150 
+    #attack routine
+    if  skill "tactics" > 80 and timer "discoTimer" > 5150 
         #acquire target
+        overhead "Attack Routine!" 23
         hotkey "Next Non-Friendly Target"
         wait 250
         @setvar! 'lastserial' lasttarget
@@ -163,13 +205,15 @@ while not dead
             settimer "discoTimer" 0
         elseif noto 'lastserial' = hostile
             overhead "Attack Target!" 33
-            attack  'lastserial'
+            attack 'lastserial'
             wait 350
             @setvar 'checkDead' 'lastserial'
             settimer "discoTimer" 0
             settimer "bardLock" 5000
         endif
     endif
+    
+    #Follower Routine
     if skill "necromancy" > 80 or skill "spirit speak" > 80
         if followers < 5
             #Lost a fire elem, resummon
@@ -182,6 +226,8 @@ while not dead
             say "All Guard Me"
         endif 
     endif
+    
+    #Repair Routine
     if timer "repairBoat" > 8000
         say '[RepairHull'
         wait 1000
