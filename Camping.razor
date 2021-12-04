@@ -1,17 +1,19 @@
 # Training Camping Passively Alone by Jaseowns
 # UO Outlands
-if not findtype "kindling" backpack
-    overhead "Need more kindling" 34
-    wait 5000
-    replay
-endif
+
+while skill "camping" < 100
+    if not findtype "kindling" backpack
+        overhead "Need more kindling" 34
+        wait 5000
+        replay
+    endif
     
-if not findtype "campfire" true
-    dclicktype "kindling" backpack
+    if not findtype "campfire" true
+        dclicktype "kindling" backpack
+        wait 2000
+    endif
     wait 2000
-endif
-wait 2000
-if not hidden
-    useskill 'hiding'
-endif
-loop
+    if not hidden
+        useskill 'hiding'
+    endif
+endwhile

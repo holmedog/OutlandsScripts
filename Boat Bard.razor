@@ -2,7 +2,7 @@
 @setvar 'captainGuy' 0x348287
 
 clearsysmsg 
-if not timerexists "bardLock"
+if not timerexists "bardLock" or not timerexists "spyGlassPeek" or not timerexists "buffTaste"
     createtimer 'discoTimer'
     settimer 'discoTimer' 5000
     createtimer 'repairBoat'
@@ -25,6 +25,16 @@ if not timerexists "bardLock"
     settimer 'campLock' 900000
     createtimer "aid time"
     settimer "aid time" 8000
+    createtimer 'RepairHull'
+    settimer 'RepairHull' 0
+    createtimer 'RepairSails'
+    settimer 'RepairSails' 4000
+    createtimer 'RepairGuns'
+    settimer 'RepairGuns' 10000
+    createtimer 'spyGlassPeek'
+    settimer 'spyGlassPeek' 15000
+    createtimer 'buffTaste'
+    settimer 'buffTaste' 15000
 endif
  
 endif
@@ -93,6 +103,19 @@ while not dead
         endif
         wait 2000
     endif
+    if skill "tracking" > 80 and timer "spyGlassPeek" > 30000 
+        gumpclose
+        wait 250
+        gumpclose
+        wait 250
+        dclicktype 'spyglass'
+        waitfortarget 1200
+        target 'self'
+        wait 350 
+        gumpresponse 4
+        wait 350 
+        settimer "spyGlassPeek" 0
+    endif
     if skill "discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 300000
         overhead "Disco Buff"
         skill "discordance" 
@@ -123,7 +146,7 @@ while not dead
         settimer "buffPeace" 0
         settimer "bardLock" 0
     endif
-    if skill "magery" > 50 and timer "bardLock" > 10000 and timer "buffMage" > 150000
+    if skill "magery" > 50 and timer "bardLock" > 10000 and timer "buffMage" > 280000
         overhead "Mage Buff"
         cast 'Bless'
         waitfortarget 2500
@@ -139,6 +162,16 @@ while not dead
         target 'self'
         settimer "buffMage" 0
     endif
+    if skill "tasteidentification" > 50 and timer "bardLock" > 10000 and timer "buffTaste" > 45000
+        overhead "tasteidentification Buff"
+        skill "tasteidentification" 
+        wft 2500
+        targettype "backpack"
+        settimer "buffTaste" 0
+        settimer "bardLock" 0
+    endif
+    
+    
     #disco routine
     if  skill "discordance" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5150 
         #acquire target
@@ -228,19 +261,19 @@ while not dead
     endif
     
     #Repair Routine
-    if timer "repairBoat" > 8000
+    if timer "RepairHull" > 8000
         say '[RepairHull'
-        wait 1000
-        if insysmsg 'hull does not need'
-            say '[RepairSails'
-            wait 1000
-            if insysmsg 'sails do not need'
-                say '[RepairGuns'
-                wait 1000
-            endif
-        else
-            wait 1000
-        endif
-        settimer "repairBoat" 0
+        wait 350
+        settimer "RepairHull" 0
+    endif    
+    if timer "RepairSails" > 8000
+        say '[RepairSails'
+        wait 350
+        settimer "RepairSails" 0
+    endif    
+    if timer "RepairGuns" > 8000
+        say '[RepairGuns'
+        wait 350
+        settimer "RepairGuns" 0
     endif    
 endwhile   
