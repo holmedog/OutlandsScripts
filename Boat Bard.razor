@@ -162,13 +162,13 @@ while not dead
         target 'self'
         settimer "buffMage" 0
     endif
-    if skill "tasteidentification" > 50 and timer "bardLock" > 10000 and timer "buffTaste" > 45000
+    if skill "taste identification" > 50 and timer "bardLock" > 10000 and timer "buffTaste" > 60000
         overhead "tasteidentification Buff"
-        skill "tasteidentification" 
+        skill "tasteid"
         wft 2500
-        targettype "backpack"
+        targettype "backpack" backpack
         settimer "buffTaste" 0
-        settimer "bardLock" 0
+        settimer "bardLock" 5000
     endif
     
     
@@ -242,7 +242,6 @@ while not dead
             wait 350
             @setvar 'checkDead' 'lastserial'
             settimer "discoTimer" 0
-            settimer "bardLock" 5000
         endif
     endif
     
