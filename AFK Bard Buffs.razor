@@ -144,13 +144,14 @@ while not dead
             settimer "buffPeace" 0
             settimer "bardLock" 0
         endif
-        if skill "tasteidentification" > 50 and timer "bardLock" > 10000 and timer "buffTaste" > 45000
+
+        if skill "taste identification" > 50 and timer "bardLock" > 10000 and timer "buffTaste" > 60000
             overhead "tasteidentification Buff"
-            skill "tasteidentification" 
+            skill "tasteid"
             wft 2500
-            targettype "backpack"
-            settimer "buffPeace" 0
-            settimer "bardLock" 0
+            targettype "backpack" backpack
+            settimer "buffTaste" 0
+            settimer "bardLock" 5000
         endif
         #mage buffs
         if skill "magery" > 50 and timer "bardLock" > 5000 and timer "buffMage" > 15000
