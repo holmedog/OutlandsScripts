@@ -7,6 +7,8 @@
 gumpclose 2424293173
 say '[aspects'
 waitforgump 2424293173
+
+#Armour Swap
 #use unique value or text just for armor
 while not ingump 'Effective Alchemy' 2424293173
     gumpresponse 15
@@ -17,15 +19,17 @@ waitforgump 2424293173
 gumpresponse 17
 waitforgump 2424293173
 
-#use unique value or text just for armor
+#Weapon/Book Swap
+#use unique value or text just for weapon *OR* book
 while not ingump 'Ice Storm' 2424293173
+    #Change this to 10 for book
     gumpresponse 5
     waitforgump 2424293173
 endwhile
+#Change this and next to 13 for book
 gumpresponse 8
 waitforgump 2424293173
 gumpresponse 8
 waitforgump 2424293173
 
-
- 
+gumpclose 
