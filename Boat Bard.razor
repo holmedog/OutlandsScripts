@@ -314,7 +314,15 @@ while not dead
             say "All Guard Me"
         endif   
     endif
-    
+    #Pain Spike
+    if skill "necromancy" > 80 
+        if findtype 'corpse' ground any any 10 as found
+            say '[painspike'
+            wft 2500
+            target found
+            wait 350
+        endif    
+    endif   
     #Repair Routine
     if timer "RepairHull" > 8000
         say '[RepairHull'

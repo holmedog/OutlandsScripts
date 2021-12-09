@@ -1,12 +1,5 @@
-        hotkey 'Next Grey Monster Target'
-        wait 355
-        if insysmsg 'No one matching that'       
-            hotkey 'Next Grey Humanoid Target'
-            wait 355
-        endif
-        if insysmsg 'No one matching that'
-            hotkey 'Cancel Current Target'
-            say '[embark'
-            wait 1000
-            say '[embarkfollowers'
-        endif
+if findtype 'corpse' ground any any 10 as found
+    say '[painspike'
+    wft 2500
+    target found
+endif    

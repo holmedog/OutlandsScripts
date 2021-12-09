@@ -1,5 +1,6 @@
+while skill 'necromancy' < 100
 cast 'Energy Vortex'
-waitfortarget
+waitfortarget 3555
 targettype 'backpack'
 wait 500
 cast 'Dispel'
@@ -20,4 +21,4 @@ endif
 if findtype 'storage shelf' ground any any 2 as found
     menu found 1
 endif
-loop
+endwhile
