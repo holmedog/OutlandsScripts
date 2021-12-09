@@ -1,0 +1,13 @@
+cast 'Energy Vortex'
+waitfortarget
+targettype 'backpack'
+wait 500
+cast 'Dispel'
+wft
+targettype 'an energy vortex'
+wait 500
+dclicktype 'mushroom'
+if findtype 'storage shelf' ground any any 2 as found
+    menu found 1
+endif
+loop

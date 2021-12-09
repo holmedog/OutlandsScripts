@@ -35,13 +35,34 @@ if not timerexists "bardLock" or not timerexists "spyGlassPeek" or not timerexis
     settimer 'spyGlassPeek' 15000
     createtimer 'buffTaste'
     settimer 'buffTaste' 15000
+    createtimer 'embarkCheck'
+    settimer 'embarkCheck' 15000
+    createtimer 'spiritSpeakCheck'
+    settimer 'spiritSpeakCheck' 15000
 endif
  
 endif
     
-#set up a last var so we dont spam disco after all dead 
+#set up a last var so we dont spam disco with one target left
 @setvar 'checkDead' self
 while not dead
+    #embar routine
+    if timer "embarkCheck" > 5000
+        hotkey 'Next Grey Monster Target'
+        wait 355
+        if insysmsg 'No one matching that'       
+            hotkey 'Next Grey Humanoid Target'
+            wait 355
+        endif
+        if insysmsg 'No one matching that'
+            hotkey 'Cancel Current Target'
+            say '[embark'
+            wait 355
+            say '[embarkfollowers'
+            wait 350
+        endif
+        settimer "embarkCheck" 0
+    endif
     #dont let this guy die
     if hp < 45 
         overhead 'Drinking heal!'
@@ -103,7 +124,8 @@ while not dead
         endif
         wait 2000
     endif
-    if skill "tracking" > 80 and timer "spyGlassPeek" > 20000 
+    if skill "tracking" > 80 and timer "spyGlassPeek" > 7000 
+        gumpclose
         gumpclose
         wait 250
         gumpclose
@@ -115,6 +137,12 @@ while not dead
         gumpresponse 4
         wait 350 
         settimer "spyGlassPeek" 0
+    endif
+    if skill "spirit speak" > 50 and timer "bardLock" > 10000 and timer "spiritSpeakCheck" > 10000
+        overhead "spirit speak"
+        skill "spirit speak" 
+        settimer "spiritSpeakCheck" 0
+        settimer "bardLock" 8000
     endif
     if skill "discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 300000
         overhead "Disco Buff"
@@ -174,9 +202,13 @@ while not dead
     
     #disco routine
     if  skill "discordance" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5150 
-        #acquire target
-        hotkey "Next Non-Friendly Target"
-        wait 250
+        #acquire target        
+        hotkey 'Next Grey Monster Target'
+        wait 355
+        if insysmsg 'No one matching that'       
+            hotkey 'Next Grey Humanoid Target'
+            wait 355
+        endif
         @setvar! 'lastserial' lasttarget
         
         if 'checkDead' = 'lastserial'
@@ -208,8 +240,12 @@ while not dead
     #poison routine if no disco
     if  skill "poisoning" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5150 
         #acquire target
-        hotkey "Next Non-Friendly Target"
-        wait 250
+        hotkey 'Next Grey Monster Target'
+        wait 355
+        if insysmsg 'No one matching that'       
+            hotkey 'Next Grey Humanoid Target'
+            wait 355
+        endif
         @setvar! 'lastserial' lasttarget
         
         if 'checkDead' = 'lastserial'
@@ -245,9 +281,29 @@ while not dead
         endif
     endif
     
+    #tamer attack routine
+    if  skill "animal taming" > 80 and timer "discoTimer" > 5150 
+        #acquire target
+        overhead "Attack Routine!" 23
+        hotkey "Next Non-Friendly Target"
+        wait 250
+        @setvar! 'lastserial' lasttarget
+        
+        if 'checkDead' = 'lastserial'
+            settimer "discoTimer" 0
+        elseif noto 'lastserial' = hostile
+            overhead "Attack Target!" 33
+            attack 'lastserial'
+            say "all guard me"
+            wait 350
+            @setvar 'checkDead' 'lastserial'
+            settimer "discoTimer" 0
+        endif
+    endif
+    
     #Follower Routine
     if skill "necromancy" > 80 or skill "spirit speak" > 80
-        if followers < 5
+        if followers < 4
             #Lost a fire elem, resummon
             if skill "necromancy" > 80
                 say "[VengefulSpirit"
@@ -256,7 +312,7 @@ while not dead
             cast 'Fire Elemental'
             wait 6000
             say "All Guard Me"
-        endif 
+        endif   
     endif
     
     #Repair Routine

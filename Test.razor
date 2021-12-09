@@ -1,31 +1,12 @@
-#Water - Change the "Ingump" string 
-# to what unique text for weapon/armour
-# change gumpresponse from 
-# 5=weapon to 10=book
-# and 8=weapon and 13=book
-
-gumpclose 2424293173
-say '[aspects'
-waitforgump 2424293173
-#use unique value or text just for armor
-while not ingump 'Effective Alchemy' 2424293173
-    gumpresponse 15
-    waitforgump 2424293173
-endwhile
-gumpresponse 17
-waitforgump 2424293173
-gumpresponse 17
-waitforgump 2424293173
-
-#use unique value or text just for armor
-while not ingump 'Ice Storm' 2424293173
-    gumpresponse 5
-    waitforgump 2424293173
-endwhile
-gumpresponse 8
-waitforgump 2424293173
-gumpresponse 8
-waitforgump 2424293173
-
-
- 
+        hotkey 'Next Grey Monster Target'
+        wait 355
+        if insysmsg 'No one matching that'       
+            hotkey 'Next Grey Humanoid Target'
+            wait 355
+        endif
+        if insysmsg 'No one matching that'
+            hotkey 'Cancel Current Target'
+            say '[embark'
+            wait 1000
+            say '[embarkfollowers'
+        endif
