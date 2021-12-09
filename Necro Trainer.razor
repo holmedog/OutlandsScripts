@@ -6,7 +6,17 @@ cast 'Dispel'
 wft
 targettype 'an energy vortex'
 wait 500
-dclicktype 'mushroom'
+
+#create shrooms
+while counttype 29012 backpack < 5
+     cast "create food"
+     wait 1000
+endwhile
+
+if mana < 70
+    dclicktype 29012
+endif
+
 if findtype 'storage shelf' ground any any 2 as found
     menu found 1
 endif
