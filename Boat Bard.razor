@@ -20,7 +20,7 @@ if not timerexists "bardLock" or not timerexists "spyGlassPeek" or not timerexis
     createtimer 'buffBeg'
     settimer 'buffBeg' 300000 
     createtimer 'bardLock'
-    settimer 'bardLock' 10000
+    settimer 'bardLock' 15000
     createtimer 'campLock'
     settimer 'campLock' 900000
     createtimer "aid time"
@@ -45,24 +45,10 @@ endif
     
 #set up a last var so we dont spam disco with one target left
 @setvar 'checkDead' self
+#Set boarded state - 1=boarded NPC 0=on our ship
+@setvar 'boardState' 0
+
 while not dead
-    #embar routine
-    if timer "embarkCheck" > 5000
-        hotkey 'Next Grey Monster Target'
-        wait 355
-        if insysmsg 'No one matching that'       
-            hotkey 'Next Grey Humanoid Target'
-            wait 355
-        endif
-        if insysmsg 'No one matching that'
-            hotkey 'Cancel Current Target'
-            say '[embark'
-            wait 355
-            say '[embarkfollowers'
-            wait 350
-        endif
-        settimer "embarkCheck" 0
-    endif
     #dont let this guy die
     if hp < 45 
         overhead 'Drinking heal!'
@@ -102,7 +88,29 @@ while not dead
             settimer 'aid time' 0
         endif
     endif
-
+    
+    if insysmsg "You board the ship"
+        @setvar 'boardState' 1
+    endif
+    
+    #embark routine - only runs if we are on NPC
+    if timer "embarkCheck" > 5000 and 'boardState' = 1
+        hotkey 'Next Grey Monster Target'
+        wait 355
+        if insysmsg 'No one matching that'       
+            hotkey 'Next Grey Humanoid Target'
+            wait 355
+        endif
+        if insysmsg 'No one matching that'
+            hotkey 'Cancel Current Target'
+            say '[embark'
+            wait 355
+            say '[embarkfollowers'
+            wait 350
+            @setvar 'boardState' 0
+        endif
+        settimer "embarkCheck" 0
+    endif
     #put in a pause so we dont spam
     wait 1000
     #camping buff
@@ -315,7 +323,7 @@ while not dead
         endif   
     endif
     #Pain Spike
-    if skill "necromancy" > 80 
+    if skill "necromancy" > 80 and 'boardState' = 1
         if findtype 'corpse' ground any any 10 as found
             say '[painspike'
             wft 2500

@@ -1,5 +1,9 @@
-if findtype 'corpse' ground any any 10 as found
-    say '[painspike'
-    wft 2500
-    target found
-endif    
+@setvar 'boardState' 0
+
+if 'boardState' = 0
+    overhead 'Yup'
+    @setvar 'boardState' 1
+endif
+if 'boardState' = 1
+    overhead 'YupYup'
+endif
