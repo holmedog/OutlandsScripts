@@ -50,7 +50,7 @@ endif
 
 while not dead
     #dont let this guy die
-    if hp < 45 
+    if hp < 55 
         overhead 'Drinking heal!'
         potion "heal"
         wait 200
@@ -63,7 +63,7 @@ while not dead
             target 'self'
             wait 666
         endif
-        if hp < 65
+        if hp < 75
             cast "greater heal"
             wft 3500
             target self
@@ -95,6 +95,7 @@ while not dead
     
     #embark routine - only runs if we are on NPC
     if timer "embarkCheck" > 5000 and 'boardState' = 1
+        clearsysmsg 
         hotkey 'Next Grey Monster Target'
         wait 355
         if insysmsg 'No one matching that'       
@@ -146,12 +147,12 @@ while not dead
         wait 350 
         settimer "spyGlassPeek" 0
     endif
-    if skill "spirit speak" > 50 and timer "bardLock" > 10000 and timer "spiritSpeakCheck" > 10000
-        overhead "spirit speak"
-        skill "spirit speak" 
-        settimer "spiritSpeakCheck" 0
-        settimer "bardLock" 8000
-    endif
+    #if skill "spirit speak" > 50 and timer "bardLock" > 10000 and timer "spiritSpeakCheck" > 10000
+    #    overhead "spirit speak"
+    #    skill "spirit speak" 
+    #    settimer "spiritSpeakCheck" 0
+    #    settimer "bardLock" 8000
+    #endif
     if skill "discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 300000
         overhead "Disco Buff"
         skill "discordance" 
@@ -273,14 +274,13 @@ while not dead
     #attack routine
     if  skill "tactics" > 80 and timer "discoTimer" > 5150 
         #acquire target
+        dress "bow"
         overhead "Attack Routine!" 23
         hotkey "Next Non-Friendly Target"
         wait 250
         @setvar! 'lastserial' lasttarget
         
-        if 'checkDead' = 'lastserial'
-            settimer "discoTimer" 0
-        elseif noto 'lastserial' = hostile
+        if noto 'lastserial' = hostile
             overhead "Attack Target!" 33
             attack 'lastserial'
             wait 350
@@ -326,6 +326,15 @@ while not dead
     if skill "necromancy" > 80 and 'boardState' = 1
         if findtype 'corpse' ground any any 10 as found
             say '[painspike'
+            wft 2500
+            target found
+            wait 350
+        endif    
+    endif
+    #Vamp 
+    if skill "necromancy" > 80 and 'boardState' = 0
+        if findtype 'corpse' ground any any 10 as found
+            say '[vampiricembrace'
             wft 2500
             target found
             wait 350

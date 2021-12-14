@@ -1,32 +1,19 @@
-
-if findtype 'hatch' ground any any 3 as 'lootbox'
-    dclick 'noidBag'
-endif
-if varexist noidBag
-    #var exists, make sure we can reach it
-    if find noidBag ground any any 2
-        overhead 'Packie Set Already, dumping'
-    else 
-        overhead 'Where did packie go!' 33
-        #We lost packie!  Retarget
-        sysmsg  'Target Packie'
-        overhead 'Target Dump'
-        setvar noidBag
-    endif
-else 
-    sysmsg  'Target Packie'
-    overhead 'Target Dump'
-    setvar noidBag
-endif
-
+overhead 'Target Vault' 33
+setvar vaultVar 
+overhead 'Target Dump Box' 23
+setvar dumpBox    
+    
 clearignore  
 createlist regTypes
 clearlist regTypes
+createlist goldTypes
+clearlist goldTypes
+@pushlist 'goldTypes' 'gold coin'
+@pushlist 'goldTypes' 'muffins'
 @pushlist 'regTypes' 'cooked fish'
 @pushlist 'regTypes' 'Crab SOUTH'
 @pushlist 'regTypes' 'Lobster SOUTH'
 @pushlist 'regTypes' 'raw fish steak%s%'
-@pushlist 'regTypes' 'muffins'
 @pushlist 'regTypes' 'Blood Moss'
 @pushlist 'regTypes' 'Black Pearl%s%'
 @pushlist 'regTypes' 'Ginseng'
@@ -37,12 +24,19 @@ clearlist regTypes
 @pushlist 'regTypes' 'Mandrake Root%s%' //MR
 @pushlist 'regTypes' 'cut%s% of raw ribs'
 @pushlist 'regTypes' 'cut up leather'
-@pushlist 'regTypes' 'gold coin'
 
-foreach x in regTypes
-  while findtype x backpack any any 1 as found
+foreach x in goldTypes
+  while findtype x ground any any 2 as found
     lift found 9999
-    drop noidBag -1 -1 0 
+    drop vaultVar -1 -1 0 
+    @ignore myVariable
+    wait 600
+  endwhile
+endfor
+foreach x in regTypes
+  while findtype x ground any any 2 as found
+    lift found 9999
+    drop dumpBox -1 -1 0 
     @ignore myVariable
     wait 600
   endwhile

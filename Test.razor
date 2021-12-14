@@ -1,9 +1,12 @@
-@setvar 'boardState' 0
+clearignore
 
-if 'boardState' = 0
-    overhead 'Yup'
-    @setvar 'boardState' 1
+if findtype '7956' backpack 0 1 any as found
+    overhead 'Found a regular rune'
+    ignore 'found'
 endif
-if 'boardState' = 1
-    overhead 'YupYup'
+
+if findtype '7956' backpack 2933 1 any as found
+    overhead 'Found a boat rune'
+    ignore 'found'
 endif
+  

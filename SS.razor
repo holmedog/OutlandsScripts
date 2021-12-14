@@ -2,9 +2,16 @@ hotkey 'Forensics'
 waitfortarget 1000
 hotkey 'Target Self'
 wait 700
-if skill 'Spirit Speak' > 1
+if skill 'Spirit Speak' > 60
     hotkey 'Spirit Speak'
     wait 350
 endif
-
+if skill "necromancy" > 80 
+    if findtype 'corpse' ground any any 4 as found
+        say '[vampiricembrace'
+        wft 2500
+        target found
+        wait 350
+    endif    
+endif   
 script "stayalive2"
