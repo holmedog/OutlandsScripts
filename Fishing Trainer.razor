@@ -16,19 +16,25 @@ if lhandempty
 endif
 
 while not dead     
+    if insysmsg "The world will save in 15 seconds"
+        wait 45000
+        overhead "World Save Pause"
+    endif
     if timer "fishy" > 8550
+        say "[greaterability"
         if lhandempty
             dress 'Fishing'
             wait 500
         endif
         hotkey 'Use item in hand'
         settimer "fishy" 0
+        wait 500
         organizer 20
         wait 350
         if insysmsg "did not find"
             while not dead 
-                say "CAPTCHA CAPTCHA CAPTCHA"
-                wait 350
+                say "Just relaxin on the waves"
+                wait 1500
             endwhile
         endif
     endif
