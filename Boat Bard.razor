@@ -111,7 +111,7 @@ while not dead
     #food buff routine
     if timer 'foodCheck' > 60000 and not findbuff 'food satisfaction'
         if not findtype tray backpack
-            party "I am out of food!"
+            say  "I am out of food!"
         else
             dclicktype tray backpack
         endif
@@ -141,7 +141,7 @@ while not dead
     #camping buff
     if skill "camping" > 50 and timer "campLock" > 900000 
         if not findtype "kindling" backpack
-            overhead "Need more kindling" 34
+            party "Need more kindling" 
             wait 355
         endif
     

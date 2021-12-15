@@ -1,7 +1,4 @@
-clearsysmsg
-while not insysmsg "You will receive"
-    hotkey 'Tracking'
-    wait 500
-    gumpresponse 6
-    wait 550
-endwhile    
+setvar 'weight' weight
+if 'weight' < weight
+    overhead 'We got fat'
+endif

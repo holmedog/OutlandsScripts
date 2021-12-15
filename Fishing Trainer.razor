@@ -1,19 +1,21 @@
 clearsysmsg 
 if not timerexists "fishy"
     createtimer "fishy"
-    settimer "fishy" 61000
+    settimer "fishy" 99999
 endif
+
+overhead "Target organizer 20 hotbag"
+organizer 20 set 
+while not insysmsg "Container set successfully"
+    wait 250
+endwhile
 
 if lhandempty
     dress 'Fishing'
     wait 500
 endif
 
-hotkey 'Use item in hand'
-settimer "fishy" 0
-
-while not dead 
-    
+while not dead     
     if timer "fishy" > 8550
         if lhandempty
             dress 'Fishing'
@@ -21,5 +23,13 @@ while not dead
         endif
         hotkey 'Use item in hand'
         settimer "fishy" 0
+        organizer 20
+        wait 350
+        if insysmsg "did not find"
+            while not dead 
+                say "CAPTCHA CAPTCHA CAPTCHA"
+                wait 350
+            endwhile
+        endif
     endif
 endwhile
