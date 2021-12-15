@@ -2,7 +2,7 @@
 @setvar 'captainGuy' 0x348287
 
 clearsysmsg 
-if not timerexists "bardLock" or not timerexists "spyGlassPeek" or not timerexists "buffTaste"
+if not timerexists 'foodCheck' or not timerexists "bardLock" or not timerexists "spyGlassPeek" or not timerexists "buffTaste"
     createtimer 'discoTimer'
     settimer 'discoTimer' 5000
     createtimer 'repairBoat'
@@ -39,6 +39,8 @@ if not timerexists "bardLock" or not timerexists "spyGlassPeek" or not timerexis
     settimer 'embarkCheck' 15000
     createtimer 'spiritSpeakCheck'
     settimer 'spiritSpeakCheck' 15000
+    createtimer 'foodCheck'
+    settimer 'foodCheck' 120000
 endif
  
 endif
@@ -47,6 +49,8 @@ endif
 @setvar 'checkDead' self
 #Set boarded state - 1=boarded NPC 0=on our ship
 @setvar 'boardState' 0
+#Set up tracking sate 1=tracking 0=not
+@setvar 'trackState' 0
 
 while not dead
     #dont let this guy die
@@ -93,6 +97,26 @@ while not dead
         @setvar 'boardState' 1
     endif
     
+    #Tracking Routine 
+    if skill 'Tracking' > 80 and 'trackState' = 0
+        clearsysmsg
+        while not insysmsg "You will receive"
+            hotkey 'Tracking'
+            wait 500
+            gumpresponse 6
+            wait 550
+        endwhile    
+        @setvar 'trackState' 1
+    endif
+    #food buff routine
+    if timer 'foodCheck' > 60000 and not findbuff 'food satisfaction'
+        if not findtype tray backpack
+            party "I am out of food!"
+        else
+            dclicktype tray backpack
+        endif
+        settimer 'foodCheck' 0
+    endif
     #embark routine - only runs if we are on NPC
     if timer "embarkCheck" > 5000 and 'boardState' = 1
         clearsysmsg 
@@ -273,6 +297,9 @@ while not dead
     
     #attack routine
     if  skill "tactics" > 80 and timer "discoTimer" > 5150 
+        if not warmode
+            warmode on
+        endif
         #acquire target
         dress "bow"
         overhead "Attack Routine!" 23

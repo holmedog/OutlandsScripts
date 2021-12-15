@@ -1,12 +1,7 @@
-clearignore
-
-if findtype '7956' backpack 0 1 any as found
-    overhead 'Found a regular rune'
-    ignore 'found'
-endif
-
-if findtype '7956' backpack 2933 1 any as found
-    overhead 'Found a boat rune'
-    ignore 'found'
-endif
-  
+clearsysmsg
+while not insysmsg "You will receive"
+    hotkey 'Tracking'
+    wait 500
+    gumpresponse 6
+    wait 550
+endwhile    

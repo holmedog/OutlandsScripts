@@ -13,12 +13,12 @@ hotkey 'Use item in hand'
 settimer "fishy" 0
 
 while not dead 
-    if lhandempty
-        dress 'Fishing'
-        wait 500
-    endif
     
     if timer "fishy" > 8550
+        if lhandempty
+            dress 'Fishing'
+            wait 500
+        endif
         hotkey 'Use item in hand'
         settimer "fishy" 0
     endif
