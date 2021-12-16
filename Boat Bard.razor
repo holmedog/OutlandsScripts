@@ -264,6 +264,14 @@ while not dead
                 target 'lastserial'
                 wait 350
             endif
+			if skill 'tactics' > 80
+				#attack routine				
+				if not warmode
+					warmode on
+				endif				
+				overhead "Attack Target!" 33
+				attack 'lastserial'
+			endif
             @setvar 'checkDead' 'lastserial'
             settimer "discoTimer" 0
             settimer "bardLock" 5000
@@ -296,7 +304,7 @@ while not dead
     endif
     
     #attack routine
-    if  skill "tactics" > 80 and timer "discoTimer" > 5150 
+    if  skill "tactics" > 80 and timer "discoTimer" > 5150 and skill 'discordance' <= 50
         if not warmode
             warmode on
         endif
