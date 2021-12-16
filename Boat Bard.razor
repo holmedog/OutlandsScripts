@@ -1,5 +1,7 @@
-#Update this var to your captain
+#Part of the attack routine is to call a Razor Dress routine named "bow".  If you do not have that it will not stop the script but it is a good idea to have one in case you unequip weapon
+#Update this var to your captain - not the char running the bot but the char you control.  If you do not we will consume a bless for no reason
 @setvar 'captainGuy' 0x348287
+
 
 clearsysmsg 
 if not timerexists 'foodCheck' or not timerexists "bardLock" or not timerexists "spyGlassPeek" or not timerexists "buffTaste"
@@ -35,12 +37,16 @@ if not timerexists 'foodCheck' or not timerexists "bardLock" or not timerexists 
     settimer 'spyGlassPeek' 15000
     createtimer 'buffTaste'
     settimer 'buffTaste' 15000
-    createtimer 'embarkCheck'
-    settimer 'embarkCheck' 15000
+    createtimer 'newTargetCheck'
+    settimer 'newTargetCheck' 15000
     createtimer 'spiritSpeakCheck'
     settimer 'spiritSpeakCheck' 15000
     createtimer 'foodCheck'
     settimer 'foodCheck' 120000
+    createtimer 'crookCheck'
+    settimer 'crookCheck' 120000
+    createtimer 'crewHealing'
+    settimer 'crewHealing' 120000
 endif
  
 endif
@@ -52,13 +58,35 @@ endif
 #Set up tracking sate 1=tracking 0=not
 @setvar 'trackState' 0
 
+#open hotbars
+say "[shiphotbars"
+
 while not dead
-    #dont let this guy die
+    #put in a pause so we dont spam
+    wait 500    
+    
+    
+    ###############                                             ###############
+    ###############Start routines that keep us alive or set vars###############
+    ###############                                             ###############   
+    
+    #make sure a cursor does not exist from before
+    if targetexists
+        hotkey "Cancel Current Target"
+        wait 350
+    endif
+    #Check if we are on NPC ship
+    if insysmsg "You board the ship"
+        @setvar 'boardState' 1
+    endif
+    
+    #dont let this guy die routine
     if hp < 55 
         overhead 'Drinking heal!'
         potion "heal"
         wait 200
     endif
+    #Magery Survival
     if skill "Magery" > 50
         #we cast arch here bc it probably hit whole crew
         if poisoned 'self'
@@ -81,67 +109,107 @@ while not dead
             settimer "shroomy" 0
         endif
     endif
-
-    # Healing Survival
+    # Bandage Survival
     if skill 'Healing' > 50
         if insysmsg 'You begin applying the bandages'
             settimer 'aid time' 0
         endif
-        if hits < maxhits and timer 'aid time' > 10250 
+        if hits < 90 and timer 'aid time' > 10250 
             hotkey 'bandage self'
             settimer 'aid time' 0
         endif
+        if insysmsg 'You begin applying the bandages'
+            settimer 'aid time' 0
+        endif
+    endif
+    #Crew Healing
+    if skill 'healing' > 50 and hits >= 90
+        if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            gumpresponse 20 1722920179
+            wait 250 
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 5000
+                settimer 'crewHealing' 0
+            endif
+        endif
+        if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            gumpresponse 21 1722920179
+            wait 250 
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 5000
+                settimer 'crewHealing' 0
+            endif
+        endif
+        if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            gumpresponse 22 1722920179
+            wait 250 
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 5000
+                settimer 'crewHealing' 0
+            endif
+        endif
+        if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            gumpresponse 23 1722920179
+            wait 250 
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 5000
+                settimer 'crewHealing' 0
+            endif
+        endif
+        if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            gumpresponse 24 1722920179
+            wait 250 
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 5000
+                settimer 'crewHealing' 0
+            endif
+        endif
+        if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            gumpresponse 25 1722920179
+            wait 250 
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 5000
+                settimer 'crewHealing' 0
+            endif
+        endif  
     endif
     
-    if insysmsg "You board the ship"
-        @setvar 'boardState' 1
-    endif
-    
-    #Tracking Routine 
+    ###############                                           ###############
+    ###############Start routines that do not require a target###############
+    ###############                                           ###############
+    #Tracking Routine - Turn it on if we have not yet
     if skill 'Tracking' > 80 and 'trackState' = 0
-        clearsysmsg
         while not insysmsg "You will receive"
             hotkey 'Tracking'
             wait 500
-            gumpresponse 6
+            gumpresponse 6 4267467659
             wait 550
         endwhile    
         @setvar 'trackState' 1
     endif
+    
     #food buff routine
     if timer 'foodCheck' > 60000 and not findbuff 'food satisfaction'
         if not findtype tray backpack
             say  "I am out of food!"
+            wait 500
+            say  "I am out of food!"
+            wait 500
+            say  "I am out of food!"
+            wait 500
         else
             dclicktype tray backpack
         endif
         settimer 'foodCheck' 0
     endif
-    #embark routine - only runs if we are on NPC
-    if timer "embarkCheck" > 5000 and 'boardState' = 1
-        clearsysmsg 
-        hotkey 'Next Grey Monster Target'
-        wait 355
-        if insysmsg 'No one matching that'       
-            hotkey 'Next Grey Humanoid Target'
-            wait 355
-        endif
-        if insysmsg 'No one matching that'
-            hotkey 'Cancel Current Target'
-            say '[embark'
-            wait 355
-            say '[embarkfollowers'
-            wait 350
-            @setvar 'boardState' 0
-        endif
-        settimer "embarkCheck" 0
-    endif
-    #put in a pause so we dont spam
-    wait 1000
     #camping buff
     if skill "camping" > 50 and timer "campLock" > 900000 
         if not findtype "kindling" backpack
-            party "Need more kindling" 
+            say "Need more kindling" 
+            wait 355
+            say "Need more kindling" 
+            wait 355
+            say "Need more kindling" 
             wait 355
         endif
     
@@ -157,26 +225,29 @@ while not dead
         endif
         wait 2000
     endif
+    #spyglass routine
     if skill "tracking" > 80 and timer "spyGlassPeek" > 7000 
-        gumpclose
-        gumpclose
+        gumpclose 2890020940
         wait 250
-        gumpclose
+        gumpclose 2890020940
         wait 250
         dclicktype 'spyglass'
         waitfortarget 1200
         target 'self'
         wait 350 
-        gumpresponse 4
+        gumpresponse 4 2890020940
         wait 350 
         settimer "spyGlassPeek" 0
     endif
-    #if skill "spirit speak" > 50 and timer "bardLock" > 10000 and timer "spiritSpeakCheck" > 10000
-    #    overhead "spirit speak"
-    #    skill "spirit speak" 
-    #    settimer "spiritSpeakCheck" 0
-    #    settimer "bardLock" 8000
-    #endif
+    #spirit speak only if on own boat and corpses present
+    if skill "spirit speak" > 50 and timer "bardLock" > 10000 and timer "spiritSpeakCheck" > 30000 and 'boardState' = 0
+        if findtype 'corpse' ground any any 12 as found
+            overhead "spirit speak"
+            skill "spirit speak" 
+            settimer "spiritSpeakCheck" 0
+            settimer "bardLock" 8000
+        endif
+    endif
     if skill "discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 300000
         overhead "Disco Buff"
         skill "discordance" 
@@ -231,127 +302,11 @@ while not dead
         settimer "buffTaste" 0
         settimer "bardLock" 5000
     endif
-    
-    
-    #disco routine
-    if  skill "discordance" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5150 
-        #acquire target        
-        hotkey 'Next Grey Monster Target'
-        wait 355
-        if insysmsg 'No one matching that'       
-            hotkey 'Next Grey Humanoid Target'
-            wait 355
-        endif
-        @setvar! 'lastserial' lasttarget
-        
-        if 'checkDead' = 'lastserial'
-            settimer "discoTimer" 0
-        elseif noto 'lastserial' = hostile
-            overhead "Disco Target!" 33
-            skill "discordance" 
-            wft 2500
-            target 'lastserial'
-            wait 350
-            if skill 'poisoning' > 50
-                cast "Poison"
-                wft 1500
-                target 'lastserial'
-                wait 350
-            endif
-            if skill 'spirit speak' > 80
-                say "All Kill"
-                wft 1500
-                target 'lastserial'
-                wait 350
-            endif
-			if skill 'tactics' > 80
-				#attack routine				
-				if not warmode
-					warmode on
-				endif				
-				overhead "Attack Target!" 33
-				attack 'lastserial'
-			endif
-            @setvar 'checkDead' 'lastserial'
-            settimer "discoTimer" 0
-            settimer "bardLock" 5000
-        endif
-    endif
-    
-    #poison routine if no disco
-    if  skill "poisoning" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5150 
-        #acquire target
-        hotkey 'Next Grey Monster Target'
-        wait 355
-        if insysmsg 'No one matching that'       
-            hotkey 'Next Grey Humanoid Target'
-            wait 355
-        endif
-        @setvar! 'lastserial' lasttarget
-        
-        if 'checkDead' = 'lastserial'
-            settimer "discoTimer" 0
-        elseif noto 'lastserial' = hostile
-            overhead "Disco Target!" 33
-            cast "Poison"
-            wft 1500
-            target 'lastserial'
-            wait 350
-            @setvar 'checkDead' 'lastserial'
-            settimer "discoTimer" 0
-            settimer "bardLock" 5000
-        endif
-    endif
-    
-    #attack routine
-    if  skill "tactics" > 80 and timer "discoTimer" > 5150 and skill 'discordance' <= 50
-        if not warmode
-            warmode on
-        endif
-        #acquire target
-        dress "bow"
-        overhead "Attack Routine!" 23
-        hotkey "Next Non-Friendly Target"
-        wait 250
-        @setvar! 'lastserial' lasttarget
-        
-        if noto 'lastserial' = hostile
-            overhead "Attack Target!" 33
-            attack 'lastserial'
-            wait 350
-            @setvar 'checkDead' 'lastserial'
-            settimer "discoTimer" 0
-        endif
-    endif
-    
-    #tamer attack routine
-    if  skill "animal taming" > 80 and timer "discoTimer" > 5150 
-        #acquire target        
-        hotkey 'Next Grey Monster Target'
-        wait 355
-        if insysmsg 'No one matching that'       
-            hotkey 'Next Grey Humanoid Target'
-            wait 355
-        endif
-        @setvar! 'lastserial' lasttarget
-        
-        if 'checkDead' = 'lastserial'
-            settimer "discoTimer" 0
-        elseif noto 'lastserial' = hostile
-            overhead "Attack Target!" 33
-            attack 'lastserial'
-            say "all guard me"
-            wait 350
-            @setvar 'checkDead' 'lastserial'
-            settimer "discoTimer" 0
-        endif
-    endif
-    
     #Follower Routine
-    if skill "necromancy" > 80 or skill "spirit speak" > 80
+    if skill "Necromancy" > 80 or skill "spirit speak" > 80
         if followers < 4
             #Lost a fire elem, resummon
-            if skill "necromancy" > 80
+            if skill "Necromancy" > 80
                 say "[VengefulSpirit"
                 wait 1000
             endif
@@ -360,38 +315,125 @@ while not dead
             say "All Guard Me"
         endif   
     endif
-    #Pain Spike
-    if skill "necromancy" > 80 and 'boardState' = 1
-        if findtype 'corpse' ground any any 10 as found
-            say '[painspike'
-            wft 2500
-            target found
-            wait 350
-        endif    
-    endif
-    #Vamp 
-    if skill "necromancy" > 80 and 'boardState' = 0
-        if findtype 'corpse' ground any any 10 as found
-            say '[vampiricembrace'
-            wft 2500
-            target found
-            wait 350
-        endif    
+    #Necro Abilities
+    if skill "Necromancy" > 80 
+        #painspike
+        if 'boardState' = 1
+            if findtype 'corpse' ground any any 10 as found
+                say '[painspike'
+                wft 2500
+                target found
+                wait 350
+            endif  
+        #Vamp 
+        elseif 'boardState' = 0
+            if findtype 'corpse' ground any any 10 as found
+                say '[vampiricembrace'
+                wft 2500
+                target found
+                wait 350
+            endif    
+        endif
     endif   
-    #Repair Routine
+    #Repair Routine - we stagger these slightly so it is a bit random which one occurs next
     if timer "RepairHull" > 8000
         say '[RepairHull'
         wait 350
         settimer "RepairHull" 0
     endif    
-    if timer "RepairSails" > 8000
+    if timer "RepairSails" > 8100
         say '[RepairSails'
         wait 350
         settimer "RepairSails" 0
     endif    
-    if timer "RepairGuns" > 8000
+    if timer "RepairGuns" > 8200
         say '[RepairGuns'
         wait 350
         settimer "RepairGuns" 0
-    endif    
+    endif 
+    
+    
+    
+    ###############                                           ###############
+    ###############Start routines that do not require a target###############
+    ###############                                           ###############
+    
+
+    if timer "newTargetCheck" > 5000
+        hotkey 'Next Grey Monster Target'
+        wait 355
+        if insysmsg 'No one matching that'       
+            hotkey 'Next Grey Humanoid Target'
+            wait 355
+        endif
+        settimer "newTargetCheck" 0
+        @setvar 'lastserial' lasttarget
+        #embark routine - only runs if we are on NPC
+        if insysmsg 'No one matching that' and 'boardState' = 1
+            hotkey 'Cancel Current Target'
+            say '[embark'
+            wait 355
+            say '[embarkfollowers'
+            wait 350
+            @setvar 'boardState' 0
+        elseif 'checkDead' = 'lastserial'
+            #Stop using skills here - set their timers to 0         
+            settimer "discoTimer" 0
+        elseif noto 'lastserial' = hostile
+            #Set serial up for last attacked for later use          
+            @setvar 'checkDead' 'lastserial'     
+            ###############                                                 ###############
+            ###############Start routines that need targets that are hostile###############
+            ###############                                                 ############### 
+            
+            
+            #herding
+            if skill 'herding' > 50 and timer "bardLock" > 2000 and timer "crookCheck" > 2000
+                #use a crook
+                dclicktype 3713
+                wft 3000
+                target 'lastserial'
+                settimer "crookCheck" 0
+                settimer "bardLock" 5000
+            endif
+            #disco routine
+            if  skill "discordance" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5050  
+                    overhead "Disco Target!" 33
+                    skill "discordance" 
+                    wft 2500
+                    target 'lastserial'
+                    settimer "discoTimer" 0
+                    settimer "bardLock" 5000
+            endif
+            #pet attack routine
+            if followers > 1
+                overhead 'Pet attack routine'
+                #We tell to guard first in case they are out of range and then do all kill
+                say "All guard me"
+                wait 500
+                say "All Kill"
+                wft 1500
+                target 'lastserial'
+            endif                   
+            if skill 'tactics' > 80 or skill 'archery' > 80  or skill 'fishing' > 80 
+                #attack routine     
+                dress "bow"     
+                if not warmode
+                    warmode on
+                endif               
+                overhead "Attack Target!" 33
+                attack 'lastserial'
+            endif           
+            #poison routine 
+            if  skill "poisoning" > 50 
+                overhead "Poison Target!" 33
+                cast "Poison"
+                wft 1500
+                target 'lastserial'
+                wait 400
+            endif
+            wait 350            
+        #End routines that need hostile targets
+        endif       
+    endif
 endwhile   
