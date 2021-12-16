@@ -2,6 +2,26 @@ if not timerexists chivgate_bot
     createtimer chivgate_bot
     settimer chivgate_bot 31000
 endif
+if not timerexists spamChat
+    createtimer spamChat
+    settimer spamChat 31000
+endif
+#make sure a cursor does not exist from before
+if targetexists
+    hotkey "Cancel Current Target"
+    wait 350
+endif
+
+if timer "spamChat" > 4000
+    wait 500
+    say "#Lantern = Towns"
+    wait 500
+    say "#Torch = Dungeons"
+    wait 500
+    say "#Candle = Shrines"
+    wait 500
+    settimer "spamChat" 0
+endif
 
 if findtype 2594 ground any any 2
     if timer chivgate_bot >= 31000
@@ -12,8 +32,11 @@ if findtype 2594 ground any any 2
         wait 200
         dclicktype '2594' ground any any 2
         settimer chivgate_bot 0
+        say "Enjoy your shopping trip!"
+        wait 3000
     else 
         say "Recharging..." 
+        dclicktype '2594' ground any any 2
     endif
 endif
 wait 200
@@ -27,8 +50,11 @@ if findtype 2578 ground any any 2
         wait 200
         dclicktype '2578' ground any any 2
         settimer chivgate_bot 0
+        say "Kill some for me!"
+        wait 3000
     else 
         say "Recharging..." 
+        dclicktype '2578' ground any any 2
     endif
 endif
 wait 200
@@ -42,9 +68,12 @@ if findtype 2575 ground any any 2
         wait 200
         dclicktype '2575' ground any any 2
         settimer chivgate_bot 0
+        say "Watch for reds!"
+        wait 3000
     else 
         say "Recharging..." 
+        dclicktype '2575' ground any any 2
     endif
 endif
-wait 5000
+wait 500
 loop
