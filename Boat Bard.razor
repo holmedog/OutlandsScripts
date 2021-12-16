@@ -318,10 +318,13 @@ while not dead
     
     #tamer attack routine
     if  skill "animal taming" > 80 and timer "discoTimer" > 5150 
-        #acquire target
-        overhead "Attack Routine!" 23
-        hotkey "Next Non-Friendly Target"
-        wait 250
+        #acquire target        
+        hotkey 'Next Grey Monster Target'
+        wait 355
+        if insysmsg 'No one matching that'       
+            hotkey 'Next Grey Humanoid Target'
+            wait 355
+        endif
         @setvar! 'lastserial' lasttarget
         
         if 'checkDead' = 'lastserial'
