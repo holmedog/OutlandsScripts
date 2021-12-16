@@ -1,0 +1,50 @@
+if not timerexists chivgate_bot
+    createtimer chivgate_bot
+    settimer chivgate_bot 31000
+endif
+
+if findtype 2594 ground any any 2
+    if timer chivgate_bot >= 31000
+        say "Cities..." 88
+        say '[SacredJourney'
+        waitforgump 1482653814
+        gumpresponse 1
+        wait 200
+        dclicktype '2594' ground any any 2
+        settimer chivgate_bot 0
+    else 
+        say "Recharging..." 
+    endif
+endif
+wait 200
+
+if findtype 2578 ground any any 2
+    if timer chivgate_bot >= 31000
+        say "Dungeons..." 88
+        say '[SacredJourney'
+        waitforgump 1482653814
+        gumpresponse 2
+        wait 200
+        dclicktype '2578' ground any any 2
+        settimer chivgate_bot 0
+    else 
+        say "Recharging..." 
+    endif
+endif
+wait 200
+
+if findtype 2575 ground any any 2
+    if timer chivgate_bot >= 31000
+        say "Shrines..." 88
+        say '[SacredJourney'
+        waitforgump 1482653814
+        gumpresponse 3
+        wait 200
+        dclicktype '2575' ground any any 2
+        settimer chivgate_bot 0
+    else 
+        say "Recharging..." 
+    endif
+endif
+wait 5000
+loop
