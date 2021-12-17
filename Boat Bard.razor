@@ -57,6 +57,8 @@ endif
 @setvar 'boardState' 0
 #Set up tracking sate 1=tracking 0=not
 @setvar 'trackState' 0
+#set up var to check if we have enemies in range
+@setvar 'closeEnemy' 0
 
 #open hotbars
 say "[shiphotbars"
@@ -172,6 +174,10 @@ while not dead
                 settimer 'crewHealing' 0
             endif
         endif  
+        #We checked all - pause for spam
+        if timer 'crewHealing' > 5050
+            settimer 'crewHealing' 1000
+        endif
     endif
     
     ###############                                           ###############
@@ -248,7 +254,7 @@ while not dead
             settimer "bardLock" 8000
         endif
     endif
-    if skill "discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 300000
+    if skill "discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 150000
         overhead "Disco Buff"
         skill "discordance" 
         wft 2500
@@ -262,7 +268,7 @@ while not dead
         settimer "buffBeg" 0
         settimer "bardLock" 5000
     endif
-    if skill "provocation" > 50 and timer "bardLock" > 10000 and timer "buffProvo" > 300000
+    if skill "provocation" > 50 and timer "bardLock" > 10000 and timer "buffProvo" > 150000
         overhead "Provo Buff"
         skill "provocation" 
         wft 2500
@@ -270,7 +276,7 @@ while not dead
         settimer "buffProvo" 0
         settimer "bardLock" 0
     endif
-    if skill "peacemaking" > 50 and timer "bardLock" > 10000 and timer "buffPeace" > 300000
+    if skill "peacemaking" > 50 and timer "bardLock" > 10000 and timer "buffPeace" > 150000
         overhead "Peace Buff"
         skill "peacemaking" 
         wft 2500
@@ -278,7 +284,7 @@ while not dead
         settimer "buffPeace" 0
         settimer "bardLock" 0
     endif
-    if skill "magery" > 50 and timer "bardLock" > 10000 and timer "buffMage" > 280000
+    if skill "magery" > 50 and timer "bardLock" > 10000 and timer "buffMage" > 200000
         overhead "Mage Buff"
         cast 'Bless'
         waitfortarget 2500
@@ -336,28 +342,27 @@ while not dead
         endif
     endif   
     #Repair Routine - we stagger these slightly so it is a bit random which one occurs next
-    if timer "RepairHull" > 8000
-        say '[RepairHull'
-        wait 350
-        settimer "RepairHull" 0
+    if 'closeEnemy' = 0
+        if timer "RepairHull" > 8000
+            say '[RepairHull'
+            wait 350
+            settimer "RepairHull" 0
+        endif    
+        if timer "RepairSails" > 8100
+            say '[RepairSails'
+            wait 350
+            settimer "RepairSails" 0
+        endif    
+        if timer "RepairGuns" > 8200
+            say '[RepairGuns'
+            wait 350
+            settimer "RepairGuns" 0
+        endif 
     endif    
-    if timer "RepairSails" > 8100
-        say '[RepairSails'
-        wait 350
-        settimer "RepairSails" 0
-    endif    
-    if timer "RepairGuns" > 8200
-        say '[RepairGuns'
-        wait 350
-        settimer "RepairGuns" 0
-    endif 
     
-    
-    
-    ###############                                           ###############
-    ###############Start routines that do not require a target###############
-    ###############                                           ###############
-    
+    ###############                                     ###############
+    ###############Start routines that  require a target###############
+    ###############                                     ###############   
 
     if timer "newTargetCheck" > 5000
         hotkey 'Next Grey Monster Target'
@@ -369,28 +374,35 @@ while not dead
         settimer "newTargetCheck" 0
         @setvar 'lastserial' lasttarget
         #embark routine - only runs if we are on NPC
-        if insysmsg 'No one matching that' and 'boardState' = 1
-            hotkey 'Cancel Current Target'
-            say '[embark'
-            wait 355
-            say '[embarkfollowers'
-            wait 350
-            @setvar 'boardState' 0
+        if insysmsg 'No one matching that' 
+            if 'boardState' = 1
+                hotkey 'Cancel Current Target'
+                say '[embark'
+                wait 355
+                say '[embarkfollowers'
+                wait 350
+                @setvar 'boardState' 0
+            endif
+            @setvar 'closeEnemy' 0
         elseif 'checkDead' = 'lastserial'
             #Stop using skills here - set their timers to 0         
             settimer "discoTimer" 0
+            #settimer "crookCheck" 0
         elseif noto 'lastserial' = hostile
+            #set enemy close flag
+            @setvar 'closeEnemy' 1
+            
             #Set serial up for last attacked for later use          
-            @setvar 'checkDead' 'lastserial'     
+            @setvar 'checkDead' 'lastserial'  
+            
             ###############                                                 ###############
             ###############Start routines that need targets that are hostile###############
-            ###############                                                 ############### 
-            
+            ###############                                                 ###############             
             
             #herding
             if skill 'herding' > 50 and timer "bardLock" > 2000 and timer "crookCheck" > 2000
                 #use a crook
-                dclicktype 3713
+                dclicktype 3713 
                 wft 3000
                 target 'lastserial'
                 settimer "crookCheck" 0
@@ -432,8 +444,22 @@ while not dead
                 target 'lastserial'
                 wait 400
             endif
-            wait 350            
+			#Magery routine because why not.  
+			#Does not cast if less than 35 SS or SA on hand and over 70 mana
+			#Does not cast unless boarded
+			if counttype "Spider's Silk" > 35 and counttype "Sulfurous Ash" > 35 and 'boardState' = 1 and mana >= 70
+                overhead "FS!" 33
+                cast "Flamestrike"
+                wft 3500
+                target 'lastserial'
+				say 'So anyway...I started blasin' 55
+                wait 400
+			endif
+			
+			#Final Pause
+            wait 350      
         #End routines that need hostile targets
         endif       
+    #closes new target check
     endif
 endwhile   
