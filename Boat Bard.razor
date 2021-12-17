@@ -447,13 +447,15 @@ while not dead
 			#Magery routine because why not.  
 			#Does not cast if less than 35 SS or SA on hand and over 70 mana
 			#Does not cast unless boarded
-			if counttype "Spider's Silk" > 35 and counttype "Sulfurous Ash" > 35 and 'boardState' = 1 and mana >= 70
-                overhead "FS!" 33
-                cast "Flamestrike"
-                wft 3500
-                target 'lastserial'
-				say 'So anyway...I started blasin' 55
-                wait 400
+			if skill 'Magery' > 80
+				if counttype "Spider's Silk" > 35 and counttype "Sulfurous Ash" > 35 and 'boardState' = 1 and mana >= 70
+					overhead "FS!" 33
+					cast "Flamestrike"
+					wft 3500
+					target 'lastserial'
+					say 'So anyway...I started blasin' 55
+					wait 400
+				endif
 			endif
 			
 			#Final Pause
