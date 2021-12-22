@@ -69,49 +69,7 @@ while not dead
         endif
     endif
 
-    # Magery Survival
-    if skill 'Magery' > 1
-        # Spell interrupt warnings, pause to give a chance to run away
-        if insysmsg 'concentration is disturbed'
-            overhead 'Interrupted cast! Waiting 2 second' 33
-            wait 2000
-        endif
-
-        # Mana warnings
-        if mana < 40 and timer 'low mana' > 3000
-            overhead 'Low Mana' 88
-            settimer 'low mana' 0
-        elseif mana < 20  and timer 'low mana' > 3000
-            overhead 'OOM' 33
-            settimer 'low mana' 0
-        endif
-
-        # If hurt, attempt to heal
-        if hits < maxhits and timer 'magery heal' > 2000
-            # If casting something already, wait before attempting to heal.
-            if insysmsg 'already casting' or insysmsg 'frozen and cannot move'
-                overhead 'Already casting! Waiting 2 second' 33
-                wait 2000
-            endif
-
-            # If under 35 HP and we cant heal pot, quick heal and reset heal timer
-            # Interrupt and clearall targets before attempting to self-cast to avoid harming self
-            if hits < 35 and timer 'healpot time' < 10000 and timer 'anti pot spam' < 1000
-                interrupt
-                clearall
-                hotkey '> Mini-Heal/Cure Self'
-                settimer 'magery heal' 3001
-            elseif hits < maxhits and timer 'magery heal' > 2000
-                # Otherwise just use greater heal to heal up. 
-                interrupt
-                clearall
-                hotkey '> Greater Heal/Cure Self'
-                settimer 'magery heal' 0
-            endif
-        endif
-    endif
-
-    # Cure Survival
+   # Cure Survival
     if poisoned 'self' and timer 'anti pot spam' > 1000
         overhead 'Used: Cure Potion' 33
         hotkey 'Drink Cure' 
@@ -119,7 +77,7 @@ while not dead
     endif
 
     # Heal Potion
-    if hits < 35 and timer 'healpot time' > 10000 and timer 'anti pot spam' > 1000
+    if hits < 55 and timer 'healpot time' > 10000 and timer 'anti pot spam' > 1000
         overhead 'Used: Heal Potion' 33
         hotkey 'Drink Heal'
         settimer 'healpot time' 0
