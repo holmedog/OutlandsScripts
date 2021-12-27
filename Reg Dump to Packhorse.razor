@@ -1,17 +1,9 @@
-
-if findtype 'hatch' ground any any 3 as 'lootbox'
-    dclick 'noidBag'
-endif
 if varexist noidBag
-    #var exists, make sure we can reach it
-    if find noidBag ground any any 2
-        overhead 'Packie Set Already, dumping'
+   if find 'noidBag'
+        overhead "Dump set, dumping"
     else 
-        overhead 'Where did packie go!' 33
-        #We lost packie!  Retarget
-        sysmsg  'Target Packie'
-        overhead 'Target Dump'
-        setvar noidBag
+        overhead 'Lost dump container, retarget' 33
+        @setvar! noidBag
     endif
 else 
     sysmsg  'Target Packie'

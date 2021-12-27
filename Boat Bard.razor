@@ -1,6 +1,6 @@
 #Part of the attack routine is to call a Razor Dress routine named "bow".  If you do not have that it will not stop the script but it is a good idea to have one in case you unequip weapon
 #Update this var to your captain - not the char running the bot but the char you control.  If you do not we will consume a bless for no reason
-@setvar 'captainGuy' 0x348287
+@setvar 'captainGuy' 0x15C5E
 
 
 clearsysmsg 
@@ -23,8 +23,6 @@ if not timerexists 'foodCheck' or not timerexists "bardLock" or not timerexists 
     settimer 'buffBeg' 300000 
     createtimer 'bardLock'
     settimer 'bardLock' 15000
-    createtimer 'campLock'
-    settimer 'campLock' 900000
     createtimer "aid time"
     settimer "aid time" 8000
     createtimer 'RepairHull'
@@ -97,7 +95,7 @@ while not dead
             target 'self'
             wait 666
         endif
-        if hp < 75
+        if diffhits > 20
             cast "greater heal"
             wft 3500
             target self
@@ -116,7 +114,7 @@ while not dead
         if insysmsg 'You begin applying the bandages'
             settimer 'aid time' 0
         endif
-        if hits < 90 and timer 'aid time' > 10250 
+        if hits < 95 and timer 'aid time' > 10250 
             hotkey 'bandage self'
             settimer 'aid time' 0
         endif
@@ -208,8 +206,23 @@ while not dead
         endif
         settimer 'foodCheck' 0
     endif
+    
+    #Follower Routine
+    if skill "Necromancy" > 80 or skill "spirit speak" > 80
+        if followers < 4
+            #Lost a fire elem, resummon
+            settimer "bardLock" 0
+            if skill "Necromancy" > 80
+                say "[VengefulSpirit"
+                wait 1000
+            endif
+            cast 'Fire Elemental'
+            wait 6000
+            say "All Guard Me"
+        endif   
+    endif
     #camping buff
-    if skill "camping" > 50 and timer "campLock" > 900000 
+    if skill "camping" > 50 and not findbuff "Campfire Visit"
         if not findtype "kindling" backpack
             say "Need more kindling" 
             wait 355
@@ -227,9 +240,8 @@ while not dead
                 dclicktype "kindling" backpack
                 wait 350
             endwhile
-            settimer 'campLock' 0
         endif
-        wait 2000
+        wait 600
     endif
     #spyglass routine
     if skill "tracking" > 80 and timer "spyGlassPeek" > 7000 
@@ -245,8 +257,8 @@ while not dead
         wait 350 
         settimer "spyGlassPeek" 0
     endif
-    #spirit speak only if on own boat and corpses present
-    if skill "spirit speak" > 50 and timer "bardLock" > 10000 and timer "spiritSpeakCheck" > 30000 and 'boardState' = 0
+    #spirit speak only if on own boat and corpses present.  Do not SS if we have necromancy as we have liches and this is wasted time
+    if skill "spirit speak" > 50 and timer "bardLock" > 10000 and timer "spiritSpeakCheck" > 30000 and 'boardState' = 0 and  skill "Necromancy" < 50
         if findtype 'corpse' ground any any 12 as found
             overhead "spirit speak"
             skill "spirit speak" 
@@ -284,7 +296,7 @@ while not dead
         settimer "buffPeace" 0
         settimer "bardLock" 0
     endif
-    if skill "magery" > 50 and timer "bardLock" > 10000 and timer "buffMage" > 200000
+    if skill "magery" > 50 and timer "bardLock" > 10000 and not findbuff "Strength"
         overhead "Mage Buff"
         cast 'Bless'
         waitfortarget 2500
@@ -292,7 +304,11 @@ while not dead
         wait 750
         cast 'Bless'
         waitfortarget 2500
-        target 'captainGuy'
+        target 'self'
+        wait 750
+        cast 'Bless'
+        waitfortarget 2500
+        target 'self'
         wait 750
         
         cast 'Arch Protection'
@@ -307,19 +323,6 @@ while not dead
         targettype "backpack" backpack
         settimer "buffTaste" 0
         settimer "bardLock" 5000
-    endif
-    #Follower Routine
-    if skill "Necromancy" > 80 or skill "spirit speak" > 80
-        if followers < 4
-            #Lost a fire elem, resummon
-            if skill "Necromancy" > 80
-                say "[VengefulSpirit"
-                wait 1000
-            endif
-            cast 'Fire Elemental'
-            wait 6000
-            say "All Guard Me"
-        endif   
     endif
     #Necro Abilities
     if skill "Necromancy" > 80 
@@ -444,21 +447,21 @@ while not dead
                 target 'lastserial'
                 wait 400
             endif
-			#Magery routine because why not.  
-			#Does not cast if less than 35 SS or SA on hand and over 70 mana
-			#Does not cast unless boarded
-			if skill 'Magery' > 80
-				if counttype "Spider's Silk" > 35 and counttype "Sulfurous Ash" > 35 and 'boardState' = 1 and mana >= 70
-					overhead "FS!" 33
-					cast "Flamestrike"
-					wft 3500
-					target 'lastserial'
-					say 'So anyway...I started blasin' 55
-					wait 400
-				endif
-			endif
-			
-			#Final Pause
+            #Magery routine because why not.  
+            #Does not cast if less than 35 SS or SA on hand and over 70 mana
+            #Does not cast unless boarded
+            if skill 'Magery' > 80
+                if counttype "Spider's Silk" > 35 and counttype "Sulfurous Ash" > 35 and 'boardState' = 1 and mana >= 70
+                    overhead "FS!" 33
+                    cast "Flamestrike"
+                    wft 3500
+                    target 'lastserial'
+                    say 'So anyway...I started blasin' 55
+                    wait 400
+                endif
+            endif
+            
+            #Final Pause
             wait 350      
         #End routines that need hostile targets
         endif       

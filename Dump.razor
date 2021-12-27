@@ -1,18 +1,19 @@
-//open all the boxes
-//dclick 0x433D6209
-//wait 500
-//dclick 0x451BB7AB
-//wait 500
-//dclick 0x440C329C
-//wait 500
-//dclick 0x51E8CEEE
-//wait 500
-//dclick 0x4310EA76
-//wait 500
-//dclick 0x5245AE7A
-//wait 500
-//dclick 0x4E850FAC
-//wait 1000
+clearignore
+
+while findtype "cooked fish"  as found
+    dclicktype "dagger"
+    wft 2500
+    target found
+    wait 400
+    ignore found
+endwhile
+while findtype "fish"  as found
+    dclicktype "dagger"
+    wft 2500
+    target found
+    wait 400
+    ignore found
+endwhile
 
 //dump all supply shelf
 menu 0x4083AF65 0

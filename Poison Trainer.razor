@@ -1,0 +1,19 @@
+while poisoned 
+    dclicktype '3847'
+    wait 1000
+endwhile
+if hits < maxhits
+    cast "greater heal"
+    wft 2500
+    target self
+    wait 500
+endif
+hotkey 'Last Skill'
+waitfortarget
+targettype "3850"
+waitfortarget
+target 0x41E53368
+wait 350
+menu 0x4083AF65 1
+wait 4800
+loop

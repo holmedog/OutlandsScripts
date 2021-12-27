@@ -1,24 +1,27 @@
 while skill 'necromancy' < 100
-cast 'Energy Vortex'
-waitfortarget 3555
-targettype 'backpack'
-wait 500
-cast 'Dispel'
-wft
-targettype 'an energy vortex'
-wait 500
+    cast 'Earth Elemental'
+    waitfortarget 3555
+    targettype 'backpack'
+    wait 500
+    cast 'Dispel'
+    wft
+    targettype 'an Earth Elemental'
+    wait 500
+    skill "tasteid" 
+    wft 2000
+    targettype 'backpack'
+    wait 350
+    #create shrooms
+    while counttype 29012 backpack < 5
+        cast "create food"
+        wait 1000
+    endwhile
 
-#create shrooms
-while counttype 29012 backpack < 5
-     cast "create food"
-     wait 1000
-endwhile
+    if mana < 70
+        dclicktype 29012
+    endif
 
-if mana < 70
-    dclicktype 29012
-endif
-
-if findtype 'storage shelf' ground any any 2 as found
-    menu found 1
-endif
+    if findtype 'storage shelf' ground any any 2 as found
+        menu found 1
+    endif
 endwhile

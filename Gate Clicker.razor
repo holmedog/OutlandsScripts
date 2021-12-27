@@ -42,3 +42,9 @@ if findtype 8148 'ground' -1 1 2 as 'graymoongate'
     waitforgump 3899019871
     gumpresponse 2
 endif
+
+# Handle gray moongates
+if findtype 30528 'ground' -1 1 2 as 'graymoongate'
+    # Confirm
+    dclick 'graymoongate'
+endif
