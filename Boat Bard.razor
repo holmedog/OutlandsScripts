@@ -187,6 +187,7 @@ while not dead
             wait 500
             gumpresponse 6 4267467659
             wait 550
+			gumpclose 4267467659
         endwhile    
         @setvar 'trackState' 1
     endif
@@ -265,7 +266,7 @@ while not dead
             settimer "bardLock" 8000
         endif
     endif
-    if skill "discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 150000
+    if skill "discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 300000
         overhead "Disco Buff"
         skill "discordance" 
         wft 2500
@@ -279,7 +280,7 @@ while not dead
         settimer "buffBeg" 0
         settimer "bardLock" 5000
     endif
-    if skill "provocation" > 50 and timer "bardLock" > 10000 and timer "buffProvo" > 150000
+    if skill "provocation" > 50 and timer "bardLock" > 10000 and timer "buffProvo" > 300000
         overhead "Provo Buff"
         skill "provocation" 
         wft 2500
@@ -287,7 +288,7 @@ while not dead
         settimer "buffProvo" 0
         settimer "bardLock" 0
     endif
-    if skill "peacemaking" > 50 and timer "bardLock" > 10000 and timer "buffPeace" > 150000
+    if skill "peacemaking" > 50 and timer "bardLock" > 10000 and timer "buffPeace" > 300000
         overhead "Peace Buff"
         skill "peacemaking" 
         wft 2500
@@ -399,7 +400,7 @@ while not dead
         elseif noto 'lastserial' = hostile
             #set enemy close flag
             @setvar 'closeEnemy' 1
-            if 'lastserial' = 0x15C5E of 'lastserial' = 0x348287 or 'lastserial' = 0x2E2E1
+            if 'lastserial' = 0x15C5E or 'lastserial' = 0x348287 or 'lastserial' = 0x2E2E1
                 #Remove this if you read this far.  It spams reverse if you target my character
                 while not dead
                     say "Reverse"

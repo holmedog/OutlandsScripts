@@ -1,16 +1,10 @@
 while skill 'necromancy' < 100
     cast 'Earth Elemental'
-    waitfortarget 3555
-    targettype 'backpack'
-    wait 500
+    wait 3000
     cast 'Dispel'
     wft
     targettype 'an Earth Elemental'
     wait 500
-    skill "tasteid" 
-    wft 2000
-    targettype 'backpack'
-    wait 350
     #create shrooms
     while counttype 29012 backpack < 5
         cast "create food"
