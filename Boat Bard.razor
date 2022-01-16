@@ -4,6 +4,8 @@
 #Set this if you want to force glassing regardless of skill
 @setvar forceGlass 0
 
+#Set this to 1 if you want to throw self overboard if a ship repair kit is on the deck
+@setvar triggerOverboard 0
 
 
 clearsysmsg 
@@ -48,6 +50,8 @@ if not timerexists 'foodCheck' or not timerexists "bardLock" or not timerexists 
     settimer 'crookCheck' 120000
     createtimer 'crewHealing'
     settimer 'crewHealing' 120000
+    createtimer 'onBoard'
+    settimer 'onBoard' 120000
 endif
  
 endif
@@ -63,13 +67,13 @@ endif
 
 #set pets if they exist
 if skill "Veterinary" > 50 and followers >= 1
-	overhead "Target pet 1"
-	setvar! pet1
-	overhead "Target pet 2"
-	setvar! pet2
-	overhead "Target pet 3"
-	setvar! pet3
-endif	
+    overhead "Target pet 1"
+    setvar! pet1
+    overhead "Target pet 2"
+    setvar! pet2
+    overhead "Target pet 3"
+    setvar! pet3
+endif   
 
 overhead "Select your Tillerman"
 setvar! tillerDude
@@ -96,6 +100,7 @@ while not dead
     #Check if we are on NPC ship
     if insysmsg "You board the ship"
         @setvar 'boardState' 1
+        settimer onBoard 0
     endif
     
     #dont let this guy die routine
@@ -140,40 +145,40 @@ while not dead
             settimer 'aid time' 0
         endif
     endif
-	#Pet Healing	
-	if skill "Veterinary" > 50 and followers >= 1
-		 if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
-			dclicktype 3617
-			wft 2500
-			target pet1			
+    #Pet Healing    
+    if skill "Veterinary" > 50 and followers >= 1
+         if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            dclicktype 3617
+            wft 2500
+            target pet1         
             if insysmsg 'You begin applying the bandages'
                 settimer 'aid time' 5000
                 settimer 'crewHealing' 0
             endif
-		 endif
-		 if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
-			dclicktype 3617
-			wft 2500
-			target pet2		
+         endif
+         if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            dclicktype 3617
+            wft 2500
+            target pet2     
             if insysmsg 'You begin applying the bandages'
                 settimer 'aid time' 5000
                 settimer 'crewHealing' 0
             endif
-		 endif
-		 if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
-			dclicktype 3617
-			wft 2500
-			target pet3		
+         endif
+         if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            dclicktype 3617
+            wft 2500
+            target pet3     
             if insysmsg 'You begin applying the bandages'
                 settimer 'aid time' 5000
                 settimer 'crewHealing' 0
             endif
-		 endif		 
+         endif       
         #We checked all - pause for spam
         if timer 'crewHealing' > 5050 and skill 'Healing' <= 50
             settimer 'crewHealing' 1000
         endif
-	endif
+    endif
     #Crew Healing
     if skill 'Healing' > 50 and hits >= 90
         if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
@@ -187,7 +192,7 @@ while not dead
         if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
             gumpresponse 21 1722920179
             wait 250 
-            if insysmsg 'You begin applying the bandages'	
+            if insysmsg 'You begin applying the bandages'   
                 settimer 'aid time' 5000
                 settimer 'crewHealing' 0
             endif
@@ -233,6 +238,17 @@ while not dead
     ###############                                           ###############
     ###############Start routines that do not require a target###############
     ###############                                           ###############
+    #Throw self overboard if a ship repair kit is on the deck
+    if 'triggerOverboard' = 1
+        if findtype 25758 ground any any 8
+            say "So long fair world"
+            wait 500
+            say "[throwselfoverboard"
+            stop
+        endif
+    endif
+    
+    
     #Tracking Routine - Turn it on if we have not yet
     if skill 'Tracking' > 80 and 'trackState' = 0
         while not insysmsg "You will receive"
@@ -298,7 +314,7 @@ while not dead
     endif
     #spyglass routine
     if skill "Tracking" > 80 or forceGlass = 1
-        if timer "spyGlassPeek" > 7000 
+        if timer "spyGlassPeek" > 10500 
             gumpclose 2890020940
             wait 250
             gumpclose 2890020940
@@ -382,7 +398,7 @@ while not dead
     #Necro Abilities
     if skill "Necromancy" > 80 
         #painspike
-        if 'boardState' = 1
+        if 'boardState' = 1 and timer "onBoard" > 7000 
             if findtype 'corpse' ground any any 10 as found
                 say '[painspike'
                 wft 2500
@@ -515,12 +531,12 @@ while not dead
                 wft 1500
                 target 'lastserial'
                 wait 400
-				if 'boardState' = 1
-					#try to poison strike
-					say "[poisonStrike"
-					wft 1500
-					target 'lastserial'
-				endif
+                if 'boardState' = 1
+                    #try to poison strike
+                    say "[poisonStrike"
+                    wft 1500
+                    target 'lastserial'
+                endif
             endif
             #Magery routine because why not.  
             #Does not cast if less than 35 SS or SA on hand and over 70 mana

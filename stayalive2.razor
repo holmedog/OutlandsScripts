@@ -15,13 +15,34 @@ if not timerexists "shroomy"
     settimer "shroomy" 61000
 endif
 
+if not timerexists "spyGlassPeek"
+    createtimer 'spyGlassPeek'
+    settimer 'spyGlassPeek' 0
+endif
+
 while not dead
         
     # If hidden, skip
     if hidden
         continue
     endif
-
+    
+    #spyglass routine
+    if skill "Tracking" > 80 or forceGlass = 1
+        if timer "spyGlassPeek" > 10500 and findtype 'spyglass' self 
+            gumpclose 2890020940
+            wait 250
+            gumpclose 2890020940
+            wait 250
+            dclicktype 'spyglass'
+            waitfortarget 1200
+            target 'self'
+            wait 350 
+            gumpresponse 4 2890020940
+            wait 350 
+            settimer "spyGlassPeek" 0
+        endif
+    endif
     
     if insysmsg 'you cannot move!'
         overhead 'Paralyzed!' 34
