@@ -20,6 +20,8 @@ if not timerexists "spyGlassPeek"
     settimer 'spyGlassPeek' 0
 endif
 
+@setvar onABoat 0
+
 while not dead
         
     # If hidden, skip
@@ -29,7 +31,7 @@ while not dead
     
     #spyglass routine
     if skill "Tracking" > 80 or forceGlass = 1
-        if timer "spyGlassPeek" > 10500 and findtype 'spyglass' self 
+        if onABoat = 1 and timer "spyGlassPeek" > 10500 and findtype 'spyglass' self 
             gumpclose 2890020940
             wait 250
             gumpclose 2890020940
