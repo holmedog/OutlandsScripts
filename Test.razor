@@ -1,7 +1,12 @@
-dclick 0x4AA64614
-waitfortarget
-target 'self'
-wait 1550
-hotkey 'Discordance'
-waitfortarget
-target 0x0 3491 701 -10
+removelist 'instrumentTypes'
+createlist 'instrumentTypes'
+pushlist 'instrumentTypes' 10245
+pushlist 'instrumentTypes' 3762
+pushlist 'instrumentTypes' 3740
+pushlist 'instrumentTypes' 3742
+pushlist 'instrumentTypes' 3763
+
+#Loop through instruments and dclick one
+foreach instrumentType in 'instrumentTypes'
+    dclicktype instrumentType
+endfor

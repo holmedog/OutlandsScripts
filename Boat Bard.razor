@@ -55,6 +55,20 @@ if not timerexists 'foodCheck' or not timerexists "bardLock" or not timerexists 
 endif
  
 endif
+
+#Create list of instrument types and dclick if found
+removelist 'instrumentTypes'
+createlist 'instrumentTypes'
+pushlist 'instrumentTypes' 10245
+pushlist 'instrumentTypes' 3762
+pushlist 'instrumentTypes' 3740
+pushlist 'instrumentTypes' 3742
+pushlist 'instrumentTypes' 3763
+
+#Loop through instruments and dclick one
+foreach instrumentType in 'instrumentTypes'
+    dclicktype instrumentType
+endfor
     
 #set up a last var so we dont spam disco with one target left
 @setvar 'checkDead' self
