@@ -498,12 +498,16 @@ while not dead
             endif
             #disco routine
             if  skill "Discordance" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5050  
-                    overhead "Disco Target!" 33
-                    skill "Discordance" 
-                    wft 2500
-                    target 'lastserial'
-                    settimer "discoTimer" 0
-                    settimer "bardLock" 5000
+				if skill 'Herding' > 50 
+					#pause here since we just herded
+					wait 1750
+				endif
+				overhead "Disco Target!" 33
+				skill "Discordance" 
+				wft 2500
+				target 'lastserial'
+				settimer "discoTimer" 0
+				settimer "bardLock" 5000
             endif
             #pet attack routine
             if followers > 1

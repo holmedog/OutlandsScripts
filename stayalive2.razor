@@ -1,6 +1,8 @@
 # Clear sys messaages 
 clearsysmsg
 
+@setvar onABoat 1
+
 if not timerexists "healpot"
     createtimer "healpot"
     settimer "healpot" 8000
@@ -20,7 +22,6 @@ if not timerexists "spyGlassPeek"
     settimer 'spyGlassPeek' 0
 endif
 
-@setvar onABoat 0
 
 while not dead
         
