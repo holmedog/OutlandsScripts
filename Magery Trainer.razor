@@ -25,6 +25,14 @@ clearsysmsg
 if not timerexists "miner"
     #Assign pack animals to variables
     #On first launch of UO 
+    #Tracking Routine - Turn it on if we have not yet
+        while not insysmsg "You will receive"
+            hotkey 'Tracking'
+            wait 500
+            gumpresponse 6 4267467659
+            wait 550
+            gumpclose 4267467659
+        endwhile    
     if list packAnimals <= 0
         @clearlist packAnimals
         @pushlist 'packAnimals' "p1"
@@ -171,6 +179,13 @@ while not dead
             cast 'recall'
             waitfortarget
             target 'escape'
+            while mana = maxmana
+                overhead "Recall failed"
+                wait 500
+                cast 'recall'
+                waitfortarget
+                target 'escape'
+            endwhile
             stop
     endif    
     
@@ -210,11 +225,18 @@ while not dead
     
     
         if insysmsg 'Now tracking'
-                overhead 'Ah shit!!!'
+            overhead 'Ah shit!!!'
+            cast 'recall'
+            waitfortarget
+            target 'escape'
+            while mana = maxmana
+                overhead "Recall failed"
+                wait 500
                 cast 'recall'
                 waitfortarget
                 target 'escape'
-                stop
+            endwhile
+            stop
         endif    
         
         #Weight check
@@ -250,8 +272,10 @@ while not dead
                 //pause and check again
                 wait 250
                 if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'World save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
-                    overhead 'Captcha break or Done!' 34
-                    break
+                    while not insysmsg "Captcha"
+                        overhead 'Captcha break or Done!' 34
+                        wait 1000
+                    endwhile
                 endif
             endif
         
