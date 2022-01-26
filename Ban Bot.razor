@@ -27,6 +27,11 @@ while not dead
             //overhead "Ignore Red Guildmate" 33
             continue
         endif
+        # If the target is in RoW guild, skip.
+        if "RoW" in 'seriallabel'
+            //overhead "Ignore Red Guildmate" 33
+            continue
+        endif
         # If the target is in OFP guild, skip.
         if "OFP" in 'seriallabel'
             //overhead "Ignore Red Guildmate" 33
