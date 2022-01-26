@@ -93,6 +93,8 @@ endfor
 @setvar 'trackState' 0
 #set up var to check if we have enemies in range
 @setvar 'closeEnemy' 0
+#set up blue tracking option
+@setvar 'blueSighted' 0
 
 #set pets if they exist
 if skill "Veterinary" > 50 and followers >= 1
@@ -117,233 +119,233 @@ while not dead
     wait 500    
     
     
-    ###############         ###############
+    ###############                                             ###############
     ###############Start routines that keep us alive or set vars###############
-    ###############         ###############   
+    ###############                                             ###############   
     
     #make sure a cursor does not exist from before
     if targetexists
-    hotkey "Cancel Current Target"
-    wait 350
+        hotkey "Cancel Current Target"
+        wait 350
     endif
     #Check if we are on NPC ship
     if insysmsg "You board the ship"
-    @setvar 'boardState' 1
-    settimer onBoard 0
+        @setvar 'boardState' 1
+        settimer onBoard 0
     endif
     
     #dont let this guy die routine
     if hp < 55 
-    overhead 'Drinking heal!'
-    potion "heal"
-    wait 200
+        overhead 'Drinking heal!'
+        potion "heal"
+        wait 200
     endif
     #Magery Survival
     if skill "Magery" > 50
-    #we cast arch here bc it probably hit whole crew
-    if poisoned 'self'
-    cast 'Arch Cure'
-    waitfortarget 1755
-    target 'self'
-    wait 666
-    endif
-    if diffhits > 20
-    cast "greater heal"
-    wft 3500
-    target self
-    wait 650 
-    endif   
-    #Eat a magic mushroom if we have 
-    #25  less mana than full
-    if mana < 70 and timer "shroomy" >= 61000
-    dclicktype '29012'
-    overhead 'Mushroom Power!'
-    settimer "shroomy" 0
-    endif
+        #we cast arch here bc it probably hit whole crew
+        if poisoned 'self'
+            cast 'Arch Cure'
+            waitfortarget 1755
+            target 'self'
+            wait 666
+        endif
+        if diffhits > 20
+            cast "greater heal"
+            wft 3500
+            target self
+            wait 650 
+        endif   
+        #Eat a magic mushroom if we have 
+        #25  less mana than full
+        if mana < 70 and timer "shroomy" >= 61000
+            dclicktype '29012'
+            overhead 'Mushroom Power!'
+            settimer "shroomy" 0
+        endif
     endif
     # Bandage Survival
     if skill 'Healing' > 50
-    if insysmsg 'You begin applying the bandages'
-    settimer 'aid time' 0
-    endif
-    if diffhits > 10 and timer 'aid time' > 10250 
-    hotkey 'bandage self'
-    settimer 'aid time' 0
-    endif
-    if insysmsg 'You begin applying the bandages'
-    settimer 'aid time' 0
-    endif
+        if insysmsg 'You begin applying the bandages'
+            settimer 'aid time' 0
+        endif
+        if diffhits > 10 and timer 'aid time' > 10250 
+            hotkey 'bandage self'
+            settimer 'aid time' 0
+        endif
+        if insysmsg 'You begin applying the bandages'
+            settimer 'aid time' 0
+        endif
     endif
     #Pet Healing    
     if skill "Veterinary" > 50 and followers >= 1 and diffhits <= 10
-     if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
-    dclicktype 3617
-    wft 2500
-    target pet1     
-    if insysmsg 'You begin applying the bandages'
-    settimer 'aid time' 4500
-    settimer 'crewHealing' 0
-    endif
-     endif
-     if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
-    dclicktype 3617
-    wft 2500
-    target pet2 
-    if insysmsg 'You begin applying the bandages'
-    settimer 'aid time' 4500
-    settimer 'crewHealing' 0
-    endif
-     endif
-     if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
-    dclicktype 3617
-    wft 2500
-    target pet3 
-    if insysmsg 'You begin applying the bandages'
-    settimer 'aid time' 4500
-    settimer 'crewHealing' 0
-    endif
-     endif   
-    #We checked all - pause for spam
-    if timer 'crewHealing' > 5050 and skill 'Healing' <= 50
-    settimer 'crewHealing' 1000
-    endif
+         if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            dclicktype 3617
+            wft 2500
+            target pet1         
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 4500
+                settimer 'crewHealing' 0
+            endif
+         endif
+         if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            dclicktype 3617
+            wft 2500
+            target pet2     
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 4500
+                settimer 'crewHealing' 0
+            endif
+         endif
+         if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            dclicktype 3617
+            wft 2500
+            target pet3     
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 4500
+                settimer 'crewHealing' 0
+            endif
+         endif       
+        #We checked all - pause for spam
+        if timer 'crewHealing' > 5050 and skill 'Healing' <= 50
+            settimer 'crewHealing' 1000
+        endif
     endif
     #Crew Healing
     if skill 'Healing' > 50 and diffhits <= 10
-    if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
-    gumpresponse 20 1722920179
-    wait 250 
-    if insysmsg 'You begin applying the bandages'
-    settimer 'aid time' 4500
-    settimer 'crewHealing' 0
-    endif
-    endif
-    if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
-    gumpresponse 21 1722920179
-    wait 250 
-    if insysmsg 'You begin applying the bandages'   
-    settimer 'aid time' 4500
-    settimer 'crewHealing' 0
-    endif
-    endif
-    if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
-    gumpresponse 22 1722920179
-    wait 250 
-    if insysmsg 'You begin applying the bandages'
-    settimer 'aid time' 4500
-    settimer 'crewHealing' 0
-    endif
-    endif
-    if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
-    gumpresponse 23 1722920179
-    wait 250 
-    if insysmsg 'You begin applying the bandages'
-    settimer 'aid time' 4500
-    settimer 'crewHealing' 0
-    endif
-    endif
-    if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
-    gumpresponse 24 1722920179
-    wait 250 
-    if insysmsg 'You begin applying the bandages'
-    settimer 'aid time' 4500
-    settimer 'crewHealing' 0
-    endif
-    endif
-    if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
-    gumpresponse 25 1722920179
-    wait 250 
-    if insysmsg 'You begin applying the bandages'
-    settimer 'aid time' 4500
-    settimer 'crewHealing' 0
-    endif
-    endif  
-    #We checked all - pause for spam
-    if timer 'crewHealing' > 5050
-    settimer 'crewHealing' 1000
-    endif
+        if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            gumpresponse 20 1722920179
+            wait 250 
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 4500
+                settimer 'crewHealing' 0
+            endif
+        endif
+        if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            gumpresponse 21 1722920179
+            wait 250 
+            if insysmsg 'You begin applying the bandages'   
+                settimer 'aid time' 4500
+                settimer 'crewHealing' 0
+            endif
+        endif
+        if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            gumpresponse 22 1722920179
+            wait 250 
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 4500
+                settimer 'crewHealing' 0
+            endif
+        endif
+        if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            gumpresponse 23 1722920179
+            wait 250 
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 4500
+                settimer 'crewHealing' 0
+            endif
+        endif
+        if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            gumpresponse 24 1722920179
+            wait 250 
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 4500
+                settimer 'crewHealing' 0
+            endif
+        endif
+        if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+            gumpresponse 25 1722920179
+            wait 250 
+            if insysmsg 'You begin applying the bandages'
+                settimer 'aid time' 4500
+                settimer 'crewHealing' 0
+            endif
+        endif  
+        #We checked all - pause for spam
+        if timer 'crewHealing' > 5050
+            settimer 'crewHealing' 1000
+        endif
     endif
     
-    ###############           ###############
+    ###############                                           ###############
     ###############Start routines that do not require a target###############
-    ###############           ###############
+    ###############                                           ###############
     #Throw self overboard if a ship repair kit is on the deck
     if 'triggerOverboard' = 1
-    if findtype 25758 ground any any 8
-    say "So long fair world"
-    wait 500
-    say "[throwselfoverboard"
-    stop
-    endif
+        if findtype 25758 ground any any 8
+            say "So long fair world"
+            wait 500
+            say "[throwselfoverboard"
+            stop
+        endif
     endif
     
     
     #Tracking Routine - Turn it on if we have not yet
     if skill 'Tracking' > 80 and 'trackState' = 0
-    while not insysmsg "You will receive"
-    hotkey 'Tracking'
-    wait 500
-    gumpresponse 6 4267467659
-    wait 550
-    gumpclose 4267467659
-    endwhile    
-    @setvar 'trackState' 1
+        while not insysmsg "You will receive"
+            hotkey 'Tracking'
+            wait 500
+            gumpresponse 6 4267467659
+            wait 550
+            gumpclose 4267467659
+        endwhile    
+        @setvar 'trackState' 1
     endif
     
     #food buff routine
     if timer 'foodCheck' > 60000 and not findbuff 'food satisfaction'
-    if not findtype tray backpack
-    say  "I am out of food!"
-    wait 500
-    say  "I am out of food!"
-    wait 500
-    say  "I am out of food!"
-    wait 500
-    else
-    dclicktype tray backpack
-    endif
-    settimer 'foodCheck' 0
+        if not findtype tray backpack
+            say  "I am out of food!"
+            wait 500
+            say  "I am out of food!"
+            wait 500
+            say  "I am out of food!"
+            wait 500
+        else
+            dclicktype tray backpack
+        endif
+        settimer 'foodCheck' 0
     endif
     
     #Follower Routine
     if skill "Necromancy" > 80 or skill "Spirit Speak" > 80
-    if followers < 4 and mana > 50
-    #Lost a fire elem, resummon
-    settimer "bardLock" 0
-    if skill "Necromancy" > 80
-    say "[VengefulSpirit"
-    wait 1000
-    endif
-    cast 'Fire Elemental'
-    wait 6000
-    say "All Guard Me"
-    endif   
+        if followers < 4 and mana > 50
+            #Lost a fire elem, resummon
+            settimer "bardLock" 0
+            if skill "Necromancy" > 80
+                say "[VengefulSpirit"
+                wait 1000
+            endif
+            cast 'Fire Elemental'
+            wait 6000
+            say "All Guard Me"
+        endif   
     endif
     #camping buff
     if skill "Camping" > 50 and not findbuff "Campfire Visit"
-    if not findtype "kindling" backpack
-    say "Need more kindling" 
-    wait 355
-    say "Need more kindling" 
-    wait 355
-    say "Need more kindling" 
-    wait 355
-    endif
+        if not findtype "kindling" backpack
+            say "Need more kindling" 
+            wait 355
+            say "Need more kindling" 
+            wait 355
+            say "Need more kindling" 
+            wait 355
+        endif
     
-    if not findtype "campfire" true
-    dclicktype "kindling" backpack
-    wait 350
-    while insysmsg "You fail to ignite"
-    wait 3000    
-    dclicktype "kindling" backpack
-    wait 350
-    endwhile
-    endif
-    wait 600
+        if not findtype "campfire" true
+            dclicktype "kindling" backpack
+            wait 350
+            while insysmsg "You fail to ignite"
+                wait 3000    
+                dclicktype "kindling" backpack
+                wait 350
+            endwhile
+        endif
+        wait 600
     endif
     #spyglass routine
     if skill "Tracking" > 80 or forceGlass = 1
-    if timer "spyGlassPeek" > 6500 
+        if timer "spyGlassPeek" > 6500 
 			gumpclose 2890020940
 			wait 250
 			gumpclose 2890020940
@@ -356,266 +358,254 @@ while not dead
 			wait 350 
 			if boardState = 1
 				if myGalleon = 1
-					if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or  ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or  ingump "a carrack" 2890020940
-						for 5 
-							say "..::<<BLUE BOAT SIGHTED>>:::.." 38
-							wait 500
-						endfor
+					if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940
+						@setvar 'blueSighted' 1
 					endif
 					while ingump "Next"
 						gumpresponse 3
 						wait 350
-						if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or  ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or  ingump "a carrack" 2890020940
-							for 5 
-								say "..::<<BLUE BOAT SIGHTED>>:::.." 38
-								wait 500
-							endfor
+						if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940
+							@setvar 'blueSighted' 1
 						endif
 					endwhile 
 				elseif myCarrack = 1
-					if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or  ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940  or ingump "a galleon" 2890020940  
-						for 5 
-							say "..::<<BLUE BOAT SIGHTED>>:::.." 38
-							wait 500
-						endfor
+					if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940  or    ingump "a galleon" 2890020940  
+						@setvar 'blueSighted' 1
 					endif
 					while ingump "Next"
 						gumpresponse 3
 						wait 350
-						if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or  ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940  or ingump "a galleon" 2890020940  
-							for 5 
-								say "..::<<BLUE BOAT SIGHTED>>:::.." 38
-								wait 500
-							endfor
+						if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940  or    ingump "a galleon" 2890020940  
+							@setvar 'blueSighted' 1
 						endif
 					endwhile 
 				elseif myLarge = 1
-					if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or  ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940  or ingump "a large dragonship" 2890020940 or  ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-						for 5 
-							say "..::<<BLUE BOAT SIGHTED>>:::.." 38
-							wait 500
-						endfor
+					if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940  or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940 or    ingump "a galleon" 2890020940  
+						@setvar 'blueSighted' 1
 					endif
 					while ingump "Next"
 						gumpresponse 3
 						wait 350
-						if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or  ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940  or ingump "a large dragonship" 2890020940 or  ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-							for 5 
-								say "..::<<BLUE BOAT SIGHTED>>:::.." 38
-								wait 500
-							endfor
+						if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940  or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940 or    ingump "a galleon" 2890020940  
+							@setvar 'blueSighted' 1
 						endif
 					endwhile 
 				elseif myLargeDragonship = 1
-					if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or  ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or  ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-						for 5 
-							say "..::<<BLUE BOAT SIGHTED>>:::.." 38
-							wait 500
-						endfor
+					if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or   ingump "a carrack" 2890020940 or    ingump "a galleon" 2890020940  
+						@setvar 'blueSighted' 1
 					endif
 					while ingump "Next"
 						gumpresponse 3
 						wait 350
-						if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or  ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or  ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-							for 5 
-								say "..::<<BLUE BOAT SIGHTED>>:::.." 38
-								wait 500
-							endfor
+						if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or   ingump "a carrack" 2890020940 or    ingump "a galleon" 2890020940  
+							@setvar 'blueSighted' 1
 						endif
 					endwhile 
 				endif
 				
 			else
-				if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or  ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or  ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-					for 5 
-        say "..::<<BLUE BOAT SIGHTED>>:::.." 38
-        wait 500
-    endfor
+				if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940 or    ingump "a galleon" 2890020940  
+					@setvar 'blueSighted' 1
 				endif
 				while ingump "Next"
 					gumpresponse 3
 					wait 350
-					if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or  ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or  ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-						for 5 
-							say "..::<<BLUE BOAT SIGHTED>>:::.." 38
-							wait 500
-						endfor
+					if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940 or    ingump "a galleon" 2890020940  
+						@setvar 'blueSighted' 1
 					endif
 				endwhile    
 			endif
-    settimer "spyGlassPeek" 0
-    endif
+            settimer "spyGlassPeek" 0
+			if blueSighted = 1		
+				for 5 
+					say "..::<<BLUE BOAT SIGHTED>>:::.." 38
+					wait 500
+				endfor
+				
+				#Embark
+                hotkey 'Cancel Current Target'
+                dclick tillerDude
+                wait 350
+                gumpresponse 21 4216593270
+                wait 350
+                gumpresponse 22 4216593270
+                gumpclose  4216593270
+                @setvar 'boardState' 0
+				@setvar 'closeEnemy' 0
+				@setvar 'blueSighted' 0
+			endif
+        endif
     endif
     #spirit speak only if on own boat and corpses present.  Do not SS if we have necromancy as we have liches and this is wasted time
     if skill "Spirit Speak" > 50 and timer "bardLock" > 10000 and timer "spiritSpeakCheck" > 30000 and 'boardState' = 0 and  skill "Necromancy" < 50
-    if findtype 'corpse' ground any any 12 as found
-    overhead "spirit speak"
-    skill "Spirit Speak" 
-    settimer "spiritSpeakCheck" 0
-    settimer "bardLock" 8000
-    endif
+        if findtype 'corpse' ground any any 12 as found
+            overhead "spirit speak"
+            skill "Spirit Speak" 
+            settimer "spiritSpeakCheck" 0
+            settimer "bardLock" 8000
+        endif
     endif
     if skill "Discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 300000
-    overhead "Disco Buff"
-    skill "Discordance" 
-    wft 2500
-    targettype "backpack"
-    settimer "buffDisco" 0
-    settimer "bardLock" 0
+        overhead "Disco Buff"
+        skill "Discordance" 
+        wft 2500
+        targettype "backpack"
+        settimer "buffDisco" 0
+        settimer "bardLock" 0
     endif
     if skill "Begging" > 50  and timer "bardLock" > 10000 and timer "buffBeg" > 60000
-    overhead "Begging Buff"
-    skill "Begging" 
-    settimer "buffBeg" 0
-    settimer "bardLock" 5000
+        overhead "Begging Buff"
+        skill "Begging" 
+        settimer "buffBeg" 0
+        settimer "bardLock" 5000
     endif
     if skill "Provocation" > 50 and timer "bardLock" > 10000 and timer "buffProvo" > 300000
-    overhead "Provo Buff"
-    skill "Provocation" 
-    wft 2500
-    targettype "backpack"
-    settimer "buffProvo" 0
-    settimer "bardLock" 0
+        overhead "Provo Buff"
+        skill "Provocation" 
+        wft 2500
+        targettype "backpack"
+        settimer "buffProvo" 0
+        settimer "bardLock" 0
     endif
     if skill "Peacemaking" > 50 and timer "bardLock" > 10000 and timer "buffPeace" > 300000
-    overhead "Peace Buff"
-    skill "Peacemaking" 
-    wft 2500
-    targettype "backpack"
-    settimer "buffPeace" 0
-    settimer "bardLock" 0
+        overhead "Peace Buff"
+        skill "Peacemaking" 
+        wft 2500
+        targettype "backpack"
+        settimer "buffPeace" 0
+        settimer "bardLock" 0
     endif
     if skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Strength" and counttype "Garlic" > 15 and counttype "Mandrake Root%s%" > 15
-    overhead "Mage Buff"
-    cast 'Bless'
-    waitfortarget 2500
-    target 'self'
-    wait 750
-    cast 'Bless'
-    waitfortarget 2500
-    target 'self'
-    wait 750
-    cast 'Bless'
-    waitfortarget 2500
-    target 'self'
-    wait 750
-    
-    cast 'Arch Protection'
-    waitfortarget 2500
-    target 'self'
-    settimer "buffMage" 0
+        overhead "Mage Buff"
+        cast 'Bless'
+        waitfortarget 2500
+        target 'self'
+        wait 750
+        cast 'Bless'
+        waitfortarget 2500
+        target 'self'
+        wait 750
+        cast 'Bless'
+        waitfortarget 2500
+        target 'self'
+        wait 750
+        
+        cast 'Arch Protection'
+        waitfortarget 2500
+        target 'self'
+        settimer "buffMage" 0
     endif
     if skill "Taste Identification" > 50 and timer "bardLock" > 10000 and timer "buffTaste" > 60000
-    overhead "tasteidentification Buff"
-    skill "tasteid"
-    wft 2500
-    targettype "backpack" backpack
-    settimer "buffTaste" 0
-    settimer "bardLock" 5000
+        overhead "tasteidentification Buff"
+        skill "tasteid"
+        wft 2500
+        targettype "backpack" backpack
+        settimer "buffTaste" 0
+        settimer "bardLock" 5000
     endif
     #Necro Abilities
     if skill "Necromancy" > 80 
-    #painspike
-    if 'boardState' = 1 and timer "onBoard" > 7000 
-    if findtype 'corpse' ground any any 10 as found
-    say '[painspike'
-    wft 2500
-    target found
-    wait 350
-    endif  
-    #Vamp 
-    elseif 'boardState' = 0
-    if findtype 'corpse' ground any any 10 as found
-    say '[vampiricembrace'
-    wft 2500
-    target found
-    wait 350
-    endif    
-    endif
+        #painspike
+        if 'boardState' = 1 and timer "onBoard" > 7000 
+            if findtype 'corpse' ground any any 10 as found
+                say '[painspike'
+                wft 2500
+                target found
+                wait 350
+            endif  
+        #Vamp 
+        elseif 'boardState' = 0
+            if findtype 'corpse' ground any any 10 as found
+                say '[vampiricembrace'
+                wft 2500
+                target found
+                wait 350
+            endif    
+        endif
     endif   
     #Repair Routine - we stagger these slightly so it is a bit random which one occurs next
     if 'closeEnemy' = 0
-    if timer "RepairHull" > 8000
-    say '[RepairHull'
-    wait 350
-    settimer "RepairHull" 0
-    endif    
-    if timer "RepairSails" > 8100
-    say '[RepairSails'
-    wait 350
-    settimer "RepairSails" 0
-    endif    
-    if timer "RepairGuns" > 8200
-    say '[RepairGuns'
-    wait 350
-    settimer "RepairGuns" 0
-    endif 
+        if timer "RepairHull" > 8000
+            say '[RepairHull'
+            wait 350
+            settimer "RepairHull" 0
+        endif    
+        if timer "RepairSails" > 8100
+            say '[RepairSails'
+            wait 350
+            settimer "RepairSails" 0
+        endif    
+        if timer "RepairGuns" > 8200
+            say '[RepairGuns'
+            wait 350
+            settimer "RepairGuns" 0
+        endif 
     endif    
     
-    ###############         ###############
+    ###############                                     ###############
     ###############Start routines that  require a target###############
-    ###############         ###############   
+    ###############                                     ###############   
 
     if timer "newTargetCheck" > 5000
-    hotkey 'Next Grey Monster Target'
-    wait 355
-    if insysmsg 'No one matching that'   
-    hotkey 'Next Grey Humanoid Target'
-    wait 355
-    endif
-    settimer "newTargetCheck" 0
-    @setvar 'lastserial' lasttarget
-    #embark routine - only runs if we are on NPC
-    if insysmsg 'No one matching that' 
-    if 'boardState' = 1
-    if skill 'Forensic Evaluation' > 20
-    hotkey 'Forensics'
-    wait 500
-    target 'self'
-    wait 1350
-    endif
-    hotkey 'Cancel Current Target'
-    dclick tillerDude
-    wait 350
-    gumpresponse 21 4216593270
-    wait 350
-    gumpresponse 22 4216593270
-    gumpclose  4216593270
-    @setvar 'boardState' 0
-    endif
-    @setvar 'closeEnemy' 0
-    elseif 'checkDead' = 'lastserial'
-    #Stop using skills here - set their timers to 0     
-    settimer "discoTimer" 0
-    #settimer "crookCheck" 0
-    elseif noto 'lastserial' = hostile
-    #set enemy close flag
-    @setvar 'closeEnemy' 1
-    if 'lastserial' = 0x15C5E or 'lastserial' = 0x348287 or 'lastserial' = 0x2E2E1
-    #Remove this if you read this far.  It spams reverse if you target my character
-    while not dead
-    say "Reverse"
-    wait 500
-    endwhile 
-    endif    
-    #Set serial up for last attacked for later use  
-    @setvar 'checkDead' 'lastserial'  
-    
-    ###############             ###############
-    ###############Start routines that need targets that are hostile###############
-    ###############             ###############     
-    
-    #herding
-    if skill 'Herding' > 50 and timer "bardLock" > 2000 and timer "crookCheck" > 2000
-    #use a crook
-    dclicktype 3713 
-    wft 3000
-    target 'lastserial'
-    settimer "crookCheck" 0
-    settimer "bardLock" 5000
-    endif
-    #disco routine
-    if  skill "Discordance" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5050  
+        hotkey 'Next Grey Monster Target'
+        wait 355
+        if insysmsg 'No one matching that'       
+            hotkey 'Next Grey Humanoid Target'
+            wait 355
+        endif
+        settimer "newTargetCheck" 0
+        @setvar 'lastserial' lasttarget
+        #embark routine - only runs if we are on NPC
+        if insysmsg 'No one matching that' 
+            if 'boardState' = 1
+                if skill 'Forensic Evaluation' > 20
+                    hotkey 'Forensics'
+                    wait 500
+                    target 'self'
+                    wait 1350
+                endif
+                hotkey 'Cancel Current Target'
+                dclick tillerDude
+                wait 350
+                gumpresponse 21 4216593270
+                wait 350
+                gumpresponse 22 4216593270
+                gumpclose  4216593270
+                @setvar 'boardState' 0
+            endif
+            @setvar 'closeEnemy' 0
+        elseif 'checkDead' = 'lastserial'
+            #Stop using skills here - set their timers to 0         
+            settimer "discoTimer" 0
+            #settimer "crookCheck" 0
+        elseif noto 'lastserial' = hostile
+            #set enemy close flag
+            @setvar 'closeEnemy' 1
+            if 'lastserial' = 0x15C5E or 'lastserial' = 0x348287 or 'lastserial' = 0x2E2E1
+                #Remove this if you read this far.  It spams reverse if you target my character
+                while not dead
+                    say "Reverse"
+                    wait 500
+                endwhile 
+            endif    
+            #Set serial up for last attacked for later use          
+            @setvar 'checkDead' 'lastserial'  
+            
+            ###############                                                 ###############
+            ###############Start routines that need targets that are hostile###############
+            ###############                                                 ###############             
+            
+            #herding
+            if skill 'Herding' > 50 and timer "bardLock" > 2000 and timer "crookCheck" > 2000
+                #use a crook
+                dclicktype 3713 
+                wft 3000
+                target 'lastserial'
+                settimer "crookCheck" 0
+                settimer "bardLock" 5000
+            endif
+            #disco routine
+            if  skill "Discordance" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5050  
 				if skill 'Herding' > 50 
 					#pause here since we just herded
 					wait 1750
@@ -626,62 +616,62 @@ while not dead
 				target 'lastserial'
 				settimer "discoTimer" 0
 				settimer "bardLock" 5000
-    endif
-    #pet attack routine
-    if followers > 1
-    overhead 'Pet attack routine'
-    #We tell to guard first in case they are out of range and then do all kill
-    say "All guard me"
-    wait 500
-    say "All Kill"
-    wft 1500
-    target 'lastserial'
-    endif       
-    if skill 'Tactics' > 80 or skill 'Archery' > 80  or skill 'Fishing' > 80 
-    #attack routine 
-    dress "bow" 
-    if not warmode
-    warmode on
-    endif   
-    overhead "Attack Target!" 33
-    attack 'lastserial'
-    endif   
-    #poison routine 
-    if  skill "Poisoning" > 50  
-    overhead "Poison Target!" 33
-    cast "Poison"
-    wft 1500
-    target 'lastserial'
-    wait 400
-    if 'boardState' = 1
-    #try to poison strike
-    say "[poisonStrike"
-    wft 1500
-    target 'lastserial'
-    endif
+            endif
+            #pet attack routine
+            if followers > 1
+                overhead 'Pet attack routine'
+                #We tell to guard first in case they are out of range and then do all kill
+                say "All guard me"
+                wait 500
+                say "All Kill"
+                wft 1500
+                target 'lastserial'
+            endif                   
+            if skill 'Tactics' > 80 or skill 'Archery' > 80  or skill 'Fishing' > 80 
+                #attack routine     
+                dress "bow"     
+                if not warmode
+                    warmode on
+                endif               
+                overhead "Attack Target!" 33
+                attack 'lastserial'
+            endif           
+            #poison routine 
+            if  skill "Poisoning" > 50  
+                overhead "Poison Target!" 33
+                cast "Poison"
+                wft 1500
+                target 'lastserial'
+                wait 400
+                if 'boardState' = 1
+                    #try to poison strike
+                    say "[poisonStrike"
+                    wft 1500
+                    target 'lastserial'
+                endif
 				if skill "Discordance" <= 50 
 					#Bump timer if we aren't waiting on a disco bot so we can poison faster
 					settimer newTargetCheck 5000
 				endif
-    endif
-    #Magery routine because why not.  
-    #Does not cast if less than 35 SS or SA on hand and over 70 mana
-    #Does not cast unless boarded 
-    if skill 'Magery' > 80
-    if counttype "Spider's Silk" > 35 and counttype "Sulfurous Ash" > 35 and 'boardState' = 1 and mana >= 55
-    overhead "FS!" 33
-    cast "Flamestrike"
-    wft 3500
-    target 'lastserial'
-    say 'So anyway...I started blasin' 55
-    wait 400
-    endif
-    endif
-    
-    #Final Pause
-    wait 350  
-    #End routines that need hostile targets
-    endif   
+            endif
+            #Magery routine because why not.  
+            #Does not cast if less than 35 SS or SA on hand and over 70 mana
+            #Does not cast unless boarded 
+            if skill 'Magery' > 80
+                if counttype "Spider's Silk" > 35 and counttype "Sulfurous Ash" > 35 and 'boardState' = 1 and mana >= 55
+                    overhead "FS!" 33
+                    cast "Flamestrike"
+                    wft 3500
+                    target 'lastserial'
+                    say 'So anyway...I started blasin' 55
+                    wait 400
+                endif
+            endif
+            
+            #Final Pause
+            wait 350      
+        #End routines that need hostile targets
+        endif       
     #closes new target check
     endif
 endwhile   
