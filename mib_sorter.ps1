@@ -48,8 +48,8 @@ foreach($line in Get-Content $dir\$file) {
 	{
 		$dump_item_string = $line -replace '.*\(' -replace '\).*'
 		$coords = $dump_item_string.split(",")
-		$x_cord = [Math]::Floor([decimal]($coords[0].trim() / 1500)) + 1
-		$y_cord = [Math]::Floor([decimal]($coords[1].trim() / 800))+ 1
+		$x_cord = [Math]::Floor([decimal]($coords[0].trim() / 1510))
+		$y_cord = [Math]::Floor([decimal]($coords[1].trim() / 810))+ 1
 		#$output_string =  $output_string + $x_cord + "," + $y_cord
 	}
 	if ($line -like "*MIB variable: *" )
@@ -57,7 +57,8 @@ foreach($line in Get-Content $dir\$file) {
 		$dump_item_string = $line -replace '.*\(' -replace '\).*'
 		#    lift found 9999
 		#drop noidBag -1 -1 0 
-		$bag_var = $x_cord * $y_cord
+		$bag_var = $y_cord * 3
+		$bag_var = $bag_var + $x_cord
 		$output_string = $output_string  + "lift $dump_item_string 1`ndrop dropBag$bag_var -1 -1 0 `n"
 		
 		$output_string =  $output_string  + "`n"
