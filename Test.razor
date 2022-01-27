@@ -1,0 +1,7 @@
+clearignore
+while findtype 5357 backpack as foundMIB
+    getlabel foundMIB 'mibLabel'
+    wait 500
+    sysmsg  "MIB variable: ({{foundMIB}})"
+    ignore foundMIB
+endwhile

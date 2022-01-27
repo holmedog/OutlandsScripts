@@ -1,3 +1,7 @@
-@setvar 'cat' 3
-@setvar 'cat' weight
-overhead {{weight}}
+    clearignore
+    while findtype 'spyglass' as 'myGold'
+        lift myGold 60000
+        drop backpack 115 75 5
+        wait 600
+        ignore myGold
+    endwhile
