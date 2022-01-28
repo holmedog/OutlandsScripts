@@ -5,50 +5,15 @@ $dir = "C:\Program Files (x86)\Ultima Online Outlands\ClassicUO\Data\Client\Jour
 $latest = Get-ChildItem -Path $dir | Sort-Object LastAccessTime -Descending | Select-Object -First 1
 
 $file = $latest.name
-
+$cord_array =  @()
 Set-Content $outfile ''
-
-Add-Content $outfile "#copy this to a new script"
-Add-Content $outfile "overhead 'Select drop bag 1' 23"
-Add-Content $outfile "@setvar dropBag1"
-Add-Content $outfile "overhead 'Select drop bag 2' 23"
-Add-Content $outfile "@setvar dropBag2"
-Add-Content $outfile "overhead 'Select drop bag 3' 23"
-Add-Content $outfile "@setvar dropBag3"
-Add-Content $outfile "overhead 'Select drop bag 4' 23"
-Add-Content $outfile "@setvar dropBag4"
-Add-Content $outfile "overhead 'Select drop bag 5' 23"
-Add-Content $outfile "@setvar dropBag5"
-Add-Content $outfile "overhead 'Select drop bag 6' 23"
-Add-Content $outfile "@setvar dropBag6"
-Add-Content $outfile "overhead 'Select drop bag 7' 23"
-Add-Content $outfile "@setvar dropBag7"
-Add-Content $outfile "overhead 'Select drop bag 8' 23"
-Add-Content $outfile "@setvar dropBag8"
-Add-Content $outfile "overhead 'Select drop bag 9' 23"
-Add-Content $outfile "@setvar dropBag9"
-Add-Content $outfile "overhead 'Select drop bag 10' 23"
-Add-Content $outfile "@setvar dropBag10"
-Add-Content $outfile "overhead 'Select drop bag 11' 23"
-Add-Content $outfile "@setvar dropBag11"
-Add-Content $outfile "overhead 'Select drop bag 12' 23"
-Add-Content $outfile "@setvar dropBag12"
-Add-Content $outfile "overhead 'Select drop bag 13' 23"
-Add-Content $outfile "@setvar dropBag13"
-Add-Content $outfile "overhead 'Select drop bag 14' 23"
-Add-Content $outfile "@setvar dropBag14"
-Add-Content $outfile "overhead 'Select drop bag 15' 23"
-Add-Content $outfile "@setvar dropBag15"
-Add-Content $outfile " " 
-Add-Content $outfile " " 	
-
 $output_string = ""
 foreach($line in Get-Content $dir\$file) {
 	if ($line -like "*The SOS appears to be located at*" )
 	{
 		$dump_item_string = $line -replace '.*\(' -replace '\).*'
 		$coords = $dump_item_string.split(",")
-		$x_cord = [Math]::Floor([decimal]($coords[0].trim() / 1510))
+		$x_cord = [Math]::Floor([decimal]($coords[0].trim() / 755))
 		$y_cord = [Math]::Floor([decimal]($coords[1].trim() / 810))+ 1
 		#$output_string =  $output_string + $x_cord + "," + $y_cord
 	}
@@ -57,8 +22,9 @@ foreach($line in Get-Content $dir\$file) {
 		$dump_item_string = $line -replace '.*\(' -replace '\).*'
 		#    lift found 9999
 		#drop noidBag -1 -1 0 
-		$bag_var = $y_cord * 3
+		$bag_var = $y_cord * 6
 		$bag_var = $bag_var + $x_cord
+		$cord_array += $bag_var + "`n"
 		$output_string = $output_string  + "lift $dump_item_string 1`ndrop dropBag$bag_var -1 -1 0 `n"
 		
 		$output_string =  $output_string  + "`n"
@@ -66,8 +32,21 @@ foreach($line in Get-Content $dir\$file) {
 }
 
 
-#$output_string = ($output_string -split ',' | Sort-Object) -join ','
+Add-Content $outfile "#copy this to a new script"
 
-Add-Content $outfile $output_string
-Add-Content $outfile "stop"
-Add-Content $outfile $master_list_string_output	
+$cord_array = $cord_array | select -Unique
+$cord_array = $cord_array | sort
+
+	foreach ($coord in $cord_array)
+	{
+		Add-Content $outfile "overhead 'Select drop bag $coord' 23"
+		Add-Content $outfile "@setvar dropBag$coord"
+	}
+
+
+
+	Add-Content $outfile " " 
+	Add-Content $outfile " " 	
+	Add-Content $outfile $output_string
+	Add-Content $outfile "stop"
+	Add-Content $outfile $master_list_string_output	
