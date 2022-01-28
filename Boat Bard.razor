@@ -1,5 +1,5 @@
 #Part of the attack routine is to call a Razor Dress routine named "bow".  
-#  	If you do not have that it will not stop the script but it is 
+#   If you do not have that it will not stop the script but it is 
 #   a good idea to have one in case you unequip weapon
 
 #Set the boat type you have to 1 for tracking purposes
@@ -18,7 +18,7 @@
 ##################################################################################
 ##################################################################################
 ##################################################################################
-##############  			No setup below here 			   ###################
+##############              No setup below here                ###################
 ##################################################################################
 ##################################################################################
 ##################################################################################
@@ -108,7 +108,9 @@ endif
 
 overhead "Select your Tillerman"
 setvar! tillerDude
-
+wait 350
+dclick tillerDude
+wait 350
 #open hotbars
 say "[shiphotbars"
 wait 350
@@ -132,8 +134,8 @@ while not dead
     if insysmsg "You board the ship"
         @setvar 'boardState' 1
         settimer onBoard 0
-		#do not glass immediately on getting on board
-		settime spyGlassPeek 0
+        #do not glass immediately on getting on board
+        settimer spyGlassPeek 0
     endif
     
     #dont let this guy die routine
@@ -348,83 +350,83 @@ while not dead
     #spyglass routine
     if skill "Tracking" > 80 or forceGlass = 1
         if timer "spyGlassPeek" > 6500 
-			gumpclose 2890020940
-			wait 250
-			gumpclose 2890020940
-			wait 250
-			dclicktype 'spyglass'
-			waitfortarget 1200
-			target 'self'
-			wait 350 
-			gumpresponse 4 2890020940
-			wait 350 
-			if boardState = 1
-				if myGalleon = 1
-					if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940
-						@setvar 'blueSighted' 1
-					endif
-					while ingump "Next" 2890020940 
-						gumpresponse 3
-						wait 350
-						if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940
-							@setvar 'blueSighted' 1
-						endif
-					endwhile 
-				elseif myCarrack = 1
-					if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940  or ingump "a galleon" 2890020940  
-						@setvar 'blueSighted' 1
-					endif
-					while ingump "Next" 2890020940 
-						gumpresponse 3
-						wait 350
-						if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940  or ingump "a galleon" 2890020940  
-							@setvar 'blueSighted' 1
-						endif
-					endwhile 
-				elseif myLarge = 1
-					if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940  or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-						@setvar 'blueSighted' 1
-					endif
-					while ingump "Next" 2890020940 
-						gumpresponse 3
-						wait 350
-						if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940  or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-							@setvar 'blueSighted' 1
-						endif
-					endwhile 
-				elseif myLargeDragonship = 1
-					if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-						@setvar 'blueSighted' 1
-					endif
-					while ingump "Next" 2890020940 
-						gumpresponse 3
-						wait 350
-						if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-							@setvar 'blueSighted' 1
-						endif
-					endwhile 
-				endif
-				
-			else
-				if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-					@setvar 'blueSighted' 1
-				endif
-				while ingump "Next" 2890020940 
-					gumpresponse 3
-					wait 350
-					if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-						@setvar 'blueSighted' 1
-					endif
-				endwhile    
-			endif
+            gumpclose 2890020940
+            wait 250
+            gumpclose 2890020940
+            wait 250
+            dclicktype 'spyglass'
+            waitfortarget 1200
+            target 'self'
+            wait 350 
+            gumpresponse 4 2890020940
+            wait 350 
+            if boardState = 1
+                if myGalleon = 1
+                    if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940
+                        @setvar 'blueSighted' 1
+                    endif
+                    while ingump "Next" 2890020940 
+                        gumpresponse 3
+                        wait 350
+                        if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940
+                            @setvar 'blueSighted' 1
+                        endif
+                    endwhile 
+                elseif myCarrack = 1
+                    if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940  or ingump "a galleon" 2890020940  
+                        @setvar 'blueSighted' 1
+                    endif
+                    while ingump "Next" 2890020940 
+                        gumpresponse 3
+                        wait 350
+                        if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940  or ingump "a galleon" 2890020940  
+                            @setvar 'blueSighted' 1
+                        endif
+                    endwhile 
+                elseif myLarge = 1
+                    if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940  or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
+                        @setvar 'blueSighted' 1
+                    endif
+                    while ingump "Next" 2890020940 
+                        gumpresponse 3
+                        wait 350
+                        if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940  or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
+                            @setvar 'blueSighted' 1
+                        endif
+                    endwhile 
+                elseif myLargeDragonship = 1
+                    if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
+                        @setvar 'blueSighted' 1
+                    endif
+                    while ingump "Next" 2890020940 
+                        gumpresponse 3
+                        wait 350
+                        if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
+                            @setvar 'blueSighted' 1
+                        endif
+                    endwhile 
+                endif
+                
+            else
+                if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
+                    @setvar 'blueSighted' 1
+                endif
+                while ingump "Next" 2890020940 
+                    gumpresponse 3
+                    wait 350
+                    if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
+                        @setvar 'blueSighted' 1
+                    endif
+                endwhile    
+            endif
             settimer "spyGlassPeek" 0
-			if blueSighted = 1		
-				for 5 
-					say "..::<<BLUE BOAT SIGHTED>>:::.." 38
-					wait 500
-				endfor
-				
-				#Embark
+            if blueSighted = 1      
+                for 5 
+                    say "..::<<BLUE BOAT SIGHTED>>:::.." 38
+                    wait 500
+                endfor
+                
+                #Embark
                 hotkey 'Cancel Current Target'
                 dclick tillerDude
                 wait 350
@@ -433,9 +435,9 @@ while not dead
                 gumpresponse 22 4216593270
                 gumpclose  4216593270
                 @setvar 'boardState' 0
-				@setvar 'closeEnemy' 0
-				@setvar 'blueSighted' 0
-			endif
+                @setvar 'closeEnemy' 0
+                @setvar 'blueSighted' 0
+            endif
         endif
     endif
     #spirit speak only if on own boat and corpses present.  Do not SS if we have necromancy as we have liches and this is wasted time
@@ -587,30 +589,30 @@ while not dead
                 #Remove this if you read this far.  It kills your own crew if you target my captain
                 while not dead
                     hotkey 'Next Friendly Humanoid Target'
-					wait 350        
-					say "WHY WOULD YOU WANT TO KILL BROZAN.  HE IS SUCH A GOOD GUY?"
-					if skill 'Tactics' > 80 or skill 'Archery' > 80  or skill 'Fishing' > 80 
-						#attack routine     
-						dress "bow"     
-						if not warmode
-							warmode on
-						endif               
-						overhead "Attack Target!" 33
-						say "OH GOD WHAT AM I DOING?"
-						attack 'lastserial'
-					endif    
-					if skill 'Magery' > 80
-						if counttype "Spider's Silk" > 35 and counttype "Sulfurous Ash" > 35 and 'boardState' = 1 and mana >= 55
-							overhead "FS!" 33
-							cast "Flamestrike"
-							wft 3500
-							target 'lastserial'
-							say 'I HATE YOU WHY DID YOU PUT ME ON HERE I AM REALLY JUST A GOOD KID' 55
-							wait 400
-						endif
-					endif
-				endwhile
-			endif
+                    wait 350        
+                    say "WHY WOULD YOU WANT TO KILL BROZAN.  HE IS SUCH A GOOD GUY?"
+                    if skill 'Tactics' > 80 or skill 'Archery' > 80  or skill 'Fishing' > 80 
+                        #attack routine     
+                        dress "bow"     
+                        if not warmode
+                            warmode on
+                        endif               
+                        overhead "Attack Target!" 33
+                        say "OH GOD WHAT AM I DOING?"
+                        attack 'lastserial'
+                    endif    
+                    if skill 'Magery' > 80
+                        if counttype "Spider's Silk" > 35 and counttype "Sulfurous Ash" > 35 and 'boardState' = 1 and mana >= 55
+                            overhead "FS!" 33
+                            cast "Flamestrike"
+                            wft 3500
+                            target 'lastserial'
+                            say 'I HATE YOU WHY DID YOU PUT ME ON HERE I AM REALLY JUST A GOOD KID' 55
+                            wait 400
+                        endif
+                    endif
+                endwhile
+            endif
             #Set serial up for last attacked for later use          
             @setvar 'checkDead' 'lastserial'  
             
@@ -629,16 +631,16 @@ while not dead
             endif
             #disco routine
             if  skill "Discordance" > 50 and timer "bardLock" > 2000 and timer "discoTimer" > 5050  
-				if skill 'Herding' > 50 
-					#pause here since we just herded
-					wait 1750
-				endif
-				overhead "Disco Target!" 33
-				skill "Discordance" 
-				wft 2500
-				target 'lastserial'
-				settimer "discoTimer" 0
-				settimer "bardLock" 5000
+                if skill 'Herding' > 50 
+                    #pause here since we just herded
+                    wait 1750
+                endif
+                overhead "Disco Target!" 33
+                skill "Discordance" 
+                wft 2500
+                target 'lastserial'
+                settimer "discoTimer" 0
+                settimer "bardLock" 5000
             endif
             #pet attack routine
             if followers > 1
@@ -672,10 +674,10 @@ while not dead
                     wft 1500
                     target 'lastserial'
                 endif
-				if skill "Discordance" <= 50 
-					#Bump timer if we aren't waiting on a disco bot so we can poison faster
-					settimer newTargetCheck 5000
-				endif
+                if skill "Discordance" <= 50 
+                    #Bump timer if we aren't waiting on a disco bot so we can poison faster
+                    settimer newTargetCheck 5000
+                endif
             endif
             #Magery routine because why not.  
             #Does not cast if less than 35 SS or SA on hand and over 70 mana
