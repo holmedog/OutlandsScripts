@@ -1,7 +1,4 @@
-clearignore
-while findtype 5357 backpack as foundMIB
-    getlabel foundMIB 'mibLabel'
-    wait 500
-    sysmsg  "MIB variable: ({{foundMIB}})"
-    ignore foundMIB
+setvar! lootBox
+while findtype 5188 lootBox as found
+    overhead 'Got one'
 endwhile
