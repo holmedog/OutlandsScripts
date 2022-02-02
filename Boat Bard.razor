@@ -2,15 +2,6 @@
 #   If you do not have that it will not stop the script but it is 
 #   a good idea to have one in case you unequip weapon
 
-#Set the boat type you have to 1 for tracking purposes
-@setvar myCarrack 0
-@setvar myGalleon 1
-@setvar myLarge 0
-@setvar myLargeDragonship 0
-
-#Set this if you want to force glassing regardless of skill
-@setvar forceGlass 1
-
 #Set this to 1 if you want to throw self overboard if a ship repair kit is on the deck
 @setvar triggerOverboard 0
 
@@ -24,7 +15,7 @@
 ##################################################################################
 
 clearsysmsg 
-if not timerexists 'foodCheck' or not timerexists "bardLock" or not timerexists "spyGlassPeek" or not timerexists "buffTaste" or not timerexists "onBoard"
+if not timerexists 'foodCheck' or not timerexists "bardLock" or not timerexists "buffTaste" or not timerexists "onBoard"
     createtimer 'discoTimer'
     settimer 'discoTimer' 5000
     createtimer 'repairBoat'
@@ -51,8 +42,6 @@ if not timerexists 'foodCheck' or not timerexists "bardLock" or not timerexists 
     settimer 'RepairSails' 4000
     createtimer 'RepairGuns'
     settimer 'RepairGuns' 10000
-    createtimer 'spyGlassPeek'
-    settimer 'spyGlassPeek' 15000
     createtimer 'buffTaste'
     settimer 'buffTaste' 15000
     createtimer 'newTargetCheck'
@@ -135,7 +124,6 @@ while not dead
         @setvar 'boardState' 1
         settimer onBoard 0
         #do not glass immediately on getting on board
-        settimer spyGlassPeek 0
     endif
     
     #dont let this guy die routine
@@ -347,8 +335,8 @@ while not dead
         endif
         wait 600
     endif
-    #spyglass routine
-    if skill "Tracking" > 80 or forceGlass = 1
+    #spyglass routine - this is deprecated but leaving it in case of future changes, change skill down to 80 if so
+    if skill "Tracking" > 135
         if timer "spyGlassPeek" > 6500 
             gumpclose 2890020940
             wait 250
@@ -520,7 +508,7 @@ while not dead
         #Vamp 
         elseif 'boardState' = 0
             if findtype 'corpse' ground any any 10 as found
-                say '[vampiricembrace'
+                say '[vampiricembrace' 
                 wft 2500
                 target found
                 wait 350
@@ -688,7 +676,6 @@ while not dead
                     cast "Flamestrike"
                     wft 3500
                     target 'lastserial'
-                    say 'So anyway...I started blasin' 55
                     wait 400
                 endif
             endif
