@@ -1,10 +1,10 @@
 clearignore
-while findtype 2463 backpack as foundBottle
+while findtype 2463 self as foundBottle
     dclick foundBottle
     wait 550
     ignore foundBottle
 endwhile
-while findtype 5357 backpack as foundMIB
+while findtype 5357 self as foundMIB
     getlabel foundMIB 'mibLabel'
     wait 500
     sysmsg  "MIB variable: ({{foundMIB}})"

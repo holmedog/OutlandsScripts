@@ -33,46 +33,16 @@ while not dead
     #spyglass routine
      
         if onABoat = 1 and timer "spyGlassPeek" > 6500 and findtype 'spyglass' self 
-			gumpclose 2890020940
-			wait 250
-			gumpclose 2890020940
-			wait 250
-			dclicktype 'spyglass'
-			waitfortarget 1200
-			target 'self'
-			wait 350 
-			gumpresponse 4 2890020940
-			wait 350 
-			if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940
-				say "White man came across the sea"
-				wait 500
-				say "He brought us pain and misery"
-				wait 500
-				say "He killed our tribes, he killed our creed"
-				wait 500
-				say "He took our game for his own need…"
-				wait 500
-				say "...RUN TO THE HILLS!"
-				wait 500
-				say "RUN FOR YOUR LIVES!!!"
-			endif
-			while ingump "Next"
-				gumpresponse 3
-				wait 350
-				if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940
-					say "White man came across the sea"
-					wait 500
-					say "He brought us pain and misery"
-					wait 500
-					say "He killed our tribes, he killed our creed"
-					wait 500
-					say "He took our game for his own need…"
-					wait 500
-					say "...RUN TO THE HILLS!"
-					wait 500
-					say "RUN FOR YOUR LIVES!!!"
-				endif
-			endwhile    
+            gumpclose 2890020940
+            wait 250
+            gumpclose 2890020940
+            wait 250
+            dclicktype 'spyglass'
+            waitfortarget 1200
+            target 'self'
+            wait 350 
+            gumpresponse 4 2890020940
+            wait 350 
             settimer "spyGlassPeek" 0
         endif
     

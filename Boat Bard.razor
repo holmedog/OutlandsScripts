@@ -335,7 +335,7 @@ while not dead
         endif
         wait 600
     endif
-    #spyglass routine - this is deprecated but leaving it in case of future changes, change skill down to 80 if so
+    #spyglass routine - this is deprecated but leaving it in case of future changes, change skill down to 80 if so and reinstate spyglass timers
     if skill "Tracking" > 135
         if timer "spyGlassPeek" > 6500 
             gumpclose 2890020940
@@ -421,7 +421,12 @@ while not dead
                 gumpresponse 21 4216593270
                 wait 350
                 gumpresponse 22 4216593270
-                gumpclose  4216593270
+				wait 350
+				#we do this to make sure embark worked
+				say "[embark"
+				wait 500
+				say "[embarkfollowers"
+				wait 350
                 @setvar 'boardState' 0
                 @setvar 'closeEnemy' 0
                 @setvar 'blueSighted' 0
@@ -562,7 +567,17 @@ while not dead
                 gumpresponse 21 4216593270
                 wait 350
                 gumpresponse 22 4216593270
-                gumpclose  4216593270
+				wait 350
+                dclick tillerDude
+                wait 350
+                gumpresponse 21 4216593270
+                wait 350
+                gumpresponse 22 4216593270
+				#we do this to make sure embark worked
+				say "[embark"
+				wait 500
+				say "[embarkfollowers"
+				wait 350
                 @setvar 'boardState' 0
             endif
             @setvar 'closeEnemy' 0
@@ -590,15 +605,24 @@ while not dead
                         attack 'lastserial'
                     endif    
                     if skill 'Magery' > 80
-                        if counttype "Spider's Silk" > 35 and counttype "Sulfurous Ash" > 35 and 'boardState' = 1 and mana >= 55
-                            overhead "FS!" 33
-                            cast "Flamestrike"
-                            wft 3500
-                            target 'lastserial'
-                            say 'I HATE YOU WHY DID YOU PUT ME ON HERE I AM REALLY JUST A GOOD KID' 55
-                            wait 400
-                        endif
-                    endif
+						overhead "FS!" 33
+						cast "Flamestrike"
+						wft 3500
+						target 'lastserial'
+						say 'I HATE YOU WHY DID YOU PUT ME ON HERE I AM REALLY JUST A GOOD KID' 55
+						wait 400
+                    endif					
+					if  skill "Poisoning" > 50  
+						overhead "Poison Target!" 33
+						cast "Poison"
+						wft 1500
+						target 'lastserial'
+						wait 400
+						#try to poison strike
+						say "[poisonStrike"
+						wft 1500
+						target 'lastserial'
+					endif
                 endwhile
             endif
             #Set serial up for last attacked for later use          
