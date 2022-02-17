@@ -135,12 +135,10 @@ while not dead
     @hotkey 'Next Humanoid Target'
     wait 350
     @setvar! 'lastserial' lasttarget
-    getlabel 'lastserial' 'seriallabel'
         if noto 'lastserial' = invulnerable 
             if findtype 3701 'lastserial' as foundBackpack
         
                 sysmsg 'New Vendor'
-                sysmsg seriallabel
                 dclick 'foundBackpack'
                 @ignore 'foundBackpack'
                 wait 250

@@ -105,8 +105,32 @@ say "[shiphotbars"
 wait 350
 say "[reload"
 
+#do camping buff at least once regardless of buff status
+#camping buff
+if skill "Camping" > 50 
+	if not findtype "kindling" backpack
+		say "Need more kindling" 
+		wait 355
+		say "Need more kindling" 
+		wait 355
+		say "Need more kindling" 
+		wait 355
+	endif
+
+	if not findtype "campfire" true
+		dclicktype "kindling" backpack
+		wait 350
+		while insysmsg "You fail to ignite"
+			wait 3000    
+			dclicktype "kindling" backpack
+			wait 350
+		endwhile
+	endif
+	wait 600
+endif
+
 while not dead
-    #put in a pause so we dont spam
+    #put in a pause so we dont spam 
     wait 500    
     
     
@@ -503,7 +527,8 @@ while not dead
     #Necro Abilities
     if skill "Necromancy" > 80 
         #painspike
-        if 'boardState' = 1 and timer "onBoard" > 7000 
+        #if 'boardState' = 1 and timer "onBoard" > 7000 
+        if 'boardState' = 1 
             if findtype 'corpse' ground any any 10 as found
                 say '[painspike'
                 wft 2500
@@ -623,6 +648,7 @@ while not dead
 						wft 1500
 						target 'lastserial'
 					endif
+					say "Well, fuck me!"
                 endwhile
             endif
             #Set serial up for last attacked for later use          

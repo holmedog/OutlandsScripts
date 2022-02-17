@@ -1,6 +1,17 @@
-dclick 0x45332289
-wait 350
-gumpresponse 22
-gumpclose 4216593270
-gumpclose 4216593270
-gumpclose 4216593270
+removelist ItemTypes
+createlist ItemTypes
+@pushlist 'ItemTypes' '(1 '
+@pushlist 'ItemTypes' '(82 '
+@pushlist 'ItemTypes' '(184 '
+
+
+getlabel backpack myLabel
+sysmsg myLabel
+
+foreach x in ItemTypes
+    if x in myLabel
+        overhead 'i see it'
+    else
+        overhead 'i dont see it'
+    endif
+endfor
