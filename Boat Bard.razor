@@ -5,6 +5,9 @@
 #Set this to 1 if you want to throw self overboard if a ship repair kit is on the deck
 @setvar triggerOverboard 0
 
+#Set this to 1 if you want to only allow repair kits for 2 mins after embarking
+@setvar repairLockdown 0
+
 
 ##################################################################################
 ##################################################################################
@@ -16,6 +19,8 @@
 
 clearsysmsg 
 if not timerexists 'foodCheck' or not timerexists "bardLock" or not timerexists "buffTaste" or not timerexists "onBoard"
+    createtimer 'repairTimer'
+    settimer 'repairTimer' 0
     createtimer 'discoTimer'
     settimer 'discoTimer' 5000
     createtimer 'repairBoat'
@@ -325,7 +330,7 @@ while not dead
     
     #Follower Routine
     if skill "Necromancy" > 80 or skill "Spirit Speak" > 80
-        if followers < 4 and mana > 50
+        while followers < 4 and mana > 50
             #Lost a fire elem, resummon
             settimer "bardLock" 0
             if skill "Necromancy" > 80
@@ -335,12 +340,11 @@ while not dead
             cast 'Fire Elemental'
             wait 6000
             say "All Guard Me"
-        endif   
+        endwhile
     endif
     #Summon Creature Routine
     if skill "Necromancy" > 80 or skill "Spirit Speak" > 80
         if followers = 4 and mana > 30
-            #Lost a fire elem, resummon
             settimer "bardLock" 0
             if skill "Necromancy" > 80
                 say "[VengefulSpirit"
@@ -372,104 +376,6 @@ while not dead
             endwhile
         endif
         wait 600
-    endif
-    #spyglass routine - this is deprecated but leaving it in case of future changes, change skill down to 80 if so and reinstate spyglass timers
-    if skill "Tracking" > 135
-        if timer "spyGlassPeek" > 6500 
-            gumpclose 2890020940
-            wait 250
-            gumpclose 2890020940
-            wait 250
-            dclicktype 'spyglass'
-            waitfortarget 1200
-            target 'self'
-            wait 350 
-            gumpresponse 4 2890020940
-            wait 350 
-            if boardState = 1
-                if myGalleon = 1
-                    if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940
-                        @setvar 'blueSighted' 1
-                    endif
-                    while ingump "Next" 2890020940 
-                        gumpresponse 3
-                        wait 350
-                        if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940
-                            @setvar 'blueSighted' 1
-                        endif
-                    endwhile 
-                elseif myCarrack = 1
-                    if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940  or ingump "a galleon" 2890020940  
-                        @setvar 'blueSighted' 1
-                    endif
-                    while ingump "Next" 2890020940 
-                        gumpresponse 3
-                        wait 350
-                        if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940  or ingump "a galleon" 2890020940  
-                            @setvar 'blueSighted' 1
-                        endif
-                    endwhile 
-                elseif myLarge = 1
-                    if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940  or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-                        @setvar 'blueSighted' 1
-                    endif
-                    while ingump "Next" 2890020940 
-                        gumpresponse 3
-                        wait 350
-                        if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940  or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-                            @setvar 'blueSighted' 1
-                        endif
-                    endwhile 
-                elseif myLargeDragonship = 1
-                    if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-                        @setvar 'blueSighted' 1
-                    endif
-                    while ingump "Next" 2890020940 
-                        gumpresponse 3
-                        wait 350
-                        if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-                            @setvar 'blueSighted' 1
-                        endif
-                    endwhile 
-                endif
-                
-            else
-                if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-                    @setvar 'blueSighted' 1
-                endif
-                while ingump "Next" 2890020940 
-                    gumpresponse 3
-                    wait 350
-                    if ingump "a small ship" 2890020940 or ingump "a small dragonship" 2890020940 or ingump "a medium ship" 2890020940 or ingump "a medium dragonship" 2890020940 or ingump "a large ship" 2890020940 or ingump "a large dragonship" 2890020940 or ingump "a carrack" 2890020940 or ingump "a galleon" 2890020940  
-                        @setvar 'blueSighted' 1
-                    endif
-                endwhile    
-            endif
-            settimer "spyGlassPeek" 0
-            if blueSighted = 1      
-                for 5 
-                    say "..::<<BLUE BOAT SIGHTED>>:::.." 38
-                    wait 500
-                endfor
-                
-                #Embark
-                hotkey 'Cancel Current Target'
-                dclick tillerDude
-                wait 350
-                gumpresponse 21 4216593270
-                wait 350
-                gumpresponse 22 4216593270
-                wait 350
-                #we do this to make sure embark worked
-                say "[embark"
-                wait 500
-                say "[embarkfollowers"
-                wait 350
-                @setvar 'boardState' 0
-                @setvar 'closeEnemy' 0
-                @setvar 'blueSighted' 0
-            endif
-        endif
     endif
     #spirit speak only if on own boat and corpses present.  Do not SS if we have necromancy as we have liches and this is wasted time
     if skill "Spirit Speak" > 50 and timer "bardLock" > 10000 and timer "spiritSpeakCheck" > 30000 and 'boardState' = 0 and  skill "Necromancy" < 50
@@ -561,21 +467,23 @@ while not dead
     endif   
     #Repair Routine - we stagger these slightly so it is a bit random which one occurs next
     if 'closeEnemy' = 0
-        if timer "RepairHull" > 8000
-            say '[RepairHull'
-            wait 350
-            settimer "RepairHull" 0
-        endif    
-        if timer "RepairSails" > 8100
-            say '[RepairSails'
-            wait 350
-            settimer "RepairSails" 0
-        endif    
-        if timer "RepairGuns" > 8200
-            say '[RepairGuns'
-            wait 350
-            settimer "RepairGuns" 0
-        endif 
+		if repairLockdown = 0 or timer "repairTimer" < 120000
+			if timer "RepairHull" > 8000
+				say '[RepairHull'
+				wait 350
+				settimer "RepairHull" 0
+			endif    
+			if timer "RepairSails" > 8100
+				say '[RepairSails'
+				wait 350
+				settimer "RepairSails" 0
+			endif    
+			if timer "RepairGuns" > 8200
+				say '[RepairGuns'
+				wait 350
+				settimer "RepairGuns" 0
+			endif 
+		endif
     endif    
     
     ###############                                     ###############
@@ -618,6 +526,7 @@ while not dead
                 say "[embarkfollowers"
                 wait 350
                 @setvar 'boardState' 0
+				settimer "repairTimer" 0
             endif
             @setvar 'closeEnemy' 0
         elseif 'checkDead' = 'lastserial'
