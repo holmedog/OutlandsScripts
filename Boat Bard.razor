@@ -108,25 +108,25 @@ say "[reload"
 #do camping buff at least once regardless of buff status
 #camping buff
 if skill "Camping" > 50 
-	if not findtype "kindling" backpack
-		say "Need more kindling" 
-		wait 355
-		say "Need more kindling" 
-		wait 355
-		say "Need more kindling" 
-		wait 355
-	endif
+    if not findtype "kindling" backpack
+        say "Need more kindling" 
+        wait 355
+        say "Need more kindling" 
+        wait 355
+        say "Need more kindling" 
+        wait 355
+    endif
 
-	if not findtype "campfire" true
-		dclicktype "kindling" backpack
-		wait 350
-		while insysmsg "You fail to ignite"
-			wait 3000    
-			dclicktype "kindling" backpack
-			wait 350
-		endwhile
-	endif
-	wait 600
+    if not findtype "campfire" true
+        dclicktype "kindling" backpack
+        wait 350
+        while insysmsg "You fail to ignite"
+            wait 3000    
+            dclicktype "kindling" backpack
+            wait 350
+        endwhile
+    endif
+    wait 600
 endif
 
 while not dead
@@ -337,6 +337,20 @@ while not dead
             say "All Guard Me"
         endif   
     endif
+    #Summon Creature Routine
+    if skill "Necromancy" > 80 or skill "Spirit Speak" > 80
+        if followers = 4 and mana > 30
+            #Lost a fire elem, resummon
+            settimer "bardLock" 0
+            if skill "Necromancy" > 80
+                say "[VengefulSpirit"
+                wait 1000
+            endif
+            cast 'Summ. Creature'
+            wait 5000
+            say "All Guard Me"
+        endif   
+    endif
     #camping buff
     if skill "Camping" > 50 and not findbuff "Campfire Visit"
         if not findtype "kindling" backpack
@@ -445,12 +459,12 @@ while not dead
                 gumpresponse 21 4216593270
                 wait 350
                 gumpresponse 22 4216593270
-				wait 350
-				#we do this to make sure embark worked
-				say "[embark"
-				wait 500
-				say "[embarkfollowers"
-				wait 350
+                wait 350
+                #we do this to make sure embark worked
+                say "[embark"
+                wait 500
+                say "[embarkfollowers"
+                wait 350
                 @setvar 'boardState' 0
                 @setvar 'closeEnemy' 0
                 @setvar 'blueSighted' 0
@@ -592,17 +606,17 @@ while not dead
                 gumpresponse 21 4216593270
                 wait 350
                 gumpresponse 22 4216593270
-				wait 350
+                wait 350
                 dclick tillerDude
                 wait 350
                 gumpresponse 21 4216593270
                 wait 350
                 gumpresponse 22 4216593270
-				#we do this to make sure embark worked
-				say "[embark"
-				wait 500
-				say "[embarkfollowers"
-				wait 350
+                #we do this to make sure embark worked
+                say "[embark"
+                wait 500
+                say "[embarkfollowers"
+                wait 350
                 @setvar 'boardState' 0
             endif
             @setvar 'closeEnemy' 0
@@ -630,25 +644,25 @@ while not dead
                         attack 'lastserial'
                     endif    
                     if skill 'Magery' > 80
-						overhead "FS!" 33
-						cast "Flamestrike"
-						wft 3500
-						target 'lastserial'
-						say 'I HATE YOU WHY DID YOU PUT ME ON HERE I AM REALLY JUST A GOOD KID' 55
-						wait 400
-                    endif					
-					if  skill "Poisoning" > 50  
-						overhead "Poison Target!" 33
-						cast "Poison"
-						wft 1500
-						target 'lastserial'
-						wait 400
-						#try to poison strike
-						say "[poisonStrike"
-						wft 1500
-						target 'lastserial'
-					endif
-					say "Well, fuck me!"
+                        overhead "FS!" 33
+                        cast "Flamestrike"
+                        wft 3500
+                        target 'lastserial'
+                        say 'I HATE YOU WHY DID YOU PUT ME ON HERE I AM REALLY JUST A GOOD KID' 55
+                        wait 400
+                    endif                   
+                    if  skill "Poisoning" > 50  
+                        overhead "Poison Target!" 33
+                        cast "Poison"
+                        wft 1500
+                        target 'lastserial'
+                        wait 400
+                        #try to poison strike
+                        say "[poisonStrike"
+                        wft 1500
+                        target 'lastserial'
+                    endif
+                    say "Well, fuck me!"
                 endwhile
             endif
             #Set serial up for last attacked for later use          
