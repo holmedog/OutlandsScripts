@@ -511,11 +511,18 @@ while not dead
 			if insysmsg 'No one matching that' 
 				if 'boardState' = 1
 					if skill 'Forensic Evaluation' > 20
+						clearsysmsg
 						for 8
 							hotkey 'Forensics'
 							wait 500
 							target 'self'
 							wait 1500
+							if not insysmsg "You carve" and not insysmsg  "anything nearby" 
+								while not insysmsg "successful"
+									say "I am broken in a Captcha loop.  Fix me"
+									wait 2500
+								endwhile								
+							endif
 						endfor
 					endif
 					hotkey 'Cancel Current Target'
