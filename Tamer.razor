@@ -115,7 +115,7 @@ while not dead
     endif
     
     # If hurt, send pet to aggro then heal self
-    if hits < 5
+    if diffhits > 5
         # Have pet guard to grab all aggro
         say 'all guard me'
 

@@ -79,7 +79,14 @@ if skill 'Magery' > 50 and not findbuff 'Strength'
     target self
     wait 500
 endif
-
+#Protection
+if skill 'Magery' > 50 and not findbuff 'Protection' 
+    overhead 'Protection time'
+    cast 'Arch Protection'
+    wft 2500
+    target self
+    wait 500
+endif
 if 'lockDisco' = 0 and skill "discordance" > 50 and timer "bardLock" > 10000 
     overhead "Disco Buff"
     skill "discordance" 
