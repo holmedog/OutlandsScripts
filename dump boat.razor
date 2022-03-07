@@ -161,7 +161,7 @@ clearlist ItemTypes
 @pushlist 'ItemTypes' 0x13d4 //studdedarms
 
 foreach x in ItemTypes
-  while findtype x backpack as found
+  while findtype x self as found
     @hotkey 'set last target'
     @target found
     @setvar myVariable lasttarget

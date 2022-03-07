@@ -1,0 +1,27 @@
+@removelist 'treasureitems'
+@createlist 'treasureitems'
+pushlist 'treasureitems' 0xa8c6 
+pushlist 'treasureitems' 0x42bf 
+pushlist 'treasureitems' 0x227a
+pushlist 'treasureitems' 0xefc 
+pushlist 'treasureitems' 0xf91 
+pushlist 'treasureitems' 0x5740
+pushlist 'treasureitems' 0xef3 
+pushlist 'treasureitems' 0xeed 
+pushlist 'treasureitems' 0x72a4
+pushlist 'treasureitems' 0x14ec
+
+#find dump chest
+overhead 'Select Chest' 32
+setvar 'dumpChest'
+
+foreach x in treasureitems
+  while findtype x self as found
+      lift found 60000
+    drop dumpChest -1 -1 0 
+    wait 600
+  endwhile
+endfor
+
+overhead 'Done dropping the loot' 45
+overhead 'Done dropping the loot' 45
