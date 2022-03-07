@@ -1,2 +1,4 @@
-
-        potion "heal"
+    if mana > 50 and skill "Magery" > 50 and not findbuff "Magic Reflection" 
+        cast 'Magic Reflection'
+        wait 750
+    endif
