@@ -563,7 +563,7 @@ while not dead
         endif
     endif   
     #Repair Routine - 
-    if 'closeEnemy' = 0 and timer "RepairHull" > 8100
+    if 'closeEnemy' = 0 and timer "RepairHull" > 4000
         if repairLockdown = 0 or timer "repairTimer" < 120000
             say '[RepairGuns'
             wait 355            
@@ -588,17 +588,18 @@ while not dead
             say "All guard me"
         endif   
 		
-		foreach reg in 'regTypes'
-			if counttype reg < 3
-				wait 500
-				say "Hey! I am Low on regs!" 23
-				wait 500
-				say "Hey! I am Low on regs!" 23
-				wait 500
-				say "Hey! I am Low on regs!" 23
-			endif
-		endfor
-			
+		if skill "Magery" > 50
+			foreach reg in 'regTypes'
+				if counttype reg < 3
+					wait 500
+					say "Hey! I am Low on regs!" 23
+					wait 500
+					say "Hey! I am Low on regs!" 23
+					wait 500
+					say "Hey! I am Low on regs!" 23
+				endif
+			endfor
+		endif
     endif
     endif
     
