@@ -84,6 +84,19 @@ pushlist 'instrumentTypes' 3740
 pushlist 'instrumentTypes' 3742
 pushlist 'instrumentTypes' 3763
 
+#Create list of reagents
+createlist regTypes
+clearlist regTypes
+@pushlist 'regTypes' 'Blood Moss'
+@pushlist 'regTypes' 'Black Pearl%s%'
+@pushlist 'regTypes' 'Ginseng'
+@pushlist 'regTypes' 'Garlic'
+@pushlist 'regTypes' 'Sulfurous Ash'
+@pushlist 'regTypes' "Spider's Silk" 
+@pushlist 'regTypes' 'Nightshade' 
+@pushlist 'regTypes' 'Mandrake Root%s%' 
+# ' for formatting reasons
+
 #Loop through instruments and dclick one
 foreach instrumentType in 'instrumentTypes'
     dclicktype instrumentType
@@ -349,7 +362,7 @@ while not dead
     
     #Follower Routine
     if skill "Necromancy" > 80 or skill "Spirit Speak" > 80
-        while followers < 4 and mana > 50
+        if followers < 4 and mana > 50
             #Lost a fire elem, resummon
             settimer "bardLock" 0
             if skill "Necromancy" > 80
@@ -366,7 +379,7 @@ while not dead
                 target 'self'
                 wait 750
             endif
-        endwhile
+        endif
     endif
     #Summon Creature Routine
     if skill "Necromancy" > 80 or skill "Spirit Speak" > 80
@@ -486,6 +499,37 @@ while not dead
     ###############    Start routines that do not require target      ###############
     ###############                                                   ###############   
     
+	#Yell if we are not in fighting party
+	if insysmsg "You must be a part of your initial embarking"
+		say "Hey! I am not in the fighting party!!!" 23
+		wait 500
+		say "Hey! I am not in the fighting party!!!" 23
+		wait 500
+		say "Hey! I am not in the fighting party!!!" 23
+		wait 500
+	endif
+	
+	#Check if we broke an instrument
+	if skill "Musicianship" > 50
+		if insysmsg "What instrument shall you play"
+			@setvar newInstrument 0 
+			foreach instrumentType in 'instrumentTypes'
+				if findtype instrumentType as foundInstrument
+					dclick foundInstrument				
+					@setvar newInstrument 1
+				endif
+			endfor
+			if newInstrument = 0
+				say "I am out of instruments!!!"
+				wait 500
+				say "I am out of instruments!!!"
+				wait 500
+				say "I am out of instruments!!!"
+				wait 500
+			endif
+		endif
+	endif
+	
     #disco routine
     if  skill "Discordance" > 50 and timer "bardLock" > 10000 and timer "discoTimer" > 5150 and closeEnemy = 1
         overhead "Disco Target!" 33
@@ -543,6 +587,19 @@ while not dead
         if followers > 1
             say "All guard me"
         endif   
+		
+		foreach reg in 'regTypes'
+			if counttype reg < 3
+				wait 500
+				say "Hey! I am Low on regs!" 23
+				wait 500
+				say "Hey! I am Low on regs!" 23
+				wait 500
+				say "Hey! I am Low on regs!" 23
+			endif
+		endfor
+			
+    endif
     endif
     
     ###############                                         ###############
