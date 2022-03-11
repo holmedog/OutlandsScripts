@@ -24,55 +24,56 @@
 ##################################################################################
 
 clearsysmsg 
-if not timerexists 'foodCheck' or not timerexists "bardLock" or not timerexists "buffTaste" or not timerexists "onBoard"
-    createtimer 'repairTimer'
-    settimer 'repairTimer' 0
-    createtimer 'discoTimer'
-    settimer 'discoTimer' 5000
-    createtimer 'repairBoat'
-    settimer 'repairBoat' 8000
-    createtimer "shroomy"
-    settimer "shroomy" 61000
-    createtimer 'buffDisco'
-    settimer 'buffDisco' 300000
-    createtimer 'buffProvo'
-    settimer 'buffProvo' 300000
-    createtimer 'buffPeace'
-    settimer 'buffPeace' 300000
-    createtimer 'buffMage'
-    settimer 'buffMage' 300000 
-    createtimer 'buffBeg'
-    settimer 'buffBeg' 300000 
-    createtimer 'bardLock'
-    settimer 'bardLock' 15000
-    createtimer "aid time"
-    settimer "aid time" 8000
-    createtimer 'RepairHull'
-    settimer 'RepairHull' 0
-    createtimer 'buffTaste'
-    settimer 'buffTaste' 15000
-    createtimer 'newTargetCheck'
-    settimer 'newTargetCheck' 15000
-    createtimer 'spiritSpeakCheck'
-    settimer 'spiritSpeakCheck' 15000
-    createtimer 'foodCheck'
-    settimer 'foodCheck' 120000
-    createtimer 'crookCheck'
-    settimer 'crookCheck' 120000
-    createtimer 'crewHealing'
-    settimer 'crewHealing' 120000
-    createtimer 'onBoard'
-    settimer 'onBoard' 120000
-    createtimer 'painSpkeTimer'
-    settimer 'painSpkeTimer' 120000
-    createtimer 'poisonStrikeTimer'
-    settimer 'poisonStrikeTimer' 120000
-    createtimer 'vampTimer'
-    settimer 'vampTimer' 120000
-    createtimer 'dressTimer'
-    settimer 'dressTimer' 120000
-endif
- 
+
+#Timers.  We used to do these on an if exists basis, but it fubard too much stuff if you leave client open forever
+createtimer 'repairTimer'
+settimer 'repairTimer' 0
+createtimer 'discoTimer'
+settimer 'discoTimer' 5000
+createtimer 'repairBoat'
+settimer 'repairBoat' 8000
+createtimer "shroomy"
+settimer "shroomy" 61000
+createtimer 'buffDisco'
+settimer 'buffDisco' 300000
+createtimer 'buffProvo'
+settimer 'buffProvo' 300000
+createtimer 'buffPeace'
+settimer 'buffPeace' 300000
+createtimer 'buffMage'
+settimer 'buffMage' 300000 
+createtimer 'buffBeg'
+settimer 'buffBeg' 300000 
+createtimer 'bardLock'
+settimer 'bardLock' 15000
+createtimer "aid time"
+settimer "aid time" 8000
+createtimer 'RepairHull'
+settimer 'RepairHull' 0
+createtimer 'buffTaste'
+settimer 'buffTaste' 15000
+createtimer 'newTargetCheck'
+settimer 'newTargetCheck' 15000
+createtimer 'spiritSpeakCheck'
+settimer 'spiritSpeakCheck' 15000
+createtimer 'foodCheck'
+settimer 'foodCheck' 120000
+createtimer 'crookCheck'
+settimer 'crookCheck' 120000
+createtimer 'crewHealing'
+settimer 'crewHealing' 120000
+createtimer 'onBoard'
+settimer 'onBoard' 120000
+createtimer 'painSpkeTimer'
+settimer 'painSpkeTimer' 120000
+createtimer 'poisonStrikeTimer'
+settimer 'poisonStrikeTimer' 120000
+createtimer 'vampTimer'
+settimer 'vampTimer' 120000
+createtimer 'dressTimer'
+settimer 'dressTimer' 120000
+
+#Clear lastt t arget from last run - this can cause a weird bug
 unsetvar 'lastserial' 
 
 #Create list of instrument types and dclick if found
