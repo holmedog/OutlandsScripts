@@ -175,7 +175,8 @@ while not dead
     if targetexists
         hotkey "Cancel Current Target"
         wait 350
-    endif
+    endif	
+	
     #Check if we are on NPC ship
     if insysmsg "You board the ship"
         @setvar 'boardState' 1
@@ -417,7 +418,7 @@ while not dead
     if skill "Spirit Speak" > 50 and timer "bardLock" > 10000 and timer "spiritSpeakCheck" > 30000 and 'boardState' = 0 and  skill "Necromancy" < 50
         if findtype 'corpse' ground any any 12 as found
             overhead "spirit speak"
-            skill "Spirit Speak" 
+            hotkey 'Spirit Speak'
             settimer "spiritSpeakCheck" 0
             settimer "bardLock" 8000
         endif
@@ -702,6 +703,11 @@ while not dead
                 wait 350             
                 @setvar! 'lastserial' lasttarget
                 attack 'lastserial'         
+				if  skill "Discordance" > 50 
+					skill "Discordance" 
+					wft 2500
+					target 'lastserial'
+				endif
                 if skill 'Magery' > 80
                     overhead "FS!" 33
                     cast "Flamestrike"
@@ -760,7 +766,7 @@ while not dead
         endif
         
         #Flamestrike
-        if skill 'Magery' > 80
+        if skill 'Magery' > 80 and skill 'Archery' < 80
             if counttype "Spider's Silk" > 15 and counttype "Sulfurous Ash" > 15 and 'boardState' = 1 and mana >= 51
                 # put an extra ' here to fix formatting
                 wait 400
