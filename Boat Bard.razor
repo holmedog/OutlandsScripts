@@ -608,101 +608,101 @@ while not dead
     ###############                                         ###############
     ###############    Start target search / embark routine ###############
     ###############                                         ###############   
-    
-    @setvar searchNew 1
-    if varexist 'lastserial'
-        if targetLock = 1 
-            if noto 'lastserial' = invulnerable 
-                sysmsg "Doing a test" 
-            endif
-            if insysmsg "not found"
-                #This status means target is dead
-                overhead "Target is dead or out of range. Finding a new one"
-            else
-                #Our target appears to be alive still.  Do not hunt for a new target
-                @setvar searchNew 0             
-            endif     
-        endif
-    endif
-    
-    
-    if timer "newTargetCheck" > 2500 and searchNew = 1 and skill "Poisoning" <= 50  
+    if timer "newTargetCheck" > 2500
+        overhead "Target acquisition routine engage!"
         #reset timer
         settimer "newTargetCheck" 0
+        @setvar searchNew 1
+        if varexist 'lastserial'
+            if targetLock = 1 
+                if noto 'lastserial' = invulnerable 
+                    sysmsg "Testing target is alive" 
+                endif
+                if insysmsg "not found"
+                    #This status means target is dead
+                    overhead "Target is dead or out of range. Finding a new one"
+                else
+                    #Our target appears to be alive still.  Do not hunt for a new target
+                    @setvar searchNew 0             
+                endif     
+            endif
+        endif
         
-        #Set this to 1 before we search
-        @setvar closeEnemy 1
-        #Start cycline
-        hotkey 'Next Grey Monster Target'
-        wait 255
-        if insysmsg 'No one matching that'       
-            hotkey 'Next Grey Humanoid Target'
+        
+        if searchNew = 1 or skill "Poisoning" > 50            
+            #Set this to 1 before we search
+            @setvar closeEnemy 1
+            #Start cycline
+            hotkey 'Next Grey Monster Target'
             wait 255
-            if insysmsg 'No one matching that'  
-                #Start boss hunt        
-                hotkey "Target random murderer" 
+            if insysmsg 'No one matching that'       
+                hotkey 'Next Grey Humanoid Target'
                 wait 255
                 if insysmsg 'No one matching that'  
-                    #We have no target so set close enemy 0                 
-                    @setvar 'closeEnemy' 0
-                else
-                    #Found a boss so we want to pretend we are boarded
-                    @setvar 'boardState' 1
+                    #Start boss hunt        
+                    hotkey "Target random murderer" 
+                    wait 255
+                    if insysmsg 'No one matching that'  
+                        #We have no target so set close enemy 0                 
+                        @setvar 'closeEnemy' 0
+                    else
+                        #Found a boss so we want to pretend we are boarded
+                        @setvar 'boardState' 1
+                    endif
                 endif
             endif
-        endif
-        
-        #Set up var for last enemy.  If no enemy it is time to leave this boat
-        if closeEnemy = 1       
-            @setvar! 'lastserial' lasttarget
-        #Embark Routine 
-        elseif 'boardState' = 1         
-            overhead "Done with this fight"
             
-            #Skinning Routine
-            if skill 'Forensic Evaluation' > 20
-                clearsysmsg             
-                #Wait on skill usage CD
-                while timer "bardLock" < 10000
-                    wait 100
-                endwhile
-                for 3
-                    hotkey 'Forensics'
-                    wait 500
-                    target 'self'
-                    wait 1500
-                    if not insysmsg "You carve" and not insysmsg  "anything nearby" and not insysmsg "must wait"
-                        while not insysmsg "successful"
-                            say "I am broken in a Captcha loop.  Fix me"
-                            wait 2500
-                        endwhile                                
-                    endif
-                endfor 
+            #Set up var for last enemy.  If no enemy it is time to leave this boat
+            if closeEnemy = 1       
+                @setvar! 'lastserial' lasttarget
+            #Embark Routine 
+            elseif 'boardState' = 1         
+                overhead "Done with this fight"
+                
+                #Skinning Routine
+                if skill 'Forensic Evaluation' > 20
+                    clearsysmsg             
+                    #Wait on skill usage CD
+                    while timer "bardLock" < 10000
+                        wait 100
+                    endwhile
+                    for 3
+                        hotkey 'Forensics'
+                        wait 500
+                        target 'self'
+                        wait 1500
+                        if not insysmsg "You carve" and not insysmsg  "anything nearby" and not insysmsg "must wait"
+                            while not insysmsg "successful"
+                                say "I am broken in a Captcha loop.  Fix me"
+                                wait 2500
+                            endwhile                                
+                        endif
+                    endfor 
+                endif
+                #Start Embarking
+                hotkey 'Cancel Current Target'
+                dclick tillerDude
+                wait 350
+                gumpresponse 21 4216593270
+                wait 350
+                gumpresponse 22 4216593270
+                wait 350
+                dclick tillerDude
+                wait 350
+                gumpresponse 21 4216593270
+                wait 350
+                gumpresponse 22 4216593270
+                #we do this to make sure embark worked
+                say "[embark"
+                wait 500
+                say "[embarkfollowers"
+                wait 350
+                @setvar 'boardState' 0
+                settimer "repairTimer" 0
             endif
-            #Start Embarking
-            hotkey 'Cancel Current Target'
-            dclick tillerDude
-            wait 350
-            gumpresponse 21 4216593270
-            wait 350
-            gumpresponse 22 4216593270
-            wait 350
-            dclick tillerDude
-            wait 350
-            gumpresponse 21 4216593270
-            wait 350
-            gumpresponse 22 4216593270
-            #we do this to make sure embark worked
-            say "[embark"
-            wait 500
-            say "[embarkfollowers"
-            wait 350
-            @setvar 'boardState' 0
-            settimer "repairTimer" 0
+        #end enemy search routine
         endif
-    #end enemy search routine
-    endif
-        
+    endif    
     ###############                                     ###############
     ###############Start routines that  require a target###############
     ###############                                     ###############   
