@@ -4,6 +4,7 @@
 
 #Set this to 1 if you want to kill one target at a time.  Anything else tries to spread damage by swapping target every 2.5s.  Should be 1 for Herding chars in particular
 #SPECIAL NOTE: Having Poisonining greater than 50 overwrites this always as that would be a bad choice
+#Also, this turns off if it finds a boss so it will clear decks.  Have to restart script to change it
 @setvar targetLock 1
 
 #Set this to 1 if you want to throw self overboard if a ship repair kit is on the deck
@@ -648,6 +649,7 @@ while not dead
                     else
                         #Found a boss so we want to pretend we are boarded
                         @setvar 'boardState' 1
+						@setvar 'searchNew' 0
                     endif
                 endif
             endif
