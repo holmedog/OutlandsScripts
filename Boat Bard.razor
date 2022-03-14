@@ -2,6 +2,10 @@
 #   If you do not have that it will not stop the script but it is 
 #   a good idea to have one in case you unequip weapon
 
+#Set this to 1 if you want to kill one target at a time.  Anything else tries to spread damage by swapping target every 2.5s.  Should be 1 for Herding chars in particular
+#SPECIAL NOTE: Having Poisonining greater than 50 overwrites this always as that would be a bad choice
+@setvar targetLock 1
+
 #Set this to 1 if you want to throw self overboard if a ship repair kit is on the deck
 @setvar triggerOverboard 0
 
@@ -26,6 +30,8 @@
 clearsysmsg 
 
 #Timers.  We used to do these on an if exists basis, but it fubard too much stuff if you leave client open forever
+createtimer 'petAttack' 
+settimer 'petAttack' 0
 createtimer 'repairTimer'
 settimer 'repairTimer' 0
 createtimer 'discoTimer'
@@ -40,12 +46,10 @@ createtimer 'buffProvo'
 settimer 'buffProvo' 300000
 createtimer 'buffPeace'
 settimer 'buffPeace' 300000
-createtimer 'buffMage'
-settimer 'buffMage' 300000 
 createtimer 'buffBeg'
 settimer 'buffBeg' 300000 
 createtimer 'bardLock'
-settimer 'bardLock' 15000
+settimer 'bardLock' 0
 createtimer "aid time"
 settimer "aid time" 8000
 createtimer 'RepairHull'
@@ -119,7 +123,7 @@ if skill "Veterinary" > 50 and followers >= 1
     overhead "Target pet 2"
     setvar! pet2
     overhead "Target pet 3"
-    setvar! pet3
+    setvar! pet3 
 endif   
 
 overhead "Select your Tillerman"
@@ -175,8 +179,8 @@ while not dead
     if targetexists
         hotkey "Cancel Current Target"
         wait 350
-    endif	
-	
+    endif   
+    
     #Check if we are on NPC ship
     if insysmsg "You board the ship"
         @setvar 'boardState' 1
@@ -198,7 +202,7 @@ while not dead
             target 'self'
             wait 666
         endif
-        if diffhits > 15
+        if diffhits > 18
             cast "greater heal"
             wft 3500
             target self
@@ -497,37 +501,37 @@ while not dead
     ###############    Start routines that do not require target      ###############
     ###############                                                   ###############   
     
-	#Yell if we are not in fighting party
-	if insysmsg "You must be a part of your initial embarking"
-		say "Hey! I am not in the fighting party!!!" 23
-		wait 500
-		say "Hey! I am not in the fighting party!!!" 23
-		wait 500
-		say "Hey! I am not in the fighting party!!!" 23
-		wait 500
-	endif
-	
-	#Check if we broke an instrument
-	if skill "Musicianship" > 50
-		if insysmsg "What instrument shall you play"
-			@setvar newInstrument 0 
-			foreach instrumentType in 'instrumentTypes'
-				if findtype instrumentType as foundInstrument
-					dclick foundInstrument				
-					@setvar newInstrument 1
-				endif
-			endfor
-			if newInstrument = 0
-				say "I am out of instruments!!!"
-				wait 500
-				say "I am out of instruments!!!"
-				wait 500
-				say "I am out of instruments!!!"
-				wait 500
-			endif
-		endif
-	endif
-	
+    #Yell if we are not in fighting party
+    if insysmsg "You must be a part of your initial embarking"
+        say "Hey! I am not in the fighting party!!!" 23
+        wait 500
+        say "Hey! I am not in the fighting party!!!" 23
+        wait 500
+        say "Hey! I am not in the fighting party!!!" 23
+        wait 500
+    endif
+    
+    #Check if we broke an instrument
+    if skill "Musicianship" > 50
+        if insysmsg "What instrument shall you play"
+            @setvar newInstrument 0 
+            foreach instrumentType in 'instrumentTypes'
+                if findtype instrumentType as foundInstrument
+                    dclick foundInstrument              
+                    @setvar newInstrument 1
+                endif
+            endfor
+            if newInstrument = 0
+                say "I am out of instruments!!!"
+                wait 500
+                say "I am out of instruments!!!"
+                wait 500
+                say "I am out of instruments!!!"
+                wait 500
+            endif
+        endif
+    endif
+    
     #disco routine
     if  skill "Discordance" > 50 and timer "bardLock" > 10000 and timer "discoTimer" > 5150 and closeEnemy = 1
         overhead "Disco Target!" 33
@@ -585,19 +589,19 @@ while not dead
         if followers > 1
             say "All guard me"
         endif   
-		
-		if skill "Magery" > 50
-			foreach reg in 'regTypes'
-				if counttype reg < 3
-					wait 500
-					say "Hey! I am Low on regs!" 23
-					wait 500
-					say "Hey! I am Low on regs!" 23
-					wait 500
-					say "Hey! I am Low on regs!" 23
-				endif
-			endfor
-		endif
+        
+        if skill "Magery" > 50
+            foreach reg in 'regTypes'
+                if counttype reg < 3
+                    wait 500
+                    say "Hey! I am Low on regs!" 23
+                    wait 500
+                    say "Hey! I am Low on regs!" 23
+                    wait 500
+                    say "Hey! I am Low on regs!" 23
+                endif
+            endfor
+        endif
     endif
     endif
     
@@ -605,7 +609,24 @@ while not dead
     ###############    Start target search / embark routine ###############
     ###############                                         ###############   
     
-    if timer "newTargetCheck" > 2500    
+    @setvar searchNew 1
+    if varexist 'lastserial'
+        if targetLock = 1 
+            if noto 'lastserial' = invulnerable 
+                sysmsg "Doing a test" 
+            endif
+            if insysmsg "not found"
+                #This status means target is dead
+                overhead "Target is dead or out of range. Finding a new one"
+            else
+                #Our target appears to be alive still.  Do not hunt for a new target
+                @setvar searchNew 0             
+            endif     
+        endif
+    endif
+    
+    
+    if timer "newTargetCheck" > 2500 and searchNew = 1 and skill "Poisoning" <= 50  
         #reset timer
         settimer "newTargetCheck" 0
         
@@ -640,11 +661,11 @@ while not dead
             
             #Skinning Routine
             if skill 'Forensic Evaluation' > 20
-                clearsysmsg				
-				#Wait on skill usage CD
-				while timer "bardLock" < 10000
-					wait 100
-				endwhile
+                clearsysmsg             
+                #Wait on skill usage CD
+                while timer "bardLock" < 10000
+                    wait 100
+                endwhile
                 for 3
                     hotkey 'Forensics'
                     wait 500
@@ -703,11 +724,11 @@ while not dead
                 wait 350             
                 @setvar! 'lastserial' lasttarget
                 attack 'lastserial'         
-				if  skill "Discordance" > 50 
-					skill "Discordance" 
-					wft 2500
-					target 'lastserial'
-				endif
+                if  skill "Discordance" > 50 
+                    skill "Discordance" 
+                    wft 2500
+                    target 'lastserial'
+                endif
                 if skill 'Magery' > 80
                     overhead "FS!" 33
                     cast "Flamestrike"
@@ -732,7 +753,7 @@ while not dead
         endif           
                                 
         #herding
-        if skill 'Herding' > 50 and timer "crookCheck" > 2000
+        if skill 'Herding' > 50 and timer "crookCheck" > 3000
             #Wait on skill usage CD
             while timer "bardLock" < 10000
                 wait 100
@@ -742,7 +763,13 @@ while not dead
             wft 500
             target 'lastserial'
             settimer "crookCheck" 0
-            settimer "bardLock" 8000
+            settimer "bardLock" 7000
+        endif
+        if followers > 1 and timer "petAttack" > 2500
+            say "All kill"
+            wft 1500
+            target 'lastserial'
+            settimer "petAttack" 0
         endif
         
         #poison routine 
@@ -760,7 +787,7 @@ while not dead
                 settimer "poisonStrikeTimer" 0
             endif
             if skill "Discordance" <= 50 
-                #Bump timer so we jump to a new target
+                #Bump timer so we jump to a new target 
                 settimer newTargetCheck 5000
             endif
         endif

@@ -1,7 +1,18 @@
-while not dead
-    if findtype 3702 ground any any 2 as found
-        lift found
-        drop found ground
-        wait 800
-    endif
-endwhile    
+#hotkey 'Next Grey Monster Target'
+#wait 255
+
+if varexist 'lastserial' 
+    overhead "Yep"
+else 
+    overhead "Nope"
+endif
+
+clearsysmsg             
+@setvar! 'lastserial' lasttarget
+
+if noto 'lastserial' = invulnerable 
+    overhead "Here"
+endif
+if insysmsg "not found"
+    overhead "This loop"
+endif     
