@@ -1,18 +1,4 @@
-#hotkey 'Next Grey Monster Target'
-#wait 255
-
-if varexist 'lastserial' 
-    overhead "Yep"
-else 
-    overhead "Nope"
-endif
-
-clearsysmsg             
-@setvar! 'lastserial' lasttarget
-
-if noto 'lastserial' = invulnerable 
-    overhead "Here"
-endif
-if insysmsg "not found"
-    overhead "This loop"
-endif     
+@setvar 'lastserial'
+if findtype 3701 'lastserial' as foundBackpack
+    dclick 'foundBackpack'
+    

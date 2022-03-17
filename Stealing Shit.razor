@@ -1,0 +1,20 @@
+#Populate Items we care about
+removelist 'item_graphic_ids'
+createlist 'item_graphic_ids'
+pushlist 'item_graphic_ids' 'recall rune'
+pushlist 'item_graphic_ids' 'Mandrake Root%s%'
+pushlist 'item_graphic_ids' 'studded gorget' 
+
+@setvar 'lastserial'  
+foreach searchItem in 'item_graphic_ids'
+    if findtype searchItem 'lastserial' as foundItem
+        @getlabel 'foundItem' foundItemLabel
+        overhead "Stealing:" 23
+        overhead foundItemLabel 33
+        skill 'stealing'
+        waitfortarget 3500
+        target foundItem
+    endif
+endfor
+
+

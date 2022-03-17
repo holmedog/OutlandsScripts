@@ -569,20 +569,20 @@ while not dead
     endif   
     #Repair Routine - 
     if 'closeEnemy' = 0 or bossFight = 1
-		if timer "RepairHull" > 4000
-			if repairLockdown = 0 or timer "repairTimer" < 120000
-				say '[RepairGuns'
-				wait 355            
-				if insysmsg 'guns do not need'
-					say '[RepairSails'
-					wait 355
-					if insysmsg 'sails do not need'
-						say '[RepairHull'
-					endif
-				endif
-			endif
-			settimer "RepairHull" 0
-		endif
+        if timer "RepairHull" > 4000
+            if repairLockdown = 0 or timer "repairTimer" < 120000
+                say '[RepairGuns'
+                wait 355            
+                if insysmsg 'guns do not need'
+                    say '[RepairSails'
+                    wait 355
+                    if insysmsg 'sails do not need'
+                        say '[RepairHull'
+                    endif
+                endif
+            endif
+            settimer "RepairHull" 0
+        endif
     endif    
     
     #Put on your clothes
@@ -614,18 +614,17 @@ while not dead
     ###############    Start target search / embark routine ###############
     ###############                                         ###############   
     if timer "newTargetCheck" > 2500
-        overhead "Target acquisition routine engage!"
         #reset timer
         settimer "newTargetCheck" 0
         @setvar searchNew 1
         if varexist 'lastserial'
             if targetLock = 1 
                 if noto 'lastserial' = invulnerable 
-                    sysmsg "Testing target is alive" 
+                    #sysmsg "Testing target is alive" 
                 endif
                 if insysmsg "not found"
                     #This status means target is dead
-                    overhead "Target is dead or out of range. Finding a new one"
+                #overhead "Target is dead or out of range. Finding a new one"
                 else
                     #Our target appears to be alive still.  Do not hunt for a new target
                     @setvar searchNew 0             
@@ -653,8 +652,8 @@ while not dead
                     else
                         #Found a boss so we want to pretend we are boarded
                         @setvar 'boardState' 1
-						@setvar 'searchNew' 0
-						@setvar 'bossFight' 1
+                        @setvar 'searchNew' 0
+                        @setvar 'bossFight' 1
                     endif
                 endif
             endif
