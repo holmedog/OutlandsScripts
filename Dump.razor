@@ -1,119 +1,11 @@
 clearignore
 
-while findtype "cooked fish"  as found
-    dclicktype "dagger"
-    wft 2500
-    target found
-    #wait 400
-    ignore found
-endwhile
-while findtype "fish"  as found
-    dclicktype "dagger"
-    wft 2500
-    target found
-    #wait 400
-    ignore found
-endwhile
+//open tome chest
+dclick 0x5B7C7BBD
+wait 600
 
-//dump all supply shelf
-menu 0x4083AF65 0
-waitfortarget
-target 'self'
-wait 500
-gumpclose 3232825965 
-wait 500
 
-//dump all resources
-dclick 0x4004288C
-waitforgump 1859005118
-gumpresponse 2
-waitfortarget
-waitforgump 1859005118
-target 'self'
-wait 500
-gumpclose 1859005118
-wait 500
-
-clearignore 
-//dump pack llama
-while findtype 292 ground any any 2 as found
-    overhead 'Packhorse dump routine' 55
-    
-    dclick found
-    wait 500
-    //dump all supply shelf
-    menu 0x4083AF65 0
-    waitfortarget
-    target found
-    wait 500
-    gumpclose
-    wait 500
-
-    //dump all resources
-    dclick 0x4004288C
-    waitforgump 1859005118
-    gumpresponse 2
-    waitfortarget
-    waitforgump 1859005118
-    target found
-    wait 500
-    gumpclose
-    wait 500
-    
-    #dump gold
-    
-
-    while findtype 3821 'found' as 'myGold'
-        lift myGold 60000
-        drop '0x4022498C' -1 -1 0 
-        wait 600
-    endwhile
-
-    ignore found
-endwhile   
-
-//dump pack horse
-while findtype 291 ground any any 2 as found
-    overhead 'Packhorse dump routine' 55
-    
-    dclick found
-    wait 500
-    //dump all supply shelf
-    menu 0x4083AF65 0
-    waitfortarget
-    target found
-    wait 500
-    gumpclose
-    wait 500
-
-    //dump all resources
-    dclick 0x4004288C
-    waitforgump 1859005118
-    gumpresponse 2
-    waitfortarget
-    waitforgump 1859005118
-    target found
-    wait 500
-    gumpclose
-    wait 500
-    
-    #dump gold
-    
-
-    while findtype 3821 'found' as 'myGold'
-        lift myGold 60000
-        drop '0x4022498C' -1 -1 0 
-        wait 600
-    endwhile
-
-    ignore found
-endwhile   
-
-//Target the resupply cabinet here
-overhead 'Restock' 25
-menu 0x4083AF65 1
-wait 500
-
+overhead "Starting Organizers"
 organizer 1
 while queued
     wait 1000
@@ -151,5 +43,117 @@ while queued
     wait 1000
 endwhile
 wait 1000
+
+while findtype "cooked fish"  as found
+    dclicktype "dagger"
+    wft 2500
+    target found
+    #wait 400
+    ignore found
+endwhile
+while findtype "fish"  as found
+    dclicktype "dagger"
+    wft 2500
+    target found
+    #wait 400
+    ignore found
+endwhile
+
+//dump all supply shelf
+menu 0x407F8ACB 0
+waitfortarget
+target 'self'
+wait 500
+gumpresponse 7
+wait 500
+gumpclose 3232825965 
+wait 500
+overhead "Done with shelf"
+
+//dump all resources
+dclick 0x4004288C
+waitforgump 1859005118
+gumpresponse 2
+waitfortarget
+waitforgump 1859005118
+target 'self'
+wait 500
+gumpclose 1859005118
+wait 500
+
+clearignore 
+//dump pack llama
+while findtype 292 ground any any 2 as found
+    overhead 'Packhorse dump routine' 55
+    
+    dclick found
+    wait 500
+    //dump all supply shelf
+    menu 0x4083AF65 0
+    waitfortarget
+    target found
+    wait 500
+    gumpclose
+    wait 500
+
+    //dump all resources
+    dclick 0x407F8ACB
+    waitforgump 1859005118
+    gumpresponse 2
+    waitfortarget
+    waitforgump 1859005118
+    target found
+    wait 500
+    gumpclose
+    wait 500
+    
+    #dump gold
+    
+
+    while findtype 3821 'found' as 'myGold'
+        lift myGold 60000
+        drop '0x40820133' -1 -1 0 
+        wait 600
+    endwhile
+
+    ignore found
+endwhile   
+
+//dump pack horse
+while findtype 291 ground any any 2 as found
+    overhead 'Packhorse dump routine' 55
+    
+    dclick found
+    wait 500
+    //dump all supply shelf
+    menu 0x4083AF65 0
+    waitfortarget
+    target found
+    wait 500
+    gumpclose
+    wait 500
+
+    //dump all resources
+    dclick 0x407F8ACB
+    waitforgump 1859005118
+    gumpresponse 2
+    waitfortarget
+    waitforgump 1859005118
+    target found
+    wait 500
+    gumpclose
+    wait 500
+    
+    #dump gold
+    
+
+    while findtype 3821 'found' as 'myGold'
+        lift myGold 60000
+        drop '0x40820133' -1 -1 0 
+        wait 600
+    endwhile
+
+    ignore found
+endwhile   
 
 script 'Bag Dumper'

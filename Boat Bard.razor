@@ -2,10 +2,11 @@
 #   If you do not have that it will not stop the script but it is 
 #   a good idea to have one in case you unequip weapon
 
-#Set this to 1 if you want to kill one target at a time.  Anything else tries to spread damage by swapping target every 2.5s.  Should be 1 for Herding chars in particular
-#SPECIAL NOTE: Having Poisonining greater than 50 overwrites this always as that would be a bad choice
-#Also, this turns off if it finds a boss so it will clear decks.  Have to restart script to change it
-@setvar targetLock 1
+#Target Lock:
+#0=default behavior (Let the script try to be intelligent)
+#1=Area discord -- kill one thing at a time (Good for things that do not want to spread damage.  BAD, like SUPER BAD, for poison
+#2=Single target discord -- switch target after every round of skill usages (SPECIAL NOTE: Bosses will switch target type to this on purpose so you kill NPC spawns with bot and target disco boss)
+@setvar targetLockType 0 
 
 #Set this to 1 if you want to throw self overboard if a ship repair kit is on the deck
 @setvar triggerOverboard 0
@@ -118,6 +119,10 @@ endfor
 @setvar 'blueSighted' 0
 #Boss Tracker
 @setvar 'bossFight' 0
+#Target Lock
+@setvar targetLock targetLockType
+#discoLock
+@setvar discoLock targetLockType
 
 #set pets if they exist
 if skill "Veterinary" > 50 and followers >= 1
@@ -535,14 +540,16 @@ while not dead
         endif
     endif
     
-    #disco routine
-    if  skill "Discordance" > 50 and timer "bardLock" > 10000 and timer "discoTimer" > 5150 and closeEnemy = 1
-        overhead "Disco Target!" 33
-        skill "Discordance" 
-        wft 500
-        target self
-        settimer "discoTimer" 0
-        settimer "bardLock" 4750
+    #disco routine if target lock is 1 or we are on a humanoid boat
+    if discoLock = 1 or targetLockType = 1
+        if  skill "Discordance" > 50 and timer "bardLock" > 10000 and timer "discoTimer" > 5150 and closeEnemy = 1 
+            overhead "Disco Target!" 33
+            skill "Discordance" 
+            wft 500
+            target self
+            settimer "discoTimer" 0
+            settimer "bardLock" 4750
+        endif
     endif
     
     #Necro Abilities
@@ -624,7 +631,7 @@ while not dead
                 endif
                 if insysmsg "not found"
                     #This status means target is dead
-                #overhead "Target is dead or out of range. Finding a new one"
+                    #overhead "Target is dead or out of range. Finding a new one"
                 else
                     #Our target appears to be alive still.  Do not hunt for a new target
                     @setvar searchNew 0             
@@ -633,7 +640,7 @@ while not dead
         endif
         
         
-        if searchNew = 1 or skill "Poisoning" > 50            
+        if searchNew = 1           
             #Set this to 1 before we search
             @setvar closeEnemy 1
             #Start cycline
@@ -651,11 +658,21 @@ while not dead
                         @setvar 'closeEnemy' 0
                     else
                         #Found a boss so we want to pretend we are boarded
+                        say "***BOSS THEME INTENSIFIES**" 44
                         @setvar 'boardState' 1
-                        @setvar 'searchNew' 0
+                        @setvar 'targetLock' 0
+                        @setvar 'discoLock' 0
                         @setvar 'bossFight' 1
                     endif
+                else
+                    #Found a humanoid target type
+                    #@setvar 'targetLock' 0
+                    @setvar 'discoLock' 1
                 endif
+            else
+                #Found a monster target type
+                #@setvar 'targetLock' 0
+                @setvar 'discoLock' 0
             endif
             
             #Set up var for last enemy.  If no enemy it is time to leave this boat
@@ -703,8 +720,12 @@ while not dead
                 wait 500
                 say "[embarkfollowers"
                 wait 350
+                
+                #Reset Variables                
                 @setvar 'boardState' 0
                 settimer "repairTimer" 0
+                @setvar targetLock targetLockType
+                @setvar discoLock targetLockType
             endif
         #end enemy search routine
         endif
@@ -759,7 +780,7 @@ while not dead
         endif           
                                 
         #herding
-        if skill 'Herding' > 50 and timer "crookCheck" > 3000
+        if skill 'Herding' > 50 and timer "crookCheck" > 3000 and 'boardState' = 1
             #Wait on skill usage CD
             while timer "bardLock" < 10000
                 wait 100
@@ -776,6 +797,21 @@ while not dead
             wft 1500
             target 'lastserial'
             settimer "petAttack" 0
+        endif
+        
+        #disco routine
+        if discoLock = 0 or targetLockType = 2
+            if  skill "Discordance" > 50 and timer "discoTimer" > 5050              
+                while timer "bardLock" < 10000
+                    wait 100
+                endwhile
+                overhead "Disco Target!" 33
+                skill "Discordance" 
+                wft 2500
+                target 'lastserial'
+                settimer "discoTimer" 0
+                settimer "bardLock" 5000
+            endif
         endif
         
         #poison routine 
