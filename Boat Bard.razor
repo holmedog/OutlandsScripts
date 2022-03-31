@@ -8,6 +8,15 @@
 #2=Single target discord -- switch target after every round of skill usages (SPECIAL NOTE: Bosses will switch target type to this on purpose so you kill NPC spawns with bot and target disco boss)
 @setvar targetLockType 0 
 
+#Summon Type Selector.  Having Necromancy skill will still summon necro version.  We will always use Summon Creature as 5th slot.  Still requires 80 SS or Necro to trigger
+#MAKE SURE you only select two here.  Selecting more will break stuff
+@setvar fireElem 1
+@setvar earthElem 1
+@setvar airElem 0
+@setvar waterElem 0
+@setvar daemonSum 0
+
+
 #Set this to 1 if you want to throw self overboard if a ship repair kit is on the deck
 @setvar triggerOverboard 0
 
@@ -19,6 +28,9 @@
 
 #Set this to 1 if you want to simulate always being boarded on NPC ship for testing reasons
 @setvar alwaysBoarded 0
+
+#Set this to 0 if you want to keep my super awesome say commands (1 mutes the bot except important stuff like food or fighting party)
+@setvar sayLess 0
 
 
 ##################################################################################
@@ -218,7 +230,7 @@ while not dead
         endif   
         #Eat a magic mushroom if we have 
         #25  less mana than full
-        if mana < 70 and timer "shroomy" >= 61000
+        if mana < 70 and timer "shroomy" >= 65000
             dclicktype '29012'
             overhead 'Mushroom Power!'
             settimer "shroomy" 0
@@ -373,15 +385,91 @@ while not dead
     #Follower Routine
     if skill "Necromancy" > 80 or skill "Spirit Speak" > 80
         if followers < 4 and mana > 50
-            #Lost a fire elem, resummon
+            #Lost a big pet, resummon
             settimer "bardLock" 0
             if skill "Necromancy" > 80
                 say "[VengefulSpirit"
                 wait 1000
             endif
-            cast 'Fire Elemental'
+            #check for pure summons they do not require as much logic
+            if 'fireElem' = 2
+                cast 'Fire Elemental'
+            elseif 'airElem' = 2
+                cast 'Air Elemental'
+            elseif 'daemonSum' = 2
+                cast 'Summon Daemon'
+            elseif 'earthElem' = 2
+                cast 'Earth Elemental'
+            elseif 'waterElem' = 2
+                cast 'Water Elemental'
+            endif
+            
+            #Check for single summons               
+            if 'fireElem' = 1 
+                if skill "Necromancy" > 80
+                    if not findtype "a lich" ground any any 12 
+                        overhead "Casting one lich"
+                        say "a fire elemental release"
+                        cast 'Fire Elemental'
+                    endif
+                else
+                    if not findtype "a fire elemental" ground any any 12 
+                        overhead "Casting plain fire elem"
+                        cast 'Fire Elemental' 
+                    endif
+                endif
+            endif           
+            if 'airElem' = 1 
+                if skill "Necromancy" > 80
+                    if not findtype "a skeletal fiend" ground any any 12 
+                        say "an air elemental release"
+                        cast 'Air Elemental'
+                    endif
+                else
+                    if not findtype "an air elemental"  ground any any 12 
+                        cast 'Air Elemental'
+                    endif
+                endif
+            endif       
+            if 'earthElem' = 1 
+                if skill "Necromancy" > 80
+                    if not findtype "an ancient mummy" ground any any 12 
+                        say "an earth elemental release"
+                        cast 'Earth Elemental'
+                    endif
+                else
+                    if not findtype "an earth elemental"  ground any any 12 
+                        cast 'Earth Elemental'
+                    endif
+                endif
+            endif       
+            if 'waterElem' = 1 
+                if skill "Necromancy" > 80
+                    if not findtype "a rag witch" ground any any 12 
+                        say "a water elemental release"
+                        cast 'Water Elemental'
+                    endif
+                else
+                    if not findtype "a water elemental"  ground any any 12 
+                        cast 'Water Elemental'
+                    endif
+                endif
+            endif           
+            if 'waterElem' = 1 
+                if skill "Necromancy" > 80
+                    if not findtype "a vampire thrall" ground any any 12 
+                        say "a daemon release"
+                        cast 'Summon Daemon'
+                    endif
+                else
+                    if not findtype "a daemon"  ground any any 12 
+                        cast 'Summon Daemon'
+                    endif
+                endif
+            endif           
             wait 6000
             say "All Guard Me"
+            
             #rebuff to get pet buffed
             if mana > 15 and followers >= 4
                 cast 'Bless'
@@ -426,6 +514,16 @@ while not dead
         endif
         wait 600
     endif
+    #tillerCheck
+    if findtype 3976 ground
+        if triggerOverboard != 2
+            dclick tillerDude
+            for 5
+                wait 500
+                gumpresponse 27 4216593270
+            endfor          
+        endif
+    endif       
     #spirit speak only if on own boat and corpses present.  Do not SS if we have necromancy as we have liches and this is wasted time
     if skill "Spirit Speak" > 50 and timer "bardLock" > 10000 and timer "spiritSpeakCheck" > 30000 and 'boardState' = 0 and  skill "Necromancy" < 50
         if findtype 'corpse' ground any any 12 as found
@@ -538,6 +636,11 @@ while not dead
                 wait 500
             endif
         endif
+    endif
+    #meditation routine 
+    if skill "Meditation" > 80 and mana < 30 and timer bardLock >= 10000
+        skill 'meditation'
+        settimer "bardLock" 0
     endif
     
     #disco routine if target lock is 1 or we are on a humanoid boat
@@ -658,7 +761,9 @@ while not dead
                         @setvar 'closeEnemy' 0
                     else
                         #Found a boss so we want to pretend we are boarded
-                        say "***BOSS THEME INTENSIFIES**" 44
+                        if sayLess = 0 
+                            say "***BOSS THEME INTENSIFIES**" 44
+                        endif
                         @setvar 'boardState' 1
                         @setvar 'targetLock' 0
                         @setvar 'discoLock' 0
@@ -843,7 +948,9 @@ while not dead
                 wft 3500
                 target 'lastserial'
                 wait 400
-                say "So anyway I started blastin" 33
+                if sayLess = 0 
+                    say "So anyway I started blastin" 33
+                endif
                 wait 300
             endif
         endif   
