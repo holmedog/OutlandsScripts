@@ -9,7 +9,8 @@
 @setvar targetLockType 0 
 
 #Summon Type Selector.  Having Necromancy skill will still summon necro version.  We will always use Summon Creature as 5th slot.  Still requires 80 SS or Necro to trigger
-#MAKE SURE you only select two here.  Selecting more will break stuff
+#MAKE SURE you only select two here.  Selecting more will break stuff.  
+#Valid Values are 0, 1, or 2 and it will summon that many of that type: Example setting fireElem to 2 will summon 2 fire elems.  Setting earthEleme to 1 and waterElem to 1 will summon 1 earth elemental and 1 waterElem
 @setvar fireElem 1
 @setvar earthElem 1
 @setvar airElem 0
@@ -18,7 +19,7 @@
 
 
 #Set this to 1 if you want to throw self overboard if a ship repair kit is on the deck
-@setvar triggerOverboard 0
+@setvar triggerOverboard 2
 
 #Set this to 1 if you want to only allow repair kits for 2 mins after embarking
 @setvar repairLockdown 0
