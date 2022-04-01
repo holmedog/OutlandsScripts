@@ -1,0 +1,9 @@
+
+    if not varexist 'tillerDude'
+        if findtype "tiller man" ground as found
+            overhead "Tillerman Set"
+            setvar 'tillerDude' 'found'
+            dclick 'tillerDude'
+            wait 500
+        endif
+    endif

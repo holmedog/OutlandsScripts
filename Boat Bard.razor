@@ -11,8 +11,8 @@
 #Summon Type Selector.  Having Necromancy skill will still summon necro version.  We will always use Summon Creature as 5th slot.  Still requires 80 SS or Necro to trigger
 #MAKE SURE you only select two here.  Selecting more will break stuff.  
 #Valid Values are 0, 1, or 2 and it will summon that many of that type: Example setting fireElem to 2 will summon 2 fire elems.  Setting earthEleme to 1 and waterElem to 1 will summon 1 earth elemental and 1 waterElem
-@setvar fireElem 1
-@setvar earthElem 1
+@setvar fireElem 2
+@setvar earthElem 0
 @setvar airElem 0
 @setvar waterElem 0
 @setvar daemonSum 0
@@ -32,6 +32,9 @@
 
 #Set this to 0 if you want to keep my super awesome say commands (1 mutes the bot except important stuff like food or fighting party)
 @setvar sayLess 0
+
+#Set this to 1 if you want bot to defuse close by bombs and reembark
+@setvar defuseBombs 1
 
 
 ##################################################################################
@@ -118,9 +121,18 @@ clearlist regTypes
 # ' for formatting reasons
 
 #Loop through instruments and dclick one
-foreach instrumentType in 'instrumentTypes'
-    dclicktype instrumentType
-endfor
+if skill "Musicianship" > 50
+	foreach instrumentType in 'instrumentTypes'
+		dclicktype instrumentType
+	endfor
+endif
+
+#open necro book
+if skill "Necromancy" > 50
+	dclicktype "8787"
+	waitforgump 3897999232
+	gumpresponse 2 3897999232
+endif	
 
 #Set boarded state - 1=boarded NPC 0=on our ship
 @setvar 'boardState' 0
@@ -147,11 +159,19 @@ if skill "Veterinary" > 50 and followers >= 1
     setvar! pet3 
 endif   
 
-overhead "Select your Tillerman"
-setvar! tillerDude
-wait 350
-dclick tillerDude
-wait 350
+#try to find tillerman
+unsetvar tillerDude
+if findtype "tiller man" ground as found
+    overhead "Tillerman Set"
+    setvar 'tillerDude' 'found'
+    dclick 'tillerDude'
+	wait 500
+endif
+
+if skill "Healing" > 50
+	say '[ShipHotbars'
+	wait 500
+endif	
 
 #do camping buff at least once regardless of buff status
 #camping buff
@@ -184,8 +204,17 @@ endif
 
 
 while not dead
+	if not varexist 'tillerDude'
+		if findtype "tiller man" ground as found
+			overhead "Tillerman Set"
+			setvar 'tillerDude' 'found'
+			dclick 'tillerDude'
+			wait 500
+		endif
+	endif
+
     #put in a pause so we dont spam 
-    wait 350    
+    wait 250    
     
     if alwaysBoarded = 1
         @setvar boardState 1
@@ -204,7 +233,7 @@ while not dead
     
     #Check if we are on NPC ship
     if insysmsg "You board the ship"
-        @setvar 'boardState' 1
+        @setvar 'boardState' 1 
         settimer onBoard 0
     endif
     
@@ -214,6 +243,10 @@ while not dead
         potion "heal"
         wait 200
     endif
+	#Chiv Poisoned
+	if skill "Chivalry" > 50 and poisoned 
+		say "[cleansebyfire"
+	endif
     #Magery Survival
     if skill "Magery" > 50
         #we cast arch here bc it probably hit whole crew
@@ -515,7 +548,7 @@ while not dead
         endif
         wait 600
     endif
-    #tillerCheck
+    #Remove this if you read this far.  It does bad stuff
     if findtype 3976 ground
         if triggerOverboard != 2
             dclick tillerDude
@@ -617,6 +650,32 @@ while not dead
         say "Hey! I am not in the fighting party!!!" 23
         wait 500
     endif
+	
+	#Goes through blue gates
+	if findtype 3948 'ground' 0 1 2 as 'bluegate'
+		dclick 'bluegate'
+		waitforgump 3899019871
+		gumpresponse 2
+		wait 500
+		say "[embark"
+		wait 500
+		say "[embarkfollowers"
+		wait 500
+	endif
+
+	#check for bombs nearby and defuses them
+	if defuseBombs = 1
+		if findtype '5188' ground -1 -1 2
+			dclicktype '5188'
+			say "[embark"
+			wait 500
+		endif
+		if findtype '5188' ground 
+			dclicktype '5188'  
+			say "[embark"
+			wait 500
+		endif
+	endif
     
     #Check if we broke an instrument
     if skill "Musicianship" > 50
@@ -748,10 +807,10 @@ while not dead
             #Set this to 1 before we search
             @setvar closeEnemy 1
             #Start cycline
-            hotkey 'Next Grey Monster Target'
+			hotkey 'Next Grey Humanoid Target'
             wait 255
-            if insysmsg 'No one matching that'       
-                hotkey 'Next Grey Humanoid Target'
+            if insysmsg 'No one matching that'      
+				hotkey 'Next Grey Monster Target' 
                 wait 255
                 if insysmsg 'No one matching that'  
                     #Start boss hunt        
@@ -771,14 +830,14 @@ while not dead
                         @setvar 'bossFight' 1
                     endif
                 else
-                    #Found a humanoid target type
-                    #@setvar 'targetLock' 0
-                    @setvar 'discoLock' 1
+					#Found a monster target type
+					#@setvar 'targetLock' 0
+					@setvar 'discoLock' 0
                 endif
             else
-                #Found a monster target type
-                #@setvar 'targetLock' 0
-                @setvar 'discoLock' 0
+				#Found a humanoid target type
+				#@setvar 'targetLock' 0
+				@setvar 'discoLock' 1
             endif
             
             #Set up var for last enemy.  If no enemy it is time to leave this boat
