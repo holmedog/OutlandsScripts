@@ -1,16 +1,2 @@
-while not dead
-    unsetvar 'lastserial'
-    @hotkey 'Next Humanoid Target'
-    pause 350
-    @setvar! 'lastserial' lasttarget
-    getlabel 'lastserial' 'seriallabel'
-    if not insysmsg "No one matching that was found"
-        if "dockmaster" in 'seriallabel'
-            overhead "Docker!"
-            overhead 'seriallabel'
-            menu 'lastserial' 1
-            stop
-        endif
-    endif
-endwhile
-
+menu 0x1F7436 1
+say "Launch my battleship!"

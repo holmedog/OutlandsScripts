@@ -1,9 +1,80 @@
+clearsysmsg 
 
-    if not varexist 'tillerDude'
-        if findtype "tiller man" ground as found
-            overhead "Tillerman Set"
-            setvar 'tillerDude' 'found'
-            dclick 'tillerDude'
-            wait 500
-        endif
+@setvar goHomeBotYouAreDrunk 1
+
+
+if goHomeBotYouAreDrunk = 1 
+    dclicktype 25758
+    wait 350
+    if insysmsg "must be onboard a ship to do that"
+
+clearignore 
+unsetvar 'gfto'
+while findtype 8901 'backpack' as 'runeBook'
+    getlabel 'runeBook' 'runeBookLabel'
+    if 'Home' in 'runeBookLabel'
+        setvar 'gtfo' 'runeBook'
+        overhead 'Set recall to rune book'
+        break
     endif
+    @ignore 'runeBook'
+endwhile
+while findtype 7956 'backpack' as 'runeBook'
+        getlabel 'runeBook' 'runeBookLabel'
+        if 'Home' in 'runeBookLabel'
+            setvar 'gtfo' 'runeBook'
+            overhead 'Set recall to rune book'
+            break
+        endif
+        @ignore 'runeBook'
+endwhile  
+  
+if not varexist 'gtfo'
+    overhead 'You need a book or rune named Home' 33
+    wait 500
+    overhead 'You need a book or rune named Home' 33
+    wait 500
+    overhead 'You need a book or rune named Home' 33
+    wait 500
+    elseif skill magery > 60
+    overhead 'Spell Cast'
+    cast 'recall'
+    wft 5000
+    target 'gtfo'
+elseif findtype 8012 'backpack'as recallScrolls
+    if skill magery > 20
+        overhead 'Recall Scroll'
+        #We have magery but prefer scrolls
+        dclick 'recallScrolls'
+        wft 5000
+        target 'gtfo'
+    else 
+        overhead 'Book use'
+        #We have loose recalls but recall with book
+        dclick 'gtfo'
+        wait 250
+        gumpresponse 2    
+    endif
+else
+    #Book use
+    overhead 'Book use'
+    dclick 'gtfo'
+    wait 250
+    gumpresponse 2        
+endif
+
+    #Walk this way        
+    walk north
+    wait 350
+    walk north
+    wait 350
+    walk north
+    wait 350
+    walk north
+    wait 350
+    walk north
+    wait 350
+    walk north
+endif
+    
+endif

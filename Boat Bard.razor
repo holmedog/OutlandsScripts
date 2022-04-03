@@ -36,6 +36,10 @@
 #Set this to 1 if you want bot to defuse close by bombs and reembark
 @setvar defuseBombs 1
 
+#Set this if you want to have bot recall on dock.  Must have a book in pack named Home and first rune be the house to recall to if not magery.  If magery make home the default rune
+#IF YOU TURN THIS ON YOU MUST GO TO THE SECTION NAMED "WALK THIS WAY" AND SET UP DIRECTIONS INTO YOUR HOUSE FROM RECALL LOCATION
+@setvar goHomeBotYouAreDrunk 1
+
 
 ##################################################################################
 ##################################################################################
@@ -96,6 +100,10 @@ createtimer 'dressTimer'
 settimer 'dressTimer' 120000
 createtimer 'provkeBossTimer' 
 settimer 'provkeBossTimer' 1500000
+createtimer 'goHomeBotYouAreDrunkTimer'
+settimer 'goHomeBotYouAreDrunkTimer' 100000
+createtimer 'scriptRunning'
+settimer 'scriptRunning' 100000
 
 #Clear lastt t arget from last run - this can cause a weird bug
 unsetvar 'lastserial' 
@@ -108,6 +116,10 @@ pushlist 'instrumentTypes' 3762
 pushlist 'instrumentTypes' 3740
 pushlist 'instrumentTypes' 3742
 pushlist 'instrumentTypes' 3763
+
+#Create ignore list so we do not target birds
+createlist ignoreList
+clearlist ignoreList
 
 #Create list of reagents
 createlist regTypes
@@ -124,17 +136,19 @@ clearlist regTypes
 
 #Loop through instruments and dclick one
 if skill "Musicianship" > 50
-	foreach instrumentType in 'instrumentTypes'
-		dclicktype instrumentType
-	endfor
+    foreach instrumentType in 'instrumentTypes'
+        dclicktype instrumentType
+    endfor
 endif
 
 #open necro book
 if skill "Necromancy" > 50
-	dclicktype "8787"
-	waitforgump 3897999232
-	gumpresponse 2 3897999232
-endif	
+    dclicktype "8787"
+    waitforgump 3897999232
+    gumpresponse 2 3897999232
+    wait 250
+    gumpclose 3897999232
+endif   
 
 #Set boarded state - 1=boarded NPC 0=on our ship
 @setvar 'boardState' 0
@@ -152,6 +166,8 @@ endif
 @setvar discoLock targetLockType
 #provoke boss
 @setvar 'provokeBoss' 0
+#set bot at home flag
+@setvar 'botAtHome' 0
 
 #set pets if they exist
 if skill "Veterinary" > 50 and followers >= 1
@@ -169,13 +185,13 @@ if findtype "tiller man" ground as found
     overhead "Tillerman Set"
     setvar 'tillerDude' 'found'
     dclick 'tillerDude'
-	wait 500
+    wait 500
 endif
 
 if skill "Healing" > 50
-	say '[ShipHotbars'
-	wait 500
-endif	
+    say '[ShipHotbars'
+    wait 500
+endif   
 
 #do camping buff at least once regardless of buff status
 #camping buff
@@ -208,17 +224,21 @@ endif
 
 
 while not dead
-	if not varexist 'tillerDude'
-		if findtype "tiller man" ground as found
-			overhead "Tillerman Set"
-			setvar 'tillerDude' 'found'
-			dclick 'tillerDude'
-			wait 500
-		endif
-	endif
+    if timer "scriptRunning" > 15000
+        overhead "Bot is running"
+        settimer "scriptRunning" 0
+    endif
+    if not varexist 'tillerDude'
+        if findtype "tiller man" ground as found
+            overhead "Tillerman Set"
+            setvar 'tillerDude' 'found'
+            dclick 'tillerDude'
+            wait 500
+        endif
+    endif
 
     #put in a pause so we dont spam 
-    wait 250    
+    wait 350    
     
     if alwaysBoarded = 1
         @setvar boardState 1
@@ -247,10 +267,10 @@ while not dead
         potion "heal"
         wait 200
     endif
-	#Chiv Poisoned
-	if skill "Chivalry" > 50 and poisoned 
-		say "[cleansebyfire"
-	endif
+    #Chiv Poisoned
+    if skill "Chivalry" > 50 and poisoned 
+        say "[cleansebyfire"
+    endif
     #Magery Survival
     if skill "Magery" > 50
         #we cast arch here bc it probably hit whole crew
@@ -287,6 +307,20 @@ while not dead
             settimer 'aid time' 0
         endif
     endif
+    
+    #Goes through blue gates
+    if findtype 3948 'ground' 0 1 2 as 'bluegate'
+        dclick 'bluegate'
+        waitforgump 3899019871
+        gumpresponse 2
+        wait 500
+        say "[embark"
+        wait 500
+        say "[embarkfollowers"
+        wait 500
+        @setvar botAtHome 0
+    endif
+    
     #Pet Healing    
     if skill "Veterinary" > 50 and followers >= 1 and diffhits <= 10
          if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
@@ -551,6 +585,10 @@ while not dead
             endwhile
         endif
         wait 600
+    endif   
+    #Bot sits and waits on a gate if it has recalled recently
+    if botAtHome = 1
+        continue
     endif
     #Remove this if you read this far.  It does bad stuff
     if findtype 3976 ground
@@ -653,33 +691,21 @@ while not dead
         wait 500
         say "Hey! I am not in the fighting party!!!" 23
         wait 500
-    endif
-	
-	#Goes through blue gates
-	if findtype 3948 'ground' 0 1 2 as 'bluegate'
-		dclick 'bluegate'
-		waitforgump 3899019871
-		gumpresponse 2
-		wait 500
-		say "[embark"
-		wait 500
-		say "[embarkfollowers"
-		wait 500
-	endif
+    endif    
 
-	#check for bombs nearby and defuses them
-	if defuseBombs = 1
-		if findtype '5188' ground -1 -1 2
-			dclicktype '5188'
-			say "[embark"
-			wait 500
-		endif
-		if findtype '5188' ground 
-			dclicktype '5188'  
-			say "[embark"
-			wait 500
-		endif
-	endif
+    #check for bombs nearby and defuses them
+    if defuseBombs = 1
+        if findtype '5188' ground -1 -1 2
+            dclicktype '5188'
+            say "[embark"
+            wait 500
+        endif
+        if findtype '5188' ground 
+            dclicktype '5188'  
+            say "[embark"
+            wait 500
+        endif
+    endif
     
     #Check if we broke an instrument
     if skill "Musicianship" > 50
@@ -719,6 +745,96 @@ while not dead
         endif
     endif
     
+    #Recall if you are docked
+    if goHomeBotYouAreDrunk = 1 and timer goHomeBotYouAreDrunkTimer > 15000 and botAtHome = 0       
+        clearsysmsg
+        #Use a ship repair kit to test if we are on a boat
+        dclicktype 25758
+        wait 350
+        if insysmsg "must be onboard a ship to do that"
+            #Embark and try again
+            say "[embark"
+            wait 350
+            dclicktype 25758
+            wait 350
+            if insysmsg "must be onboard a ship to do that"
+        
+            clearignore 
+            unsetvar 'gfto'
+            while findtype 8901 'backpack' as 'runeBook'
+                getlabel 'runeBook' 'runeBookLabel'
+                if 'Home' in 'runeBookLabel'
+                    setvar 'gtfo' 'runeBook'
+                    overhead 'Set recall to rune book'
+                    break
+                endif
+                @ignore 'runeBook'
+            endwhile
+            while findtype 7956 'backpack' as 'runeBook'
+                getlabel 'runeBook' 'runeBookLabel'
+                if 'Home' in 'runeBookLabel'
+                    setvar 'gtfo' 'runeBook'
+                    overhead 'Set recall to rune book'
+                    break
+                endif
+                @ignore 'runeBook'
+            endwhile              
+            if not varexist 'gtfo'
+                say 'You need a book or rune named Home on bot' 33
+                wait 500
+                say 'You need a book or rune named Home on bot' 33
+                wait 500
+                say 'You need a book or rune named Home on bot' 33
+                wait 500
+            elseif skill magery > 60
+                overhead 'Spell Cast'
+                cast 'recall'
+                wft 5000
+                target 'gtfo'
+            elseif findtype 8012 'backpack' as recallScrolls
+                if skill magery > 20
+                    overhead 'Recall Scroll'
+                    #We have magery but prefer scrolls
+                    dclick 'recallScrolls'
+                    wft 5000
+                    target 'gtfo'
+                else 
+                    overhead 'Book use'
+                    #We have loose recalls but recall with book
+                    dclick 'gtfo'
+                    wait 250
+                    gumpresponse 2    
+                endif
+            else
+                #Book use
+                overhead 'Book use'
+                dclick 'gtfo'
+                wait 250
+                gumpresponse 2        
+            endif
+
+            while not position 4006 904 5
+                walk 'North'
+                wait 150
+            endwhile
+            if findtype 'storage shelf' ground any any 2 as found
+                menu found 0 
+                wft 2500
+                target self
+                menu found 1
+            endif
+            while not position 4006 909 0
+                walk 'South'
+                wait 150
+            endwhile
+            @setvar botAtHome 1
+        endif   
+        endif
+        @settimer "goHomeBotYouAreDrunkTimer" 0 
+        #Skip rest of this loop
+        continue
+    endif
+    
     #Necro Abilities
     if skill "Necromancy" > 80 
         #painspike
@@ -745,13 +861,13 @@ while not dead
     if 'closeEnemy' = 0 or bossFight = 1
         if timer "RepairHull" > 4000
             if repairLockdown = 0 or timer "repairTimer" < 120000
-                say '[RepairGuns'
-                wait 355            
-                if insysmsg 'guns do not need'
+                say '[RepairHull'
+                wait 355
+                if insysmsg 'hull does not need'
                     say '[RepairSails'
                     wait 355
                     if insysmsg 'sails do not need'
-                        say '[RepairHull'
+                        say '[RepairGuns'
                     endif
                 endif
             endif
@@ -811,10 +927,10 @@ while not dead
             #Set this to 1 before we search
             @setvar closeEnemy 1
             #Start cycline
-			hotkey 'Next Grey Humanoid Target'
+            hotkey 'Next Grey Humanoid Target'
             wait 255
             if insysmsg 'No one matching that'      
-				hotkey 'Next Grey Monster Target' 
+                hotkey 'Next Grey Monster Target' 
                 wait 255
                 if insysmsg 'No one matching that'  
                     #Start boss hunt        
@@ -832,17 +948,17 @@ while not dead
                         @setvar 'targetLock' 0
                         @setvar 'discoLock' 0
                         @setvar 'bossFight' 1
-						@setvar 'provokeBoss' 1
+                        @setvar 'provokeBoss' 1
                     endif
                 else
-					#Found a monster target type
-					#@setvar 'targetLock' 0
-					@setvar 'discoLock' 0
+                    #Found a monster target type
+                    #@setvar 'targetLock' 0
+                    @setvar 'discoLock' 0
                 endif
             else
-				#Found a humanoid target type
-				#@setvar 'targetLock' 0
-				@setvar 'discoLock' 1
+                #Found a humanoid target type
+                #@setvar 'targetLock' 0
+                @setvar 'discoLock' 1
             endif
             
             #Set up var for last enemy.  If no enemy it is time to leave this boat
@@ -898,7 +1014,18 @@ while not dead
                 @setvar discoLock targetLockType
             endif
         #end enemy search routine
-        endif
+        endif       
+        
+        #check ignore list
+        if  bossFight = 0 and inlist 'ignoreList' 'lasttarget'
+            if sayLess = 0
+                say "We got a birdy!"
+            endif
+            settimer "newTargetCheck" 0
+            setvar 'lasttarget' 0
+            #skip rest of actions to reaquire target
+            continue
+        endif   
     endif    
     ###############                                     ###############
     ###############Start routines that  require a target###############
@@ -968,8 +1095,8 @@ while not dead
             target 'lastserial'
             settimer "petAttack" 0
         endif
-		
-		#Boss provoke or peace routine
+        
+        #Boss provoke or peace routine
         if discoLock = 0 or targetLockType = 2 
             if  skill "Peacemaking" > 50 and timer "provkeBossTimer" > 17500 and bossFight = 1 and provokeBoss = 1
                 while timer "bardLock" < 10000
@@ -981,8 +1108,8 @@ while not dead
                 target 'lastserial'
                 settimer "discoTimer" 0
                 settimer "bardLock" 5000
-				settimer "provkeBossTimer" 0
-            elseif  skill "Provocation" > 50 and timer "provkeBossTimer" > 17500 and bossFight = 1 and provokeBoss = 1		 		
+                settimer "provkeBossTimer" 0
+            elseif  skill "Provocation" > 50 and timer "provkeBossTimer" > 17500 and bossFight = 1 and provokeBoss = 1              
                 while timer "bardLock" < 10000
                     wait 100
                 endwhile
@@ -990,13 +1117,13 @@ while not dead
                 skill "Provocation" 
                 wft 2500
                 target 'lastserial'
-				wft 2500
-				target self
+                wft 2500
+                target self
                 settimer "discoTimer" 0
                 settimer "bardLock" 5000
-				settimer "provkeBossTimer" 0
-			endif
-			setvar provokeBoss 0
+                settimer "provkeBossTimer" 0
+            endif
+            setvar provokeBoss 0
         endif
         
         #disco routine
@@ -1049,6 +1176,10 @@ while not dead
                 wait 300
             endif
         endif   
+        #Check for cannot see and ignore going forward
+        if boardState = 1 and insysmsg "cannot be seen" and bossFight = 0
+            pushlist ignoreList 'lasttarget'
+        endif
     #end target required routines
     endif
 endwhile   
