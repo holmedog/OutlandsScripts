@@ -94,6 +94,8 @@ createtimer 'vampTimer'
 settimer 'vampTimer' 120000
 createtimer 'dressTimer'
 settimer 'dressTimer' 120000
+createtimer 'provkeBossTimer' 
+settimer 'provkeBossTimer' 1500000
 
 #Clear lastt t arget from last run - this can cause a weird bug
 unsetvar 'lastserial' 
@@ -148,6 +150,8 @@ endif
 @setvar targetLock targetLockType
 #discoLock
 @setvar discoLock targetLockType
+#provoke boss
+@setvar 'provokeBoss' 0
 
 #set pets if they exist
 if skill "Veterinary" > 50 and followers >= 1
@@ -828,6 +832,7 @@ while not dead
                         @setvar 'targetLock' 0
                         @setvar 'discoLock' 0
                         @setvar 'bossFight' 1
+						@setvar 'provokeBoss' 1
                     endif
                 else
 					#Found a monster target type
@@ -962,6 +967,36 @@ while not dead
             wft 1500
             target 'lastserial'
             settimer "petAttack" 0
+        endif
+		
+		#Boss provoke or peace routine
+        if discoLock = 0 or targetLockType = 2 
+            if  skill "Peacemaking" > 50 and timer "provkeBossTimer" > 17500 and bossFight = 1 and provokeBoss = 1
+                while timer "bardLock" < 10000
+                    wait 100
+                endwhile
+                overhead "Peacing Target!" 33
+                skill "Peacemaking" 
+                wft 2500
+                target 'lastserial'
+                settimer "discoTimer" 0
+                settimer "bardLock" 5000
+				settimer "provkeBossTimer" 0
+            elseif  skill "Provocation" > 50 and timer "provkeBossTimer" > 17500 and bossFight = 1 and provokeBoss = 1		 		
+                while timer "bardLock" < 10000
+                    wait 100
+                endwhile
+                overhead "Provocation Target!" 33
+                skill "Provocation" 
+                wft 2500
+                target 'lastserial'
+				wft 2500
+				target self
+                settimer "discoTimer" 0
+                settimer "bardLock" 5000
+				settimer "provkeBossTimer" 0
+			endif
+			setvar provokeBoss 0
         endif
         
         #disco routine
