@@ -1,14 +1,3 @@
-#11 - rune 2
-#17 - rune 3
-createlist 'runes'
-clearlist  'runes'
-pushlist 'runes' 11
-pushlist 'runes' 17
-
-foreach rune in runes
-  overhead "At Rune: [{{rune}}]"
-  dclick 0x46764C68
-  waitforgump 'any'
-  gumpresponse rune
-  wait 5000
-endfor
+dclick 0x46764C68
+waitforgump 1551740969
+gumpresponse 11
