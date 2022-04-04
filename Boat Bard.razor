@@ -748,90 +748,89 @@ while not dead
     #Recall if you are docked
     if goHomeBotYouAreDrunk = 1 and timer goHomeBotYouAreDrunkTimer > 15000 and botAtHome = 0 and boardState = 0     
         clearsysmsg
-        #Use a ship repair kit to test if we are on a boat
-        dclicktype 25758
-        wait 350
-        if insysmsg "must be onboard a ship to do that"
+        #Test boat condition
+        say "[shipmenu"
+        wait 250
+        if insysmsg "must be close to a ship"
             #Embark and try again
             say "[embark"
-            wait 350
-            dclicktype 25758
-            wait 350
-            if insysmsg "must be onboard a ship to do that"
-        
-            clearignore 
-            unsetvar 'gfto'
-            while findtype 8901 'backpack' as 'runeBook'
-                getlabel 'runeBook' 'runeBookLabel'
-                if 'Home' in 'runeBookLabel'
-                    setvar 'gtfo' 'runeBook'
-                    overhead 'Set recall to rune book'
-                    break
-                endif
-                @ignore 'runeBook'
-            endwhile
-            while findtype 7956 'backpack' as 'runeBook'
-                getlabel 'runeBook' 'runeBookLabel'
-                if 'Home' in 'runeBookLabel'
-                    setvar 'gtfo' 'runeBook'
-                    overhead 'Set recall to rune book'
-                    break
-                endif
-                @ignore 'runeBook'
-            endwhile              
-            if not varexist 'gtfo'
-                say 'You need a book or rune named Home on bot' 33
-                wait 500
-                say 'You need a book or rune named Home on bot' 33
-                wait 500
-                say 'You need a book or rune named Home on bot' 33
-                wait 500
-            elseif skill magery > 60
-                overhead 'Spell Cast'
-                cast 'recall'
-                wft 5000
-                target 'gtfo'
-            elseif findtype 8012 'backpack' as recallScrolls
-                if skill magery > 20
-                    overhead 'Recall Scroll'
-                    #We have magery but prefer scrolls
-                    dclick 'recallScrolls'
-                    wft 5000
-                    target 'gtfo'
-                else 
-                    overhead 'Book use'
-                    #We have loose recalls but recall with book
-                    dclick 'gtfo'
-                    wait 250
-                    gumpresponse 2    
-                endif
-            else
-                #Book use
-                overhead 'Book use'
-                dclick 'gtfo'
-                wait 250
-                gumpresponse 2        
-            endif
-            
-            #WALK THIS WAY
-            #Change the 3 numbers at the end of this to where you want to stop and ressupply.  Change the walk direction to the direction you need to go
-            while not position 4006 904 5
-                walk 'North'
-                wait 150
-            endwhile
-            if findtype 'storage shelf' ground any any 2 as found
-                menu found 0 
-                wft 2500
-                target self
-                menu found 1
-            endif
-            #Change the 3 numbers at the end of this to where you want to stop and wait on a gate.  Change the walk direction to the direction you need to go
-            while not position 4006 909 0
-                walk 'South'
-                wait 150
-            endwhile
-            @setvar botAtHome 1
-        endif   
+            wait 250
+			say "[shipmenu"
+            wait 350            
+			if insysmsg "must be close to a ship"        
+				clearignore 
+				unsetvar 'gfto'
+				while findtype 8901 'backpack' as 'runeBook'
+					getlabel 'runeBook' 'runeBookLabel'
+					if 'Home' in 'runeBookLabel'
+						setvar 'gtfo' 'runeBook'
+						overhead 'Set recall to rune book'
+						break
+					endif
+					@ignore 'runeBook'
+				endwhile
+				while findtype 7956 'backpack' as 'runeBook'
+					getlabel 'runeBook' 'runeBookLabel'
+					if 'Home' in 'runeBookLabel'
+						setvar 'gtfo' 'runeBook'
+						overhead 'Set recall to rune book'
+						break
+					endif
+					@ignore 'runeBook'
+				endwhile              
+				if not varexist 'gtfo'
+					say 'You need a book or rune named Home on bot' 33
+					wait 500
+					say 'You need a book or rune named Home on bot' 33
+					wait 500
+					say 'You need a book or rune named Home on bot' 33
+					wait 500
+				elseif skill magery > 60
+					overhead 'Spell Cast'
+					cast 'recall'
+					wft 5000
+					target 'gtfo'
+				elseif findtype 8012 'backpack' as recallScrolls
+					if skill magery > 20
+						overhead 'Recall Scroll'
+						#We have magery but prefer scrolls
+						dclick 'recallScrolls'
+						wft 5000
+						target 'gtfo'
+					else 
+						overhead 'Book use'
+						#We have loose recalls but recall with book
+						dclick 'gtfo'
+						wait 250
+						gumpresponse 2    
+					endif
+				else
+					#Book use
+					overhead 'Book use'
+					dclick 'gtfo'
+					wait 250
+					gumpresponse 2        
+				endif
+				
+				#WALK THIS WAY
+				#Change the 3 numbers at the end of this to where you want to stop and ressupply.  Change the walk direction to the direction you need to go
+				while not position 4006 904 5
+					walk 'North'
+					wait 150
+				endwhile
+				if findtype 'storage shelf' ground any any 2 as found
+					menu found 0 
+					wft 2500
+					target self
+					menu found 1
+				endif
+				#Change the 3 numbers at the end of this to where you want to stop and wait on a gate.  Change the walk direction to the direction you need to go
+				while not position 4006 909 0
+					walk 'South'
+					wait 150
+				endwhile
+				@setvar botAtHome 1
+			endif   
         endif
         @settimer "goHomeBotYouAreDrunkTimer" 0 
         #Skip rest of this loop

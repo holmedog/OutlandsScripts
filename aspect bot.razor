@@ -1,10 +1,7 @@
-#Things to fix:
- #Skipping target breaks foreach loop
- #Look at other breaks
- #FS isn't going off - is poison eating it?
- #Need a "prep" recall
- #Need a way to trigger recall
+#Use a dagger to force recall.  Otherise it checks 
+# for loot queue ending to recall
 
+#Make sure to have Magery to recall **OR** [autousespellscrolls and a shitload of spell scrolls
 
 #Part of the attack routine is to call a Razor Dress routine named "bow".  
 #   If you do not have that it will not stop the script but it is 
@@ -108,9 +105,6 @@ pushlist 'instrumentTypes' 3740
 pushlist 'instrumentTypes' 3742
 pushlist 'instrumentTypes' 3763
 
-#Create ignore list so we do not target birds
-createlist ignoreList
-clearlist ignoreList
 
 #Create list of reagents
 createlist regTypes
@@ -298,60 +292,110 @@ if followers > 1
 endif   
 
 
+@setvar goHomeBotYouAreDrunk 0
 #Populate our runes
 createlist 'runes'
 clearlist  'runes'
-pushlist 'runes' 11
-pushlist 'runes' 17
-pushlist 'runes' 23
-pushlist 'runes' 29
-pushlist 'runes' 35
-pushlist 'runes' 41
-pushlist 'runes' 47
-pushlist 'runes' 53
-pushlist 'runes' 59
-pushlist 'runes' 65
-pushlist 'runes' 71
-pushlist 'runes' 77
-pushlist 'runes' 83
-pushlist 'runes' 89
-pushlist 'runes' 95
+if skill "Magery" > 40
+    #gumps here for recall spell use
+    pushlist 'runes' 1
+    pushlist 'runes' 11
+    pushlist 'runes' 17
+    pushlist 'runes' 23
+    pushlist 'runes' 29
+    pushlist 'runes' 35
+    pushlist 'runes' 41
+    pushlist 'runes' 47
+    pushlist 'runes' 53
+    pushlist 'runes' 59
+    pushlist 'runes' 65
+    pushlist 'runes' 71
+    pushlist 'runes' 77
+    pushlist 'runes' 83
+    pushlist 'runes' 89
+    pushlist 'runes' 95
+else
+    #need gumps here for recall scroll use
+    pushlist 'runes' 1
+    pushlist 'runes' 8
+    pushlist 'runes' 14
+    pushlist 'runes' 20
+    pushlist 'runes' 26
+    pushlist 'runes' 32
+    pushlist 'runes' 38
+    pushlist 'runes' 44
+    pushlist 'runes' 50
+    pushlist 'runes' 56
+    pushlist 'runes' 62
+    pushlist 'runes' 68
+    pushlist 'runes' 74
+    pushlist 'runes' 80
+    pushlist 'runes' 86
+    pushlist 'runes' 92
+endif   
+
+@setvar goToNextRune 0
 
 
 while not dead
     foreach rune in runes
         clearsysmsg
-        
         #stop if dead
         if dead
             stop
         endif
-                    
-        #Recall to next rune
-        overhead "Heading to Rune: [{{rune}}]"
-        dclick runeBookFarm
-        wait 500
-        gumpresponse rune
-        wait 2555       
-        if followers > 1
-            say "All guard me"
-        endif   
         
-        clearsysmsg 
+        if rune != 1
+            #Recall to next rune
+            overhead "Heading to Rune: [{{rune}}]"
+            if skill "Magery" > 40
+                while mana < 25
+                    overhead "Waiting on mana to be safe levels"
+                    wait 1000
+                endwhile
+            endif    
+            dclick runeBookFarm
+            waitforgump 1551740969
+            gumpresponse rune 1551740969
+            #gumpresponse rune
+            for 3 
+                wait 1000       
+                if followers > 1
+                    say "All guard me"
+                endif   
+            endfor
+        else
+            overhead "Setup run, dclick dagger when done"
+        endif
+        
         #kill stuff until we see loot message
-        while not insysmsg "queued actions in"
+        while goToNextRune = 0
             
-            if diffweight <= 50
-                break
+            if diffweight <= 50           
+                overhead "Too fat recall"
+                @setvar goHomeBotYouAreDrunk 1
+                @setvar goToNextRune 1
+            endif
+            if insysmsg "queued actions in" 
+                overhead "Time to go to next rune"
+                @setvar goToNextRune 1
+            endif
+            if insysmsg "Now tracking"
+                overhead "Red Alert!"
+                @setvar goToNextRune 1
+            endif           
+            if insysmsg "any nearby trees" or insysmsg "get you more wood"
+                overhead "Time to move on"
+                @setvar goToNextRune 1
             endif
             #alert bot is working
-            if timer "scriptRunning" > 15000
+            if timer "scriptRunning" > 25000
                 overhead "Bot is running"
                 settimer "scriptRunning" 0
             endif           
 
             #put in a pause so we dont spam 
-            wait 350    
+            wait 250    
  
             ###############                                             ###############
             ###############Start routines that keep us alive or set vars###############
@@ -359,7 +403,7 @@ while not dead
             
             #make sure a cursor does not exist from before
             if targetexists
-                hotkey "Cancel Current Target"
+               hotkey "Cancel Current Target"
                 wait 350
             endif   
             
@@ -708,19 +752,8 @@ while not dead
                 settimer "bardLock" 0
             endif
 
-            #Necro Abilities
+            #Vampiric Embrace
             if skill "Necromancy" > 80 
-                #painspike
-                if timer "painSpkeTimer" > 35000
-                    if findtype 'corpse' ground any any 10 as found
-                        say '[painspike'
-                        wft 500
-                        target found
-                        wait 350
-                        settimer "painSpkeTimer" 0
-                    endif  
-                endif
-                #Vamp 
                 if timer "vampTimer" > 35000
                     if findtype 'corpse' ground any any 10 as found
                         say '[vampiricembrace' 
@@ -733,20 +766,16 @@ while not dead
             endif  
             
             #Skin corpses
-            if findtype 'corpse' ground any any 1 as found
+            if findtype 'corpse' ground any any 2 as found
                 hotkey 'Forensics'
                 wait 500
                 target 'self'
                 wait 1500
                 if not insysmsg "You carve" and not insysmsg  "anything nearby" and not insysmsg "must wait"
-                    while not insysmsg "successful"
-                        overhead  "I am broken in a Captcha loop.  Fix me or dclick dagger"
+                    while not insysmsg "successful" and not insysmsg "any nearby trees" and not insysmsg "get you more wood"
+                        overhead  "I am broken in a Captcha loop.  Fix me or target self with dagger" 
                         wait 2500
-                        if targetexists 
-                            hotkey "Cancel Current Target"
-                            break
-                        endif
-                    endwhile                                
+                    endwhile                   
                 endif
                 ignore found
             endif
@@ -765,11 +794,13 @@ while not dead
                     foreach reg in 'regTypes'
                         if counttype reg < 3
                             wait 500
-                            say "Hey! I am Low on regs!" 23
+                            overhead "Hey! I am Low on regs!" 23
                             wait 500
-                            say "Hey! I am Low on regs!" 23
+                            overhead "Hey! I am Low on regs!" 23
                             wait 500
-                            say "Hey! I am Low on regs!" 23
+                            overhead "Hey! I am Low on regs!" 23
+                            @setvar goHomeBotYouAreDrunk 1
+                            @setvar goToNextRune 1
                         endif
                     endfor
                 endif
@@ -778,13 +809,13 @@ while not dead
             ###############                                         ###############
             ###############    Start target search / embark routine ###############
             ###############                                         ###############   
-            if timer "newTargetCheck" > 2500
+            if timer "newTargetCheck" > 1250
                 #reset timer
                 settimer "newTargetCheck" 0
-                @setvar searchNew 1                 
-                
+                @setvar searchNew 1 
                 @setvar closeEnemy 1
-                #Start cycline
+                
+                #Start cycling
                 hotkey 'Next Grey Humanoid Target'
                 wait 255
                 if insysmsg 'No one matching that'      
@@ -799,14 +830,6 @@ while not dead
                 if closeEnemy = 1       
                     @setvar! 'lastserial' lasttarget
                 endif     
-                
-                #check ignore list
-                if  inlist 'ignoreList' 'lasttarget'
-                    overhead "Skipping target too far"
-                    settimer "newTargetCheck" 0
-                    #skip rest of actions to reaquire target
-                    continue
-                endif   
             endif    
             
             ###############                                     ###############
@@ -822,9 +845,21 @@ while not dead
                 if not warmode
                     warmode on
                 endif               
+                
+                
+                #painspike
+                if skill "Necromancy" > 80 and timer "painSpkeTimer" > 35000
+                    if findtype 'corpse' ground any any 10 as found
+                        say '[painspike'
+                        wft 500
+                        target found
+                        wait 350
+                        settimer "painSpkeTimer" 0
+                    endif  
+                endif
                                                         
                 #herding
-                if skill 'Herding' > 50 and timer "crookCheck" > 3000 
+                if skill 'Herding' > 50 and timer "crookCheck" > 3000  and followers > 1
                     #Wait on skill usage CD
                     while timer "bardLock" < 10000
                         wait 100
@@ -835,8 +870,7 @@ while not dead
                     target 'lastserial'
                     settimer "crookCheck" 0
                     settimer "bardLock" 7000
-                endif
-                if followers > 1 and timer "petAttack" > 2500
+                    
                     say "All kill"
                     wft 1500
                     target 'lastserial'
@@ -844,7 +878,7 @@ while not dead
                 endif
                 
                 #poison routine 
-                if  skill "Poisoning" > 50 and mana >= 35
+                if  skill "Poisoning" > 50 and mana >= 45  and followers >= 4
                     overhead "Poison Target!" 33
                     cast "Poison"
                     wft 4500
@@ -908,32 +942,31 @@ while not dead
                 
                 #Flamestrike
                 if skill 'Magery' > 80 and skill 'Archery' < 80
-                    if counttype "Spider's Silk" > 15 and counttype "Sulfurous Ash" > 15 and mana >= 51
-                        # put an extra ' here to fix formatting
+                    if mana >= 45 and followers >= 4
                         wait 400
                         cast "Flamestrike"
                         wft 3500
                         target 'lastserial'
                         wait 400
                         if sayLess = 0 
-                            say "So anyway I started blastin" 33
+                            overhead "So anyway I started blastin" 33
                         endif
                         wait 300
                     endif
                 endif   
-                #Check for cannot see and ignore going forward
-                if  insysmsg "cannot be seen" or insysmsg "too far away"
-                    pushlist ignoreList 'lasttarget'
-                endif
             #end target required routines
-            else
-                #No close enemies and we are still here; wait 5000 and set final loot call
-                overhead "Recall or Loot"
+            endif
+            if insysmsg "any nearby trees" or insysmsg "get you more wood"
+                overhead "Time to move on"
+                @setvar goToNextRune 1
             endif
         endwhile
         
-        #Go home if overweight and dump loot
-        if diffweight <= 50
+        #reset go to next rune variable     
+        @setvar goToNextRune 0
+        
+        #Go home, dump loot, and restock
+        if diffweight <= 50 or goHomeBotYouAreDrunk = 1
             #Cast recall til you are home
             #Walk this way
             #Change the 3 numbers at the end of this to where land at recall location
@@ -1019,6 +1052,10 @@ while not dead
             endif
         #End weight check recall home routine   
         endif
+        
+        #update recall home variable        
+        @setvar goHomeBotYouAreDrunk 0
+        
     #end foreach rune routine   
     endfor
 #End while not dead routine
