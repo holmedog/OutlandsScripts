@@ -1,21 +1,14 @@
-createlist myPets
-clearlist myPets
+#11 - rune 2
+#17 - rune 3
+createlist 'runes'
+clearlist  'runes'
+pushlist 'runes' 11
+pushlist 'runes' 17
 
-for 20
-    hotkey 'Next Friendly Monster Target'
-    @setvar! 'lastserial' lasttarget
-
-    menu lastserial 1
-    wait 200
-    if targetexists
-        overhead "it is my pet!"
-        if not inlist myPets 'lastserial'
-            pushlist myPets 'lastserial' 
-        endif
-    endif
-    hotkey 'Cancel current target'
-endfor    
-
-foreach x in myPets
-    overhead 'Pet: {{x}}'
+foreach rune in runes
+  overhead "At Rune: [{{rune}}]"
+  dclick 0x46764C68
+  waitforgump 'any'
+  gumpresponse rune
+  wait 5000
 endfor

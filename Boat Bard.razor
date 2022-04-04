@@ -261,6 +261,18 @@ while not dead
         settimer onBoard 0
     endif
     
+    #disco routine if target lock is 1 or we are on a humanoid boat
+    if discoLock = 1 or targetLockType = 1
+        if  skill "Discordance" > 50 and timer "bardLock" > 10000 and timer "discoTimer" > 5150 and closeEnemy = 1 
+            overhead "Disco Target!" 33
+            skill "Discordance" 
+            wft 500
+            target self
+            settimer "discoTimer" 0
+            settimer "bardLock" 4750
+        endif
+    endif
+    
     #dont let this guy die routine
     if hp < 55 
         overhead 'Drinking heal!'
@@ -733,20 +745,8 @@ while not dead
         settimer "bardLock" 0
     endif
     
-    #disco routine if target lock is 1 or we are on a humanoid boat
-    if discoLock = 1 or targetLockType = 1
-        if  skill "Discordance" > 50 and timer "bardLock" > 10000 and timer "discoTimer" > 5150 and closeEnemy = 1 
-            overhead "Disco Target!" 33
-            skill "Discordance" 
-            wft 500
-            target self
-            settimer "discoTimer" 0
-            settimer "bardLock" 4750
-        endif
-    endif
-    
     #Recall if you are docked
-    if goHomeBotYouAreDrunk = 1 and timer goHomeBotYouAreDrunkTimer > 15000 and botAtHome = 0       
+    if goHomeBotYouAreDrunk = 1 and timer goHomeBotYouAreDrunkTimer > 15000 and botAtHome = 0 and boardState = 0     
         clearsysmsg
         #Use a ship repair kit to test if we are on a boat
         dclicktype 25758
@@ -995,6 +995,15 @@ while not dead
                 hotkey 'Cancel Current Target'
                 dclick tillerDude
                 wait 350
+				if insysmsg "were not found"
+					say "[embark"					
+					if findtype "tiller man" ground as found
+						overhead "Tillerman Set"
+						setvar 'tillerDude' 'found'
+						dclick 'tillerDude'
+						wait 500
+					endif
+				endif
                 gumpresponse 21 4216593270
                 wait 350
                 gumpresponse 22 4216593270
