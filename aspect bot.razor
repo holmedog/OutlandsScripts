@@ -12,10 +12,7 @@
 #Search for "Walk This Way" and update the numbers to be your landing spot and dump spots
 
 #Need a runebook with the default rune as your home base.
-if not varexist  runeBookFarm
-    overhead "Select your runebook"
-    setvar runeBookFarm
-endif
+
 
 #Summon Type Selector.  Having Necromancy skill will still summon necro version.  We will always use Summon Creature as 5th slot.  Still requires 80 SS or Necro to trigger
 #MAKE SURE you only select two here.  Selecting more will break stuff.  
@@ -38,6 +35,10 @@ endif
 ##################################################################################
 clearsysmsg 
 clearignore 
+
+
+overhead "Select your runebook"
+setvar runeBookFarm
 
 #Timers.  We used to do these on an if exists basis, but it fubard too much stuff if you leave client open forever
 createtimer 'petAttack' 
@@ -366,6 +367,7 @@ while not dead
             endfor
         else
             overhead "Setup run, dclick dagger when done"
+			poplist 'runes' 1
         endif
         
         #kill stuff until we see loot message
@@ -670,7 +672,7 @@ while not dead
                 settimer "buffDisco" 0
                 settimer "bardLock" 0
             endif
-            if skill "Provocation" > 50 and timer "bardLock" > 10000 and timer "buffProvo" > 300000
+            if skill "Provocation" > 50 and timer "bardLock" > 11000 and timer "buffProvo" > 300000
                 overhead "Provo Buff"
                 skill "Provocation" 
                 wft 2500
@@ -678,7 +680,7 @@ while not dead
                 settimer "buffProvo" 0
                 settimer "bardLock" 0
             endif
-            if skill "Peacemaking" > 50 and timer "bardLock" > 10000 and timer "buffPeace" > 300000
+            if skill "Peacemaking" > 50 and timer "bardLock" > 11000 and timer "buffPeace" > 300000
                 overhead "Peace Buff"
                 skill "Peacemaking" 
                 wft 2500
@@ -687,13 +689,13 @@ while not dead
                 settimer "bardLock" 0
             endif
             #Arch Protection
-            if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Protection"
+            if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 11000 and not findbuff "Protection"
                 cast 'Arch Protection'
                 waitfortarget 2500
                 target 'self'
             endif
             #Bless
-            if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Strength" 
+            if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 11000 and not findbuff "Strength" 
                 overhead "Mage Buff"
                 cast 'Bless'
                 waitfortarget 2500
@@ -809,7 +811,7 @@ while not dead
             ###############                                         ###############
             ###############    Start target search / embark routine ###############
             ###############                                         ###############   
-            if timer "newTargetCheck" > 1250
+            if timer "newTargetCheck" > 1250 and goToNextRune = 0
                 #reset timer
                 settimer "newTargetCheck" 0
                 @setvar searchNew 1 
@@ -836,7 +838,7 @@ while not dead
             ###############Start routines that  require a target###############
             ###############                                     ###############   
             
-            if closeEnemy = 1    
+            if closeEnemy = 1    and goToNextRune = 0
                 
                 #attack routine  - Always attack so pets go aggro at least if we are not a melee class   
                 attack 'lastserial'
