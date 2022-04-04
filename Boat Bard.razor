@@ -812,9 +812,9 @@ while not dead
                 wait 250
                 gumpresponse 2        
             endif
-			
-			#WALK THIS WAY
-			#Change the 3 numbers at the end of this to where you want to stop and ressupply.  Change the walk direction to the direction you need to go
+            
+            #WALK THIS WAY
+            #Change the 3 numbers at the end of this to where you want to stop and ressupply.  Change the walk direction to the direction you need to go
             while not position 4006 904 5
                 walk 'North'
                 wait 150
@@ -825,7 +825,7 @@ while not dead
                 target self
                 menu found 1
             endif
-			#Change the 3 numbers at the end of this to where you want to stop and wait on a gate.  Change the walk direction to the direction you need to go
+            #Change the 3 numbers at the end of this to where you want to stop and wait on a gate.  Change the walk direction to the direction you need to go
             while not position 4006 909 0
                 walk 'South'
                 wait 150
@@ -1025,7 +1025,6 @@ while not dead
                 say "We got a birdy!"
             endif
             settimer "newTargetCheck" 0
-            setvar 'lasttarget' 0
             #skip rest of actions to reaquire target
             continue
         endif   
@@ -1180,8 +1179,10 @@ while not dead
             endif
         endif   
         #Check for cannot see and ignore going forward
-        if boardState = 1 and insysmsg "cannot be seen" and bossFight = 0
-            pushlist ignoreList 'lasttarget'
+        if boardState = 1 and bossFight = 0
+            if  insysmsg "cannot be seen" or insysmsg "too far away"
+                pushlist ignoreList 'lasttarget'
+            endif
         endif
     #end target required routines
     endif
