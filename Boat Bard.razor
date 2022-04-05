@@ -602,16 +602,6 @@ while not dead
     if botAtHome = 1
         continue
     endif
-    #Remove this if you read this far.  It does bad stuff
-    if findtype 3976 ground
-        if triggerOverboard != 2
-            dclick tillerDude
-            for 5
-                wait 500
-                gumpresponse 27 4216593270
-            endfor          
-        endif
-    endif       
     #spirit speak only if on own boat and corpses present.  Do not SS if we have necromancy as we have liches and this is wasted time
     if skill "Spirit Speak" > 50 and timer "bardLock" > 10000 and timer "spiritSpeakCheck" > 30000 and 'boardState' = 0 and  skill "Necromancy" < 50
         if findtype 'corpse' ground any any 12 as found
