@@ -1,5 +1,7 @@
 #Recall Conditions: All valid targets are dead and 5s has completed or dagger has been double clicked
 
+    #Search for "valuable target list" and add whatever you are farming to it
+
 #Make sure to have Magery to recall **OR** [autousespellscrolls and a shitload of spell scrolls
 
 #Part of the attack routine is to call a Razor Dress routine named "bow".  
@@ -10,14 +12,14 @@
 
 #Search for "Walk This Way" and update the numbers to be your landing spot and dump spots
 
-#Need a runebook with the default rune as your home base.  For non-magery need to have first rune as home
+#Need a runebook with the default rune as your home base.  For non-magery need to have first rune as home.  Fill out all the runes.  It is best to land close to target
 
 
 #Summon Type Selector.  Having Necromancy skill will still summon necro version.  We will always use Summon Creature as 5th slot.  Still requires 80 SS or Necro to trigger
 #MAKE SURE you only select two here.  Selecting more will break stuff.  
 #Valid Values are 0, 1, or 2 and it will summon that many of that type: Example setting fireElem to 2 will summon 2 fire elems.  Setting earthEleme to 1 and waterElem to 1 will summon 1 earth elemental and 1 waterElem
-@setvar fireElem 1
-@setvar earthElem 1
+@setvar fireElem 2
+@setvar earthElem 0
 @setvar airElem 0
 @setvar waterElem 0
 @setvar daemonSum 0
@@ -29,7 +31,7 @@
 ##################################################################################
 ##################################################################################
 ##############              No setup below here                ###################
-##################################################################################
+################################################################################## 
 ##################################################################################
 ##################################################################################
 clearsysmsg 
@@ -204,7 +206,6 @@ else
 endif   
 
 @setvar goToNextRune 0
-@setvar skinnedCorpse 0
 
 while not dead
     foreach rune in runes
@@ -238,7 +239,8 @@ while not dead
         endif
         dress "bow"
         clearsysmsg
-        settimer "atThisSpot" 0
+        settimer "atThisSpot" 0     
+        settimer 'allKillTimer' 100000
         #kill stuff until we see loot message
         while goToNextRune = 0
             
@@ -258,7 +260,7 @@ while not dead
                 setvar targetDead 0
                 @setvar goToNextRune 1
             endif   
-            if timer "atThisSpot" > 60000 and rune != 1
+            if timer "atThisSpot" > 120000 and rune != 1
                 overhead "Been here too damn long"
                 setvar targetDead 0
                 @setvar goToNextRune 1
@@ -635,21 +637,31 @@ while not dead
                 endif
             endif  
             
-            #Skin corpses
-            if skill 'Forensic Evaluation' > 20 and findtype 'corpse' ground any any 2 as found
-                hotkey 'Forensics'
-                wait 500
-                target 'self'
-                wait 1500
-                if not insysmsg "You carve" and not insysmsg  "anything nearby" and not insysmsg "must wait"
-                    while not insysmsg "successful" and not insysmsg "any nearby trees" and not insysmsg "get you more wood"
-                        overhead  "I am broken in a Captcha loop.  Fix me or target self with dagger" 
-                        wait 2500
-                    endwhile                   
-                endif
-                @setvar skinnedCorpse 1
-                ignore found
-            endif
+            #Skin corpses if we have been here 7s
+            if timer "atThisSpot" > 7000 and findtype 'corpse' ground any any 2 as found
+                #Check for a blade
+                if findtype '11552' backpack
+                    hotkey 'Forensics'
+                    wft 500
+                    target 'self'
+                    wait 255
+                    if not insysmsg "You carve" and not insysmsg  "anything nearby" and not insysmsg "must wait"
+                        while not insysmsg "successful" and not insysmsg "What do you want to use this item on" and not insysmsg "save complete"
+                            overhead  "I am broken in a Captcha loop.  Fix me or double click dagger" 
+                            wait 2500
+                        endwhile                   
+                    endif
+                else
+                    #No blade, open corpses
+                    @clearignore
+                    while findtype 0x2006 'ground' 'any' 1 2 as 'found'
+                        dclick 'found'
+                        pause 400
+                        @ignore 'found'
+                    endwhile
+                endif               
+                @ignore 'found'
+            endif           
             
             #Put on your clothes
             if timer "dressTimer" > 10000
@@ -820,7 +832,7 @@ while not dead
                 
                 #Flamestrike
                 if skill 'Magery' > 80 and skill 'Archery' < 80
-                    if mana >= 55 and followers >= 4
+                    if mana >= 75 and followers >= 4
                         if skill "Poisoning" < 80 or skill "evalint" >= 50                       
                             #Above check is because we would rather not FS spam if poisoning is better
                             wait 400
