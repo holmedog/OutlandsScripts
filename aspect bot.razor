@@ -1,9 +1,9 @@
 #Recall Conditions: 
-	#All valid targets are dead and 5s has completed 
-	#or dagger has been double clicked
+    #All valid targets are dead and 5s has completed 
+    #or dagger has been double clicked
 
 #Search for "valuable target list" and add whatever you are farming to it.  
-	#THIS DOES NOT WORK ON HUMANOIDS.  DO NOT MARK RUNES AT THEM HOPING IT WILL START WORKING
+    #THIS DOES NOT WORK ON HUMANOIDS.  DO NOT MARK RUNES AT THEM HOPING IT WILL START WORKING
 
 #Make sure to have Magery to recall **OR** [autousespellscrolls and a shitload of spell scrolls
 
@@ -21,8 +21,8 @@
 #Summon Type Selector.  Having Necromancy skill will still summon necro version.  We will always use Summon Creature as 5th slot.  Still requires 80 SS or Necro to trigger
 #MAKE SURE you only select two here.  Selecting more will break stuff.  
 #Valid Values are 0, 1, or 2 and it will summon that many of that type: Example setting fireElem to 2 will summon 2 fire elems.  Setting earthEleme to 1 and waterElem to 1 will summon 1 earth elemental and 1 waterElem
-@setvar fireElem 2
-@setvar earthElem 0
+@setvar fireElem 1
+@setvar earthElem 1
 @setvar airElem 0
 @setvar waterElem 0
 @setvar daemonSum 0
@@ -93,6 +93,8 @@ createtimer 'atThisSpot'
 settimer 'atThisSpot' 100000
 createtimer 'allKillTimer'
 settimer 'allKillTimer' 100000
+createimter 'redCheck' 
+settimer 'redCheck' 100000
 
 #Clear lastt target from last run - this can cause a weird bug
 unsetvar 'lastserial' 
@@ -105,6 +107,10 @@ pushlist 'stuffToKill' 'a lich magus'
 pushlist 'stuffToKill' 'an ancient oak'
 #daemon body type
 pushlist 'stuffToKill' '9' 
+pushlist 'stuffToKill' '280' 
+pushlist 'stuffToKill' '281' 
+pushlist 'stuffToKill' '375' 
+pushlist 'stuffToKill' '173' 
 pushlist 'stuffToKill' 'a sunken sorcerer'
 
 #Create list of instrument types and dclick if found
@@ -246,13 +252,6 @@ while not dead
         settimer 'allKillTimer' 100000
         #kill stuff until we see loot message
         while goToNextRune = 0
-            
-            if diffweight <= 50           
-                overhead "Too fat recall"
-                @setvar goHomeBotYouAreDrunk 1
-                @setvar goToNextRune 1
-                setvar targetDead 0
-            endif
             if insysmsg "Now tracking"
                 overhead "Red Alert!"
                 @setvar goToNextRune 1
@@ -268,6 +267,19 @@ while not dead
                 setvar targetDead 0
                 @setvar goToNextRune 1
             endif
+			if timer "redCheck" > 750
+				hotkey 'Next Enemy Humanoid Target'
+				wait 100
+				if insysmsg 'No one matching that'  
+					#we are fine continue on
+					settimer "redCheck" 0
+				else
+					overhead "Red!  GTFO"					
+					@setvar goToNextRune 1
+					@setvar goHomeBotYouAreDrunk 1
+					continue
+				endif
+			endif
 
             #put in a pause so we dont spam 
             #wait 250    
@@ -574,10 +586,6 @@ while not dead
                 waitfortarget 2500
                 target 'self'
                 wait 750
-                cast 'Bless'
-                waitfortarget 2500
-                target 'self'
-                wait 750
             endif
             if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Reactive Armor" and defensiveBuffs = 1
                 cast 'Reactive Armor'
@@ -759,7 +767,7 @@ while not dead
                         wait 100
                     endwhile
                     #use a crook
-                    dclicktype 3713 
+                    say "[FocusAggression"
                     wft 500
                     target 'lastserial'
                     settimer "crookCheck" 0
@@ -861,6 +869,12 @@ while not dead
         #reset go to next rune variable     
         setvar goToNextRune 0
         unsetvar 'lastserial'
+
+        if diffweight <= 50           
+            overhead "Too fat recall"
+            @setvar goHomeBotYouAreDrunk 1
+            setvar targetDead 0                
+        endif
         
         #Go home, dump loot, and restock
         if diffweight <= 50 or goHomeBotYouAreDrunk = 1
