@@ -1,6 +1,9 @@
-#Recall Conditions: All valid targets are dead and 5s has completed or dagger has been double clicked
+#Recall Conditions: 
+	#All valid targets are dead and 5s has completed 
+	#or dagger has been double clicked
 
-    #Search for "valuable target list" and add whatever you are farming to it
+#Search for "valuable target list" and add whatever you are farming to it.  
+	#THIS DOES NOT WORK ON HUMANOIDS.  DO NOT MARK RUNES AT THEM HOPING IT WILL START WORKING
 
 #Make sure to have Magery to recall **OR** [autousespellscrolls and a shitload of spell scrolls
 
@@ -8,7 +11,7 @@
 #   If you do not have that it will not stop the script but it is 
 #   a good idea to have one in case you unequip weapon
 
-#Make sure to have a skinning knife on you
+#Make sure to have a skinning knife on you if you want to skin.  Loot routine only fires at your feet (within 1 tile)
 
 #Search for "Walk This Way" and update the numbers to be your landing spot and dump spots
 
@@ -638,7 +641,7 @@ while not dead
             endif  
             
             #Skin corpses if we have been here 7s
-            if timer "atThisSpot" > 7000 and findtype 'corpse' ground any any 2 as found
+            if timer "atThisSpot" > 7000 and findtype 'corpse' ground any any 1 as found
                 #Check for a blade
                 if findtype '11552' backpack
                     hotkey 'Forensics'
