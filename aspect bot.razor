@@ -1,3 +1,7 @@
+#Enable target locking
+#Change recall routine - needs to happen 5s after target is dead
+
+
 #Use a dagger to force recall.  Otherise it checks 
 # for loot queue ending to recall
 
@@ -35,20 +39,16 @@
 ##################################################################################
 clearsysmsg 
 clearignore 
-
+unsetvar 'lastserial'
 
 overhead "Select your runebook"
 setvar runeBookFarm
 
 #Timers.  We used to do these on an if exists basis, but it fubard too much stuff if you leave client open forever
-createtimer 'petAttack' 
-settimer 'petAttack' 0
-createtimer 'repairTimer'
-settimer 'repairTimer' 0
+createtimer 'targetDeadTimer'
+settimer 'targetDeadTimer' 0
 createtimer 'discoTimer'
 settimer 'discoTimer' 5000
-createtimer 'repairBoat'
-settimer 'repairBoat' 8000
 createtimer "shroomy"
 settimer "shroomy" 61000
 createtimer 'buffDisco'
@@ -77,8 +77,6 @@ createtimer 'crookCheck'
 settimer 'crookCheck' 120000
 createtimer 'crewHealing'
 settimer 'crewHealing' 120000
-createtimer 'onBoard'
-settimer 'onBoard' 120000
 createtimer 'painSpkeTimer'
 settimer 'painSpkeTimer' 120000
 createtimer 'poisonStrikeTimer'
@@ -91,11 +89,12 @@ createtimer 'provkeBossTimer'
 settimer 'provkeBossTimer' 1500000
 createtimer 'goHomeBotYouAreDrunkTimer'
 settimer 'goHomeBotYouAreDrunkTimer' 100000
-createtimer 'scriptRunning'
-settimer 'scriptRunning' 100000
+createtimer 'atThisSpot'
+settimer 'atThisSpot' 100000
 
 #Clear lastt target from last run - this can cause a weird bug
 unsetvar 'lastserial' 
+@setvar targetDead 0
 
 #Create list of instrument types and dclick if found
 removelist 'instrumentTypes'
@@ -143,151 +142,14 @@ endif
 if skill "Veterinary" > 50 and followers >= 1
     overhead "Target pet 1" 
     setvar! pet1
+    wait 250
     overhead "Target pet 2"
     setvar! pet2
+    wait 250
     overhead "Target pet 3"
     setvar! pet3 
 endif   
-
-#do camping buff at least once regardless of buff status
-#camping buff
-if skill "Camping" > 50 
-    if not findtype "kindling" backpack
-        say "Need more kindling" 
-        wait 355
-        say "Need more kindling" 
-        wait 355
-        say "Need more kindling" 
-        wait 355
-    endif
-
-    if not findtype "campfire" true
-        dclicktype "kindling" backpack
-        wait 350
-        while insysmsg "You fail to ignite"
-            wait 3000    
-            dclicktype "kindling" backpack
-            wait 350
-        endwhile
-    endif
-    wait 600
-endif
-
    
-#Tracking Routine - Turn it on if we have not yet
-if skill 'Tracking' > 80 and 'trackState' = 0
-    while not insysmsg "You will receive"
-        hotkey 'Tracking'
-        gumpresponse 6 4267467659
-        wait 500
-    endwhile    
-    gumpclose 4267467659
-    @setvar 'trackState' 1
-endif
-
-#Follower Routine first run
-if skill "Necromancy" > 80 or skill "Spirit Speak" > 80
-    while followers < 4 
-        #Lost a big pet, resummon
-        settimer "bardLock" 0
-        if skill "Necromancy" > 80
-            say "[VengefulSpirit"
-            wait 1000
-        endif
-        #check for pure summons they do not require as much logic
-        if 'fireElem' = 2
-            cast 'Fire Elemental'
-        elseif 'airElem' = 2
-            cast 'Air Elemental'
-        elseif 'daemonSum' = 2
-            cast 'Summon Daemon'
-        elseif 'earthElem' = 2
-            cast 'Earth Elemental'
-        elseif 'waterElem' = 2
-            cast 'Water Elemental'
-        endif
-        
-        #Check for single summons               
-        if 'fireElem' = 1 
-            if skill "Necromancy" > 80
-                if not findtype "a lich" ground any any 12 
-                    overhead "Casting one lich"
-                    say "a fire elemental release"
-                    cast 'Fire Elemental'
-                endif
-            else
-                if not findtype "a fire elemental" ground any any 12 
-                    overhead "Casting plain fire elem"
-                    cast 'Fire Elemental' 
-                endif
-            endif
-        endif           
-        if 'airElem' = 1 
-            if skill "Necromancy" > 80
-                if not findtype "a skeletal fiend" ground any any 12 
-                    say "an air elemental release"
-                    cast 'Air Elemental'
-                endif
-            else
-                if not findtype "an air elemental"  ground any any 12 
-                    cast 'Air Elemental'
-                endif
-            endif
-        endif       
-        if 'earthElem' = 1 
-            if skill "Necromancy" > 80
-                if not findtype "an ancient mummy" ground any any 12 
-                    say "an earth elemental release"
-                    cast 'Earth Elemental'
-                endif
-            else
-                if not findtype "an earth elemental"  ground any any 12 
-                    cast 'Earth Elemental'
-                endif
-            endif
-        endif       
-        if 'waterElem' = 1 
-            if skill "Necromancy" > 80
-                if not findtype "a rag witch" ground any any 12 
-                    say "a water elemental release"
-                    cast 'Water Elemental'
-                endif
-            else
-                if not findtype "a water elemental"  ground any any 12 
-                    cast 'Water Elemental'
-                endif
-            endif
-        endif           
-        if 'waterElem' = 1 
-            if skill "Necromancy" > 80
-                if not findtype "a vampire thrall" ground any any 12 
-                    say "a daemon release"
-                    cast 'Summon Daemon'
-                endif
-            else
-                if not findtype "a daemon"  ground any any 12 
-                    cast 'Summon Daemon'
-                endif
-            endif
-        endif           
-        wait 6000
-        say "All Guard Me"
-        
-        #rebuff to get pet buffed
-        if mana > 15 and followers >= 4
-            cast 'Bless'
-            waitfortarget 2500
-            target 'self'
-            wait 750
-        endif
-        if mana < 70 and timer "shroomy" >= 65000
-            dclicktype '29012'
-            overhead 'Mushroom Power!'
-            settimer "shroomy" 0
-        endif
-    endwhile
-endif
-     
 if followers > 1
     say "All guard me"
 endif   
@@ -297,7 +159,7 @@ endif
 #Populate our runes
 createlist 'runes'
 clearlist  'runes'
-if skill "Magery" > 40
+if skill "Magery" >= 40
     #gumps here for recall spell use
     pushlist 'runes' 1
     pushlist 'runes' 11
@@ -336,7 +198,7 @@ else
 endif   
 
 @setvar goToNextRune 0
-
+@setvar skinnedCorpse 0
 
 while not dead
     foreach rune in runes
@@ -365,11 +227,13 @@ while not dead
                     say "All guard me"
                 endif   
             endfor
+            settimer "atThisSpot" 0
         else
             overhead "Setup run, dclick dagger when done"
-			poplist 'runes' 1
         endif
-        
+        dress "bow"
+        wait 1000
+        clearsysmsg
         #kill stuff until we see loot message
         while goToNextRune = 0
             
@@ -377,24 +241,33 @@ while not dead
                 overhead "Too fat recall"
                 @setvar goHomeBotYouAreDrunk 1
                 @setvar goToNextRune 1
+                setvar targetDead 0
             endif
-            if insysmsg "queued actions in" 
+            if skinnedCorpse = 1 and insysmsg "queued actions in" 
                 overhead "Time to go to next rune"
                 @setvar goToNextRune 1
+                setvar targetDead 0
             endif
             if insysmsg "Now tracking"
                 overhead "Red Alert!"
                 @setvar goToNextRune 1
+                setvar targetDead 0
             endif           
             if insysmsg "any nearby trees" or insysmsg "get you more wood"
                 overhead "Time to move on"
                 @setvar goToNextRune 1
+                setvar targetDead 0
             endif
-            #alert bot is working
-            if timer "scriptRunning" > 25000
-                overhead "Bot is running"
-                settimer "scriptRunning" 0
-            endif           
+            if targetDead = 1 and timer "targetDeadTimer" > 7000
+                overhead "Target dead can we leave?"
+                setvar targetDead 0
+                @setvar goToNextRune 1
+            endif   
+            if timer "atThisSpot" > 60000 and rune != 1
+                overhead "Target dead can we leave?"
+                setvar targetDead 0
+                @setvar goToNextRune 1
+            endif
 
             #put in a pause so we dont spam 
             wait 250    
@@ -462,7 +335,7 @@ while not dead
                     dclicktype 3617
                     wft 2500
                     target pet1         
-                    wait 250
+                    wait 600
                     if insysmsg 'You begin applying the bandages'
                         settimer 'aid time' 4500
                         settimer 'crewHealing' 0
@@ -472,7 +345,7 @@ while not dead
                     dclicktype 3617
                     wft 2500
                     target pet2       
-                    wait 250 
+                    wait 600 
                     if insysmsg 'You begin applying the bandages'
                         settimer 'aid time' 4500
                         settimer 'crewHealing' 0
@@ -779,6 +652,7 @@ while not dead
                         wait 2500
                     endwhile                   
                 endif
+                @setvar skinnedCorpse 1
                 ignore found
             endif
             
@@ -811,27 +685,57 @@ while not dead
             ###############                                         ###############
             ###############    Start target search / embark routine ###############
             ###############                                         ###############   
-            if timer "newTargetCheck" > 1250 and goToNextRune = 0
+            if timer "newTargetCheck" > 1000 and goToNextRune = 0
                 #reset timer
                 settimer "newTargetCheck" 0
                 @setvar searchNew 1 
                 @setvar closeEnemy 1
+                if varexist 'lastserial'
+                    if  insysmsg "cannot be seen" or insysmsg "too far away"
+                        #target is too far away
+                        overhead "Target too far, skip"
+                        @setvar searchNew 1             
+                    else
+                        if noto 'lastserial' = invulnerable   
+                            @setvar searchNew 0    
+                            overhead "Friend targeted"
+                        endif
+                        if insysmsg "not found"
+                            #This status means target is dead
+                            overhead "Target is dead or out of range. Finding a new one"
+                            @setvar targetDead 1
+                            settimer "targetDeadTimer" 0
+                        else
+                            #Our target appears to be alive still.  Do not hunt for a new target
+                            overhead "Target still alive"
+                            @setvar searchNew 0             
+                        endif                       
+                    endif
+                endif               
                 
-                #Start cycling
-                hotkey 'Next Grey Humanoid Target'
-                wait 255
-                if insysmsg 'No one matching that'      
-                    hotkey 'Next Grey Monster Target' 
+                if searchNew = 1
+                    #Start cycling
+                    hotkey 'Next Grey Monster Target'
                     wait 255
-                    if insysmsg 'No one matching that'               
-                        @setvar 'closeEnemy' 0
+                    if insysmsg 'No one matching that'      
+                        hotkey 'Next Grey Humanoid Target' 
+                        wait 255
+                        if insysmsg 'No one matching that'               
+                            @setvar 'closeEnemy' 0
+                        endif
                     endif
                 endif
                 
-                #Set up var for last enemy.  If no enemy it is time to leave this boat
-                if closeEnemy = 1       
+                #Set up var for last enemy. 
+                if closeEnemy = 1                           
                     @setvar! 'lastserial' lasttarget
                 endif     
+                
+                if noto 'lastserial' = friend   
+                    @setvar closeEnemy 0    
+                    overhead "Friend targeted"
+                    unsetvar 'lastserial'
+                endif
             endif    
             
             ###############                                     ###############
@@ -839,15 +743,18 @@ while not dead
             ###############                                     ###############   
             
             if closeEnemy = 1    and goToNextRune = 0
-                
-                #attack routine  - Always attack so pets go aggro at least if we are not a melee class   
-                attack 'lastserial'
-                
                 #Turn on war mode because why not
                 if not warmode
                     warmode on
                 endif               
                 
+                #attack routine  - Always attack so pets go aggro at least if we are not a melee class   
+                attack 'lastserial'                
+                if followers > 1
+                    say "All attack"
+                    wft 500
+                    target 'lastserial'
+                endif
                 
                 #painspike
                 if skill "Necromancy" > 80 and timer "painSpkeTimer" > 35000
@@ -876,7 +783,6 @@ while not dead
                     say "All kill"
                     wft 1500
                     target 'lastserial'
-                    settimer "petAttack" 0
                 endif
                 
                 #poison routine 
@@ -958,14 +864,15 @@ while not dead
                 endif   
             #end target required routines
             endif
-            if insysmsg "any nearby trees" or insysmsg "get you more wood"
+            if insysmsg "What do you want to use this item on"
                 overhead "Time to move on"
                 @setvar goToNextRune 1
             endif
         endwhile
         
         #reset go to next rune variable     
-        @setvar goToNextRune 0
+        setvar goToNextRune 0
+        unsetvar 'lastserial'
         
         #Go home, dump loot, and restock
         if diffweight <= 50 or goHomeBotYouAreDrunk = 1
@@ -973,10 +880,17 @@ while not dead
             #Walk this way
             #Change the 3 numbers at the end of this to where land at recall location
             while not position 4007 909 0
-                cast "Recall"
-                wft 2500
-                target runeBookFarm
-                wait 500
+                if skill "Magery" > 40
+                    cast "Recall"
+                    wft 2500
+                    target runeBookFarm
+                    wait 500
+                else                    
+                    dclick 'runeBookFarm'
+                    wait 250
+                    gumpresponse 2    
+                    wait 3000               
+                endif
             endwhile    
             #Loot Routine
             #WALK THIS WAY
@@ -1059,6 +973,9 @@ while not dead
         @setvar goHomeBotYouAreDrunk 0
         
     #end foreach rune routine   
-    endfor
+    endfor  
+    
+    #drop off startup rune
+    poplist 'runes' '1'
 #End while not dead routine
 endwhile    

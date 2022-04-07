@@ -29,7 +29,9 @@ while not dead
     if hidden
         continue
     endif
-    
+    if findtype '5188' ground -1 -1 2
+        dclicktype '5188' ground -1 -1 2
+    endif
     #spyglass routine
      
         if onABoat = 1 and timer "spyGlassPeek" > 6500 and findtype 'spyglass' self 

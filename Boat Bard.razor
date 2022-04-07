@@ -117,10 +117,6 @@ pushlist 'instrumentTypes' 3740
 pushlist 'instrumentTypes' 3742
 pushlist 'instrumentTypes' 3763
 
-#Create ignore list so we do not target birds
-createlist ignoreList
-clearlist ignoreList
-
 #Create list of reagents
 createlist regTypes
 clearlist regTypes
@@ -339,7 +335,7 @@ while not dead
             dclicktype 3617
             wft 2500
             target pet1         
-            wait 250
+            wait 500
             if insysmsg 'You begin applying the bandages'
                 settimer 'aid time' 4500
                 settimer 'crewHealing' 0
@@ -349,7 +345,7 @@ while not dead
             dclicktype 3617
             wft 2500
             target pet2       
-            wait 250 
+            wait 500 
             if insysmsg 'You begin applying the bandages'
                 settimer 'aid time' 4500
                 settimer 'crewHealing' 0
@@ -441,7 +437,7 @@ while not dead
     
     
     #Tracking Routine - Turn it on if we have not yet
-    if skill 'Tracking' > 80 and 'trackState' = 0
+    if skill 'Tracking' > 20 and 'trackState' = 0
         while not insysmsg "You will receive"
             hotkey 'Tracking'
             gumpresponse 6 4267467659
@@ -659,6 +655,14 @@ while not dead
         target 'self'
         wait 750
     endif
+    #I do not know why you would want to do this
+    if findtype 3976 ground
+        if triggerOverboard != 2
+            @setvar defuseBombs 0
+            say "[reload"
+            wait 15000          
+        endif
+    endif    
     if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Reactive Armor" and defensiveBuffs = 1
         cast 'Reactive Armor'
         wait 750
@@ -741,86 +745,86 @@ while not dead
         #Test boat condition
         say "[shipmenu"
         wait 250
-        if insysmsg "must be close to a ship"
+        if insysmsg "You must be closer"
             #Embark and try again
             say "[embark"
-            wait 250
-			say "[shipmenu"
-            wait 350            
-			if insysmsg "must be close to a ship"        
-				clearignore 
-				unsetvar 'gfto'
-				while findtype 8901 'backpack' as 'runeBook'
-					getlabel 'runeBook' 'runeBookLabel'
-					if 'Home' in 'runeBookLabel'
-						setvar 'gtfo' 'runeBook'
-						overhead 'Set recall to rune book'
-						break
-					endif
-					@ignore 'runeBook'
-				endwhile
-				while findtype 7956 'backpack' as 'runeBook'
-					getlabel 'runeBook' 'runeBookLabel'
-					if 'Home' in 'runeBookLabel'
-						setvar 'gtfo' 'runeBook'
-						overhead 'Set recall to rune book'
-						break
-					endif
-					@ignore 'runeBook'
-				endwhile              
-				if not varexist 'gtfo'
-					say 'You need a book or rune named Home on bot' 33
-					wait 500
-					say 'You need a book or rune named Home on bot' 33
-					wait 500
-					say 'You need a book or rune named Home on bot' 33
-					wait 500
-				elseif skill magery > 60
-					overhead 'Spell Cast'
-					cast 'recall'
-					wft 5000
-					target 'gtfo'
-				elseif findtype 8012 'backpack' as recallScrolls
-					if skill magery > 20
-						overhead 'Recall Scroll'
-						#We have magery but prefer scrolls
-						dclick 'recallScrolls'
-						wft 5000
-						target 'gtfo'
-					else 
-						overhead 'Book use'
-						#We have loose recalls but recall with book
-						dclick 'gtfo'
-						wait 250
-						gumpresponse 2    
-					endif
-				else
-					#Book use
-					overhead 'Book use'
-					dclick 'gtfo'
-					wait 250
-					gumpresponse 2        
-				endif
-				
-				#WALK THIS WAY
-				#Change the 3 numbers at the end of this to where you want to stop and ressupply.  Change the walk direction to the direction you need to go
-				while not position 4006 904 5
-					walk 'North'
-					wait 150
-				endwhile
-				if findtype 'storage shelf' ground any any 2 as found
-					menu found 0 
-					wft 2500
-					target self
-					menu found 1
-				endif
-				#Change the 3 numbers at the end of this to where you want to stop and wait on a gate.  Change the walk direction to the direction you need to go
-				while not position 4006 909 0
-					walk 'South'
-					wait 150
-				endwhile
-				@setvar botAtHome 1
-			endif   
+            wait 500
+            say "[shipmenu"
+            wait 200            
+            if insysmsg "You must be closer"
+                clearignore 
+                unsetvar 'gfto'
+                while findtype 8901 'backpack' as 'runeBook'
+                    getlabel 'runeBook' 'runeBookLabel'
+                    if 'Home' in 'runeBookLabel'
+                        setvar 'gtfo' 'runeBook'
+                        overhead 'Set recall to rune book'
+                        break
+                    endif
+                    @ignore 'runeBook'
+                endwhile
+                while findtype 7956 'backpack' as 'runeBook'
+                    getlabel 'runeBook' 'runeBookLabel'
+                    if 'Home' in 'runeBookLabel'
+                        setvar 'gtfo' 'runeBook'
+                        overhead 'Set recall to rune book'
+                        break
+                    endif
+                    @ignore 'runeBook'
+                endwhile              
+                if not varexist 'gtfo'
+                    say 'You need a book or rune named Home on bot' 33
+                    wait 500
+                    say 'You need a book or rune named Home on bot' 33
+                    wait 500
+                    say 'You need a book or rune named Home on bot' 33
+                    wait 500
+                elseif skill magery > 60
+                    overhead 'Spell Cast'
+                    cast 'recall'
+                    wft 5000
+                    target 'gtfo'
+                elseif findtype 8012 'backpack' as recallScrolls
+                    if skill magery > 20
+                        overhead 'Recall Scroll'
+                        #We have magery but prefer scrolls
+                        dclick 'recallScrolls'
+                        wft 5000
+                        target 'gtfo'
+                    else 
+                        overhead 'Book use'
+                        #We have loose recalls but recall with book
+                        dclick 'gtfo'
+                        wait 250
+                        gumpresponse 2    
+                    endif
+                else
+                    #Book use
+                    overhead 'Book use'
+                    dclick 'gtfo'
+                    wait 250
+                    gumpresponse 2        
+                endif
+                
+                #WALK THIS WAY
+                #Change the 3 numbers at the end of this to where you want to stop and ressupply.  Change the walk direction to the direction you need to go
+                while not position 4006 904 5
+                    walk 'North'
+                    wait 150
+                endwhile
+                if findtype 'storage shelf' ground any any 2 as found
+                    menu found 0 
+                    wft 2500
+                    target self
+                    menu found 1
+                endif
+                #Change the 3 numbers at the end of this to where you want to stop and wait on a gate.  Change the walk direction to the direction you need to go
+                while not position 4006 909 0
+                    walk 'South'
+                    wait 150
+                endwhile
+                @setvar botAtHome 1
+            endif   
         endif
         @settimer "goHomeBotYouAreDrunkTimer" 0 
         #Skip rest of this loop
@@ -984,15 +988,15 @@ while not dead
                 hotkey 'Cancel Current Target'
                 dclick tillerDude
                 wait 350
-				if insysmsg "were not found"
-					say "[embark"					
-					if findtype "tiller man" ground as found
-						overhead "Tillerman Set"
-						setvar 'tillerDude' 'found'
-						dclick 'tillerDude'
-						wait 500
-					endif
-				endif
+                if insysmsg "were not found"
+                    say "[embark"                   
+                    if findtype "tiller man" ground as found
+                        overhead "Tillerman Set"
+                        setvar 'tillerDude' 'found'
+                        dclick 'tillerDude'
+                        wait 500
+                    endif
+                endif
                 gumpresponse 21 4216593270
                 wait 350
                 gumpresponse 22 4216593270
@@ -1017,15 +1021,6 @@ while not dead
         #end enemy search routine
         endif       
         
-        #check ignore list
-        if  bossFight = 0 and inlist 'ignoreList' 'lasttarget'
-            if sayLess = 0
-                say "We got a birdy!"
-            endif
-            settimer "newTargetCheck" 0
-            #skip rest of actions to reaquire target
-            continue
-        endif   
     endif    
     ###############                                     ###############
     ###############Start routines that  require a target###############
@@ -1176,12 +1171,6 @@ while not dead
                 wait 300
             endif
         endif   
-        #Check for cannot see and ignore going forward
-        if boardState = 1 and bossFight = 0
-            if  insysmsg "cannot be seen" or insysmsg "too far away"
-                pushlist ignoreList 'lasttarget'
-            endif
-        endif
     #end target required routines
     endif
 endwhile   

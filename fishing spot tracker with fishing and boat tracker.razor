@@ -1,0 +1,108 @@
+clearsysmsg 
+if not timerexists "fishy"
+    createtimer "fishy"
+    settimer "fishy" 99999
+endif
+if not timerexists "glass"
+    createtimer "glass"
+    settimer "glass" 99999
+endif
+
+if not timerexists "glassBoat"
+    createtimer "glassBoat"
+    settimer "glassBoat" 99999
+endif
+
+overhead "Target organizer 20 hotbag"
+organizer 20 set 
+while not insysmsg "Container set successfully"
+    wait 250
+endwhile
+
+if lhandempty
+    dress 'Fishing'
+    wait 500
+endif
+
+while not dead     
+    if insysmsg "The world will save in 15 seconds"
+        wait 45000
+        overhead "World Save Pause"
+    endif
+    if timer "glass" > 7000     
+        gumpclose 2890020940
+        dclicktype 'spyglass'
+        waitfortarget 1200
+        target 'self'
+        waitforgump 2890020940
+        gumpresponse 11
+        waitforgump 2890020940
+        gumpresponse 4
+        waitforgump 2890020940
+        if ingump "a fishing" 2890020940 
+            say "stop"
+            dclicktype 3763
+            wait 500
+            say "stop"
+            wait 500
+            dclicktype 3763
+        endif
+        settimer "glass" 0
+    endif
+	
+	if timer "glassBoat" > 6500	
+		gumpclose 2890020940
+		wait 250
+		gumpclose 2890020940
+		wait 250
+		dclicktype 'spyglass'
+		waitfortarget 1200
+		target 'self'
+		wait 350 
+		gumpresponse 4 2890020940
+		wait 350 
+		if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
+				overhead "Player BOAT" 43
+				wait 250
+				overhead "Player BOAT" 43
+				wait 250
+				overhead "Player BOAT" 43
+				dclicktype 3763
+		endif
+		while ingump "Next" 2890020940
+			gumpresponse 3 2890020940
+			wait 350
+			if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
+				overhead "Player BOAT" 43
+				wait 250
+				overhead "Player BOAT" 43
+				wait 250
+				overhead "Player BOAT" 43
+				dclicktype 3763
+			endif
+		endwhile    
+	endif
+	
+	
+    if timer "fishy" > 8550
+        say "[greaterability"
+        if lhandempty
+            dress 'Fishing'
+            wait 500
+        endif
+        hotkey 'Use item in hand'
+        settimer "fishy" 0
+        wait 500
+        organizer 20
+        wait 350
+        if insysmsg "did not find"
+            while not dead 
+                say "Just relaxin on the waves"
+                wait 1500
+                if insysmsg "successful"
+                    break
+                endif
+            endwhile
+        endif
+    endif
+endwhile
