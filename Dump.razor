@@ -60,14 +60,23 @@ while findtype "fish"  as found
 endwhile
 
 //dump all supply shelf
-menu 0x407F8ACB 0
-waitfortarget
-target 'self'
-wait 500
-gumpresponse 7
-wait 500
-gumpclose 3232825965 
-wait 500
+if findtype 'storage shelf' ground any any 2 as found
+    menu found 0 
+    wft 2500
+    target self
+    menu found 1                
+    gumpclose 3232825965        
+    if skill "Magery" > 50
+        while counttype 29012 backpack < 35
+            cast "create food"
+            wait 1000
+            if mana < 70 and insysmsg "use another magic"
+                dclicktype 29012
+            endif
+            menu found 1
+        endwhile
+    endif
+endif        
 overhead "Done with shelf"
 
 //dump all resources

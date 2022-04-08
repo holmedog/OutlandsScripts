@@ -98,10 +98,13 @@ createtimer 'allKillTimer'
 settimer 'allKillTimer' 100000
 createtimer 'redCheck' 
 settimer 'redCheck' 100000
+createtimer 'recallSpam' 
+settimer 'recallSpam' 5000
 
 #Clear lastt target from last run - this can cause a weird bug
 unsetvar 'lastserial' 
 @setvar targetDead 0
+@setvar discoSwitch 0
 
 #valuable target list
 removelist 'stuffToKill'
@@ -110,7 +113,7 @@ pushlist 'stuffToKill' 'a lich magus'
 pushlist 'stuffToKill' 'an ancient oak'
 #daemon body type
 pushlist 'stuffToKill' '9' 
-pushlist 'stuffToKill' '15' 
+pushlist 'stuffToKill' 'a water spirit' 
 pushlist 'stuffToKill' '280' 
 pushlist 'stuffToKill' '281' 
 pushlist 'stuffToKill' '375' 
@@ -239,14 +242,24 @@ while not dead
             overhead "Heading to Rune: [{{rune}}]"
             if skill "Magery" > 40
                 while mana < 55
-                    overhead "Waiting on mana to be safe levels"
-                    wait 1000
+                    if timer "recallSpam" > 1000
+                        overhead "Waiting on mana to be safe levels"                    
+                        settimer "recallSpam" 0
+                    endif
+                    hotkey "Target random murderer" 
+                    wait 100
+                    if insysmsg 'No one matching that'  
+                        #we are fine continue on
+                        settimer "redCheck" 0
+                    else
+                        overhead "Red!  GTFO"       
+                        break
+                    endif
                 endwhile
             endif    
             dclick runeBookFarm
             waitforgump 1551740969
             gumpresponse rune 1551740969
-            #gumpresponse rune
             for 3 
                 wait 900       
                 if followers > 1
@@ -260,7 +273,8 @@ while not dead
         clearsysmsg
         settimer "atThisSpot" 0     
         settimer 'allKillTimer' 100000
-        #kill stuff until we see loot message
+        
+        #kill stuff
         while goToNextRune = 0
             if insysmsg "Now tracking"
                 overhead "Red Alert!"
@@ -281,20 +295,6 @@ while not dead
                 setvar targetDead 0
                 @setvar goToNextRune 1
             endif
-			hotkey "Target random murderer" 
-			wait 50
-			if insysmsg 'No one matching that'  
-				#we are fine continue on
-				settimer "redCheck" 0
-			else
-				overhead "Red!  GTFO"                   
-				@setvar goToNextRune 1
-				@setvar goHomeBotYouAreDrunk 1
-				continue
-			endif
-
-            #put in a pause so we dont spam 
-            #wait 250    
  
             ###############                                             ###############
             ###############Start routines that keep us alive or set vars###############
@@ -665,8 +665,11 @@ while not dead
                         say '[vampiricembrace' 
                         wft 500
                         target found
-                        settimer "vampTimer" 0
-                        wait 350
+                        if not insysmsg "You do not have enough unholy symbols for that"
+                            settimer "vampTimer" 0
+                        else
+                            settimer "vampTimer" 30000
+                        endif
                     endif    
                 endif
             endif  
@@ -733,12 +736,15 @@ while not dead
                 @setvar targetDead 0
                 foreach 'killThis' in 'stuffToKill'
                     if findtype 'killThis' ground any any 7 as found
-                        if noto 'lastserial' = friend    or noto 'lastserial' = innocent 
-                            overhead 'Targeted Blue or Green'
+                        @setvar! 'lastserial' 'found'
+                        if noto 'lastserial' = friend
+                            overhead 'Targeted Green'
+                            ignore 'found'
+                        elseif noto 'lastserial' = innocent                         
+                            overhead 'Targeted Blue'
                             ignore 'found'
                         else
                             overhead "Target aquired: [[{{killThis}}]]"
-                            @setvar! 'lastserial' 'found'
                             @setvar closeEnemy 1
                             settimer targetDeadTimer 0
                         endif
@@ -778,8 +784,13 @@ while not dead
                         say '[painspike'
                         wft 500
                         target found
-                        wait 350
-                        settimer "painSpkeTimer" 0
+                        wait 100
+                        if not insysmsg "You do not have enough unholy symbols for that"
+                            settimer "painSpkeTimer" 0
+                        else
+                            #wait 5s
+                            settimer "painSpkeTimer" 30000
+                        endif
                     endif  
                 endif
                                                         
@@ -802,7 +813,7 @@ while not dead
                 endif
                 
                 #poison routine 
-                if  skill "Poisoning" > 50 and mana >= 60  and followers >= 4 and diffhits <= 18
+                if  skill "Poisoning" > 50 and mana >= 80  and followers >= 4 and diffhits <= 18
                     overhead "Poison Target!" 33
                     cast "Poison"
                     wft 4500
@@ -820,27 +831,10 @@ while not dead
                         settimer newTargetCheck 5000
                     endif
                 endif
-                                
-                #disco routine
-                if discoLock = 0 or targetLockType = 2
-                    if  skill "Discordance" > 50 and timer "discoTimer" > 5050              
-                        while timer "bardLock" < 10000
-                            wait 100
-                        endwhile
-                        overhead "Disco Target!" 33
-                        skill "Discordance" 
-                        wft 2500
-                        target 'lastserial'
-                        settimer "discoTimer" 0
-                        settimer "bardLock" 5000
-                    endif
-                endif
+                
                 
                 #Provoke or peace routine
-                if  skill "Peacemaking" > 50 and timer "provkeBossTimer" > 17500 
-                    while timer "bardLock" < 10500
-                        wait 100
-                    endwhile
+                if  skill "Peacemaking" > 50 and timer "provkeBossTimer" > 17500 and 'discoSwitch' = 0
                     overhead "Peacing Target!" 33
                     skill "Peacemaking" 
                     wft 2500
@@ -848,10 +842,8 @@ while not dead
                     settimer "discoTimer" 0
                     settimer "bardLock" 5000
                     settimer "provkeBossTimer" 0
-                elseif  skill "Provocation" > 50 and timer "provkeBossTimer" > 10500          
-                    while timer "bardLock" < 10000
-                        wait 100
-                    endwhile
+                    @setvar discoSwitch 1
+                elseif  skill "Provocation" > 50 and timer "provkeBossTimer" > 10500 and 'discoSwitch' = 0
                     overhead "Provocation Target!" 33
                     skill "Provocation" 
                     wft 2500
@@ -860,9 +852,23 @@ while not dead
                     hotkey 'Next Grey Monster Target' 
                     hotkey 'Last Target'
                     settimer "discoTimer" 0
-                    settimer "bardLock" 5000
+                    settimer "bardLock" 4750
                     settimer "provkeBossTimer" 0
+                    @setvar discoSwitch 1
                 endif
+                                
+                #disco routine
+                if discoLock = 0 or targetLockType = 2 and discoSwitch = 1
+                    if  skill "Discordance" > 50 and timer "discoTimer" > 5050          
+                        overhead "Disco Target!" 33
+                        skill "Discordance" 
+                        wft 2500
+                        target 'lastserial'
+                        settimer "discoTimer" 0
+                        settimer "bardLock" 4750
+                        @setvar discoSwitch 0
+                    endif
+                endif                
                 
                 #Flamestrike
                 if skill 'Magery' > 80 and skill 'Archery' < 80 and diffhits <= 18
@@ -879,11 +885,25 @@ while not dead
                         wait 300
                     endif
                 endif   
-            #end target required routines
+            #end target required routines           
             endif
+            
+            ###Beging GTFO routines###
             if insysmsg "What do you want to use this item on"
                 overhead "Time to move on"
                 @setvar goToNextRune 1
+            endif
+            
+            hotkey "Target random murderer" 
+            wait 100
+            if insysmsg 'No one matching that'  
+                #we are fine continue on
+                settimer "redCheck" 0
+            else
+                overhead "Red!  GTFO"                   
+                @setvar goToNextRune 1
+                @setvar goHomeBotYouAreDrunk 1
+                continue
             endif
         endwhile
         
@@ -926,19 +946,19 @@ while not dead
                 menu found 0 
                 wft 2500
                 target self
-                menu found 1				
-                gumpclose 3232825965		
-				if skill "Magery" > 50
-					while counttype 29012 backpack < 110
-						cast "create food"
-						wait 1000
-						if mana < 70 and insysmsg "use another magic"
-							dclicktype 29012
-						endif
-						menu found 1
-					endwhile
-				endif
-            endif			
+                menu found 1                
+                gumpclose 3232825965        
+                if skill "Magery" > 50
+                    while counttype 29012 backpack < 35
+                        cast "create food"
+                        wait 1000
+                        if mana < 70 and insysmsg "use another magic"
+                            dclicktype 29012
+                        endif
+                        menu found 1
+                    endwhile
+                endif
+            endif           
 
             #If you need to open chests do so here
             dclick 0x5B7C7BBD
