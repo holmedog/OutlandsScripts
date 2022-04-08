@@ -100,6 +100,9 @@ createtimer 'redCheck'
 settimer 'redCheck' 100000
 createtimer 'recallSpam' 
 settimer 'recallSpam' 5000
+createtimer 'poisonTimer' 
+settimer 'poisonTimer' 5000
+
 
 #Clear lastt target from last run - this can cause a weird bug
 unsetvar 'lastserial' 
@@ -281,7 +284,7 @@ while not dead
                 @setvar goToNextRune 1
                 setvar targetDead 0
             endif        
-            if rune != 1 and targetDead = 1 and timer "targetDeadTimer" > 7000
+            if rune != 1 and targetDead = 1 and timer "targetDeadTimer" > 4000
                 overhead "Target dead can we leave?"
                 setvar targetDead 0
                 @setvar goToNextRune 1
@@ -682,12 +685,12 @@ while not dead
                     wft 500
                     target 'self'
                     wait 255
-                    if not insysmsg "You carve" and not insysmsg  "anything nearby" and not insysmsg "must wait"
-                        while not insysmsg "successful" and not insysmsg "What do you want to use this item on" and not insysmsg "save complete"
-                            overhead  "I am broken in a Captcha loop.  Fix me or double click dagger" 
-                            wait 2500
-                        endwhile                   
-                    endif
+                    #if not insysmsg "You carve" and not insysmsg  "anything nearby" and not insysmsg "must wait"
+                    #    while not insysmsg "successful" and not insysmsg "What do you want to use this item on" and not insysmsg "save complete"
+                    #        overhead  "I am broken in a Captcha loop.  Fix me or double click dagger" 
+                    #        wait 2500
+                    #    endwhile                   
+                    #endif
                 else
                     #No blade, open corpses
                     @clearignore
@@ -737,16 +740,15 @@ while not dead
                 foreach 'killThis' in 'stuffToKill'
                     if findtype 'killThis' ground any any 7 as found
                         @setvar! 'lastserial' 'found'
-                        if noto 'lastserial' = friend
-                            overhead 'Targeted Green'
-                            ignore 'found'
-                        elseif noto 'lastserial' = innocent                         
-                            overhead 'Targeted Blue'
-                            ignore 'found'
-                        else
+                        if noto 'lastserial' = hostile 
                             overhead "Target aquired: [[{{killThis}}]]"
                             @setvar closeEnemy 1
                             settimer targetDeadTimer 0
+                        else
+                            overhead 'Targeted Bad Target'
+                            ignore 'found'
+                            unsetvar 'lastserial'
+                            settimer "newTargetCheck" 0
                         endif
                     endif
                 endfor
@@ -783,13 +785,13 @@ while not dead
                     if findtype 'corpse' ground any any 10 as found
                         say '[painspike'
                         wft 500
-                        target found
+                        target 'lasttarget'
                         wait 100
-                        if not insysmsg "You do not have enough unholy symbols for that"
-                            settimer "painSpkeTimer" 0
-                        else
-                            #wait 5s
+                        if insysmsg "You do not have enough unholy symbols for that" or insysmsg " not see any corpses near that"
+                            #wait 5s and try again maybe 
                             settimer "painSpkeTimer" 30000
+                        else
+                            settimer "painSpkeTimer" 0
                         endif
                     endif  
                 endif
@@ -813,28 +815,44 @@ while not dead
                 endif
                 
                 #poison routine 
-                if  skill "Poisoning" > 50 and mana >= 80  and followers >= 4 and diffhits <= 18
+                @setvar castPoison 0
+                if skill "Poisoning" > 50 and mana >= 90  and followers >= 4 and diffhits <= 18 and timer "poisonTimer" > 1000
+                    #cast poison often if over 90 mana
+                    @setvar castPoison 1
+                elseif  skill "Poisoning" > 50 and mana >= 80  and followers >= 4 and diffhits <= 18 and timer "poisonTimer" > 5000
+                    @setvar castPoison 1
+                elseif  skill "Poisoning" > 50 and mana >= 50  and followers >= 4 and diffhits <= 18 and timer "poisonTimer" > 10000                
+                    @setvar castPoison 1
+                elseif  skill "Poisoning" > 50 and mana >= 20  and followers >= 4 and diffhits <= 18 and timer "poisonTimer" > 30000        
+                    #poison if we have not done so in 30s
+                    @setvar castPoison 1
+                endif
+                
+                if castPoison = 1
                     overhead "Poison Target!" 33
                     cast "Poison"
                     wft 4500
                     target 'lastserial'
                     wait 400
-                    if timer "poisonStrikeTimer" > 35000
-                        #try to poison strike
-                        say "[poisonStrike"
-                        wft 500
-                        target 'lastserial'
-                        settimer "poisonStrikeTimer" 0
-                    endif
-                    if skill "Discordance" <= 50 
-                        #Bump timer so we jump to a new target 
-                        settimer newTargetCheck 5000
-                    endif
+                    settimer "poisonTimer" 0
                 endif
                 
-                
+                #Poison Strike Routine
+                if timer "poisonStrikeTimer" > 35000 and skill "Poisoning" > 50 and skill "Necromancy" > 50
+                    #try to poison strike
+                    say "[poisonStrike"
+                    wft 500
+                    target 'lastserial'
+                    wait 100
+                    if insysmsg "You do not have enough unholy symbols for that"
+                        settimer "poisonStrikeTimer" 30000
+                    else
+                        settimer "poisonStrikeTimer" 0
+                    endif
+                endif
+				
                 #Provoke or peace routine
-                if  skill "Peacemaking" > 50 and timer "provkeBossTimer" > 17500 and 'discoSwitch' = 0
+                if  skill "Peacemaking" > 50 and timer "provkeBossTimer" > 5500 and 'discoSwitch' = 0 and timer "bardLock" > 10500
                     overhead "Peacing Target!" 33
                     skill "Peacemaking" 
                     wft 2500
@@ -843,7 +861,7 @@ while not dead
                     settimer "bardLock" 5000
                     settimer "provkeBossTimer" 0
                     @setvar discoSwitch 1
-                elseif  skill "Provocation" > 50 and timer "provkeBossTimer" > 10500 and 'discoSwitch' = 0
+                elseif  skill "Provocation" > 50 and timer "provkeBossTimer" > 5500 and 'discoSwitch' = 0 and timer "bardLock" > 10500
                     overhead "Provocation Target!" 33
                     skill "Provocation" 
                     wft 2500
@@ -858,7 +876,7 @@ while not dead
                 endif
                                 
                 #disco routine
-                if discoLock = 0 or targetLockType = 2 and discoSwitch = 1
+                if discoLock = 0 or targetLockType = 2 and discoSwitch = 1  and timer "bardLock" > 10500
                     if  skill "Discordance" > 50 and timer "discoTimer" > 5050          
                         overhead "Disco Target!" 33
                         skill "Discordance" 
