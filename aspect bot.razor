@@ -267,19 +267,19 @@ while not dead
                 setvar targetDead 0
                 @setvar goToNextRune 1
             endif
-			if timer "redCheck" > 750
-				hotkey 'Next Enemy Humanoid Target'
-				wait 100
-				if insysmsg 'No one matching that'  
-					#we are fine continue on
-					settimer "redCheck" 0
-				else
-					overhead "Red!  GTFO"					
-					@setvar goToNextRune 1
-					@setvar goHomeBotYouAreDrunk 1
-					continue
-				endif
-			endif
+            if timer "redCheck" > 750
+                hotkey "Target random murderer" 
+                wait 100
+                if insysmsg 'No one matching that'  
+                    #we are fine continue on
+                    settimer "redCheck" 0
+                else
+                    overhead "Red!  GTFO"                   
+                    @setvar goToNextRune 1
+                    @setvar goHomeBotYouAreDrunk 1
+                    continue
+                endif
+            endif
 
             #put in a pause so we dont spam 
             #wait 250    
