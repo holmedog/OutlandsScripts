@@ -30,6 +30,9 @@
 #Set this to 1 if you want to keep up buffs for Reactive Armour and Magic Reflect
 @setvar defensiveBuffs 0
 
+#Set t his to 1 if you want to leave after 65s
+@setvar getGone 0
+
 ##################################################################################
 ##################################################################################
 ##################################################################################
@@ -107,11 +110,18 @@ pushlist 'stuffToKill' 'a lich magus'
 pushlist 'stuffToKill' 'an ancient oak'
 #daemon body type
 pushlist 'stuffToKill' '9' 
+pushlist 'stuffToKill' '15' 
 pushlist 'stuffToKill' '280' 
 pushlist 'stuffToKill' '281' 
 pushlist 'stuffToKill' '375' 
 pushlist 'stuffToKill' '173' 
+pushlist 'stuffToKill' '1504' 
+pushlist 'stuffToKill' '1419' 
+pushlist 'stuffToKill' '138' 
+pushlist 'stuffToKill' '310'
+pushlist 'stuffToKill' '721 '
 pushlist 'stuffToKill' 'a sunken sorcerer'
+
 
 #Create list of instrument types and dclick if found
 removelist 'instrumentTypes'
@@ -228,7 +238,7 @@ while not dead
             #Recall to next rune
             overhead "Heading to Rune: [{{rune}}]"
             if skill "Magery" > 40
-                while mana < 25
+                while mana < 55
                     overhead "Waiting on mana to be safe levels"
                     wait 1000
                 endwhile
@@ -261,25 +271,27 @@ while not dead
                 overhead "Target dead can we leave?"
                 setvar targetDead 0
                 @setvar goToNextRune 1
+                if skill "Necromancy" > 50 or skill "Spirit Speak" > 50 and followers < 5
+                    overhead "Summoning pets before leaving"                    
+                    @setvar goToNextRune 0
+                endif
             endif   
-            if timer "atThisSpot" > 120000 and rune != 1
+            if timer "atThisSpot" > 65000 and rune != 1 and getGone = 1
                 overhead "Been here too damn long"
                 setvar targetDead 0
                 @setvar goToNextRune 1
             endif
-            if timer "redCheck" > 750
-                hotkey "Target random murderer" 
-                wait 100
-                if insysmsg 'No one matching that'  
-                    #we are fine continue on
-                    settimer "redCheck" 0
-                else
-                    overhead "Red!  GTFO"                   
-                    @setvar goToNextRune 1
-                    @setvar goHomeBotYouAreDrunk 1
-                    continue
-                endif
-            endif
+			hotkey "Target random murderer" 
+			wait 50
+			if insysmsg 'No one matching that'  
+				#we are fine continue on
+				settimer "redCheck" 0
+			else
+				overhead "Red!  GTFO"                   
+				@setvar goToNextRune 1
+				@setvar goHomeBotYouAreDrunk 1
+				continue
+			endif
 
             #put in a pause so we dont spam 
             #wait 250    
@@ -294,6 +306,13 @@ while not dead
                 wait 350
             endif   
             
+            #Pouch
+            if insysmsg 'you cannot move!'
+                overhead 'Paralyzed!' 34
+                overhead [pouch
+            endif
+            
+            
             #dont let this guy die routine
             if hp < 55 
                 overhead 'Drinking heal!'
@@ -303,6 +322,10 @@ while not dead
             #Chiv Poisoned
             if skill "Chivalry" > 50 and poisoned 
                 say "[cleansebyfire"
+            endif
+            if poisoned 
+                potion 'heal'
+                wait 200
             endif
             #Magery Survival
             if skill "Magery" > 50
@@ -409,7 +432,7 @@ while not dead
             endif
             
             #Follower Routine
-            if skill "Necromancy" > 80 or skill "Spirit Speak" > 80
+            if skill "Necromancy" > 50 or skill "Spirit Speak" > 50
                 if followers < 4 and mana > 50
                     #Lost a big pet, resummon
                     settimer "bardLock" 0
@@ -433,13 +456,13 @@ while not dead
                     #Check for single summons               
                     if 'fireElem' = 1 
                         if skill "Necromancy" > 80
-                            if not findtype "a lich" ground any any 12 
+                            if not findtype "a lich" ground any any 3 
                                 overhead "Casting one lich"
                                 say "a fire elemental release"
                                 cast 'Fire Elemental'
                             endif
                         else
-                            if not findtype "a fire elemental" ground any any 12 
+                            if not findtype "a fire elemental" ground any any 3 
                                 overhead "Casting plain fire elem"
                                 cast 'Fire Elemental' 
                             endif
@@ -447,48 +470,48 @@ while not dead
                     endif           
                     if 'airElem' = 1 
                         if skill "Necromancy" > 80
-                            if not findtype "a skeletal fiend" ground any any 12 
+                            if not findtype "a skeletal fiend" ground any any 3 
                                 say "an air elemental release"
                                 cast 'Air Elemental'
                             endif
                         else
-                            if not findtype "an air elemental"  ground any any 12 
+                            if not findtype "an air elemental"  ground any any 3 
                                 cast 'Air Elemental'
                             endif
                         endif
                     endif       
                     if 'earthElem' = 1 
                         if skill "Necromancy" > 80
-                            if not findtype "an ancient mummy" ground any any 12 
+                            if not findtype "an ancient mummy" ground any any 3 
                                 say "an earth elemental release"
                                 cast 'Earth Elemental'
                             endif
                         else
-                            if not findtype "an earth elemental"  ground any any 12 
+                            if not findtype "an earth elemental"  ground any any 3 
                                 cast 'Earth Elemental'
                             endif
                         endif
                     endif       
                     if 'waterElem' = 1 
                         if skill "Necromancy" > 80
-                            if not findtype "a rag witch" ground any any 12 
+                            if not findtype "a rag witch" ground any any 3 
                                 say "a water elemental release"
                                 cast 'Water Elemental'
                             endif
                         else
-                            if not findtype "a water elemental"  ground any any 12 
+                            if not findtype "a water elemental"  ground any any 3 
                                 cast 'Water Elemental'
                             endif
                         endif
                     endif           
                     if 'waterElem' = 1 
                         if skill "Necromancy" > 80
-                            if not findtype "a vampire thrall" ground any any 12 
+                            if not findtype "a vampire thrall" ground any any 3 
                                 say "a daemon release"
                                 cast 'Summon Daemon'
                             endif
                         else
-                            if not findtype "a daemon"  ground any any 12 
+                            if not findtype "a daemon"  ground any any 3 
                                 cast 'Summon Daemon'
                             endif
                         endif
@@ -709,9 +732,9 @@ while not dead
                 @setvar closeEnemy 0
                 @setvar targetDead 0
                 foreach 'killThis' in 'stuffToKill'
-                    if findtype 'killThis' ground any any 8 as found
-                        if noto 'lastserial' = friend   
-                            overhead 'Targeted Our Own Pet'
+                    if findtype 'killThis' ground any any 7 as found
+                        if noto 'lastserial' = friend    or noto 'lastserial' = innocent 
+                            overhead 'Targeted Blue or Green'
                             ignore 'found'
                         else
                             overhead "Target aquired: [[{{killThis}}]]"
@@ -779,7 +802,7 @@ while not dead
                 endif
                 
                 #poison routine 
-                if  skill "Poisoning" > 50 and mana >= 45  and followers >= 4
+                if  skill "Poisoning" > 50 and mana >= 60  and followers >= 4 and diffhits <= 18
                     overhead "Poison Target!" 33
                     cast "Poison"
                     wft 4500
@@ -815,7 +838,7 @@ while not dead
                 
                 #Provoke or peace routine
                 if  skill "Peacemaking" > 50 and timer "provkeBossTimer" > 17500 
-                    while timer "bardLock" < 10000
+                    while timer "bardLock" < 10500
                         wait 100
                     endwhile
                     overhead "Peacing Target!" 33
@@ -842,20 +865,18 @@ while not dead
                 endif
                 
                 #Flamestrike
-                if skill 'Magery' > 80 and skill 'Archery' < 80
-                    if mana >= 75 and followers >= 4
-                        if skill "Poisoning" < 80 or skill "evalint" >= 50                       
-                            #Above check is because we would rather not FS spam if poisoning is better
-                            wait 400
-                            cast "Flamestrike"
-                            wft 3500
-                            target 'lastserial'
-                            wait 400
-                            if sayLess = 0 
-                                overhead "So anyway I started blastin" 33
-                            endif
-                            wait 300
+                if skill 'Magery' > 80 and skill 'Archery' < 80 and diffhits <= 18
+                    if mana >= 80 and followers >= 4              
+                        #Above check is because we would rather not FS spam if poisoning is better
+                        wait 400
+                        cast "Flamestrike"
+                        wft 3500
+                        target 'lastserial'
+                        wait 400
+                        if sayLess = 0 
+                            overhead "So anyway I started blastin" 33
                         endif
+                        wait 300
                     endif
                 endif   
             #end target required routines
@@ -905,9 +926,19 @@ while not dead
                 menu found 0 
                 wft 2500
                 target self
-                menu found 1
-                gumpclose 3232825965
-            endif
+                menu found 1				
+                gumpclose 3232825965		
+				if skill "Magery" > 50
+					while counttype 29012 backpack < 110
+						cast "create food"
+						wait 1000
+						if mana < 70 and insysmsg "use another magic"
+							dclicktype 29012
+						endif
+						menu found 1
+					endwhile
+				endif
+            endif			
 
             #If you need to open chests do so here
             dclick 0x5B7C7BBD

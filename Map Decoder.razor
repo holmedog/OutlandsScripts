@@ -1,24 +1,995 @@
+#Recall Conditions: 
+    #All valid targets are dead and 5s has completed 
+    #or dagger has been double clicked
+
+#Search for "valuable target list" and add whatever you are farming to it.  
+    #THIS DOES NOT WORK ON HUMANOIDS.  DO NOT MARK RUNES AT THEM HOPING IT WILL START WORKING
+
+#Make sure to have Magery to recall **OR** [autousespellscrolls and a shitload of spell scrolls
+
+#Part of the attack routine is to call a Razor Dress routine named "bow".  
+#   If you do not have that it will not stop the script but it is 
+#   a good idea to have one in case you unequip weapon
+
+#Make sure to have a skinning knife on you if you want to skin.  Loot routine only fires at your feet (within 1 tile)
+
+#Search for "Walk This Way" and update the numbers to be your landing spot and dump spots
+
+#Need a runebook with the default rune as your home base.  For non-magery need to have first rune as home.  Fill out all the runes.  It is best to land close to target
+
+
+#Summon Type Selector.  Having Necromancy skill will still summon necro version.  We will always use Summon Creature as 5th slot.  Still requires 80 SS or Necro to trigger
+#MAKE SURE you only select two here.  Selecting more will break stuff.  
+#Valid Values are 0, 1, or 2 and it will summon that many of that type: Example setting fireElem to 2 will summon 2 fire elems.  Setting earthEleme to 1 and waterElem to 1 will summon 1 earth elemental and 1 waterElem
+@setvar fireElem 1
+@setvar earthElem 1
+@setvar airElem 0
+@setvar waterElem 0
+@setvar daemonSum 0
+
+#Set this to 1 if you want to keep up buffs for Reactive Armour and Magic Reflect
+@setvar defensiveBuffs 0
+
+##################################################################################
+##################################################################################
+##################################################################################
+##############              No setup below here                ###################
+################################################################################## 
+##################################################################################
+##################################################################################
 clearsysmsg 
 clearignore 
+unsetvar 'lastserial'
 
-overhead 'Select drop tome' 33
-@setvar! dropTome
+overhead "Select your runebook"
+setvar runeBookFarm
 
-while findtype 5356 self as found
-        dclicktype 5365
-        wft 500
-        target found
-        wait 500
-        gumpresponse 4
-        wait 1500
-        while not insysmsg "maximum accuracy"
-            #overhead 'here'
-            gumpresponse  4
-            wait 1500
-        endwhile
-        ignore found
-        lift found 1
-        drop dropTome -1 -1 0 
-        wait 500
+#Timers.  
+createtimer 'targetDeadTimer'
+settimer 'targetDeadTimer' 0
+createtimer 'discoTimer'
+settimer 'discoTimer' 5000
+createtimer "shroomy"
+settimer "shroomy" 61000
+createtimer 'buffDisco'
+settimer 'buffDisco' 300000
+createtimer 'buffProvo'
+settimer 'buffProvo' 300000
+createtimer 'buffPeace'
+settimer 'buffPeace' 300000
+createtimer 'buffBeg'
+settimer 'buffBeg' 300000 
+createtimer 'bardLock'
+settimer 'bardLock' 0
+createtimer "aid time"
+settimer "aid time" 8000
+createtimer 'RepairHull'
+settimer 'RepairHull' 0
+createtimer 'buffTaste'
+settimer 'buffTaste' 15000
+createtimer 'newTargetCheck'
+settimer 'newTargetCheck' 15000
+createtimer 'spiritSpeakCheck'
+settimer 'spiritSpeakCheck' 15000
+createtimer 'foodCheck'
+settimer 'foodCheck' 120000
+createtimer 'crookCheck'
+settimer 'crookCheck' 120000
+createtimer 'crewHealing'
+settimer 'crewHealing' 120000
+createtimer 'painSpkeTimer'
+settimer 'painSpkeTimer' 120000
+createtimer 'poisonStrikeTimer'
+settimer 'poisonStrikeTimer' 120000
+createtimer 'vampTimer'
+settimer 'vampTimer' 120000
+createtimer 'dressTimer'
+settimer 'dressTimer' 120000
+createtimer 'provkeBossTimer' 
+settimer 'provkeBossTimer' 1500000
+createtimer 'goHomeBotYouAreDrunkTimer'
+settimer 'goHomeBotYouAreDrunkTimer' 100000
+createtimer 'atThisSpot'
+settimer 'atThisSpot' 100000
+createtimer 'allKillTimer'
+settimer 'allKillTimer' 100000
+createtimer 'redCheck' 
+settimer 'redCheck' 100000
+
+#Clear lastt target from last run - this can cause a weird bug
+unsetvar 'lastserial' 
+@setvar targetDead 0
+
+#valuable target list
+removelist 'stuffToKill'
+createlist 'stuffToKill'
+pushlist 'stuffToKill' 'a lich magus'
+pushlist 'stuffToKill' 'an ancient oak'
+#daemon body type
+pushlist 'stuffToKill' '9' 
+pushlist 'stuffToKill' '280' 
+pushlist 'stuffToKill' '281' 
+pushlist 'stuffToKill' '375' 
+pushlist 'stuffToKill' '173' 
+pushlist 'stuffToKill' 'a sunken sorcerer'
+
+#Create list of instrument types and dclick if found
+removelist 'instrumentTypes'
+createlist 'instrumentTypes'
+pushlist 'instrumentTypes' 10245
+pushlist 'instrumentTypes' 3762
+pushlist 'instrumentTypes' 3740
+pushlist 'instrumentTypes' 3742
+pushlist 'instrumentTypes' 3763
+
+
+#Create list of reagents
+createlist regTypes
+clearlist regTypes
+@pushlist 'regTypes' 'Blood Moss'
+@pushlist 'regTypes' 'Black Pearl%s%'
+@pushlist 'regTypes' 'Ginseng'
+@pushlist 'regTypes' 'Garlic'
+@pushlist 'regTypes' 'Sulfurous Ash'
+@pushlist 'regTypes' "Spider's Silk" 
+@pushlist 'regTypes' 'Nightshade' 
+@pushlist 'regTypes' 'Mandrake Root%s%' 
+# ' for formatting reasons
+
+#Loop through instruments and dclick one
+if skill "Musicianship" > 50
+    foreach instrumentType in 'instrumentTypes'
+        dclicktype instrumentType
+    endfor
+endif
+
+#open necro book
+if skill "Necromancy" > 50
+    dclicktype "8787"
+    waitforgump 3897999232
+    gumpresponse 2 3897999232
+    wait 250
+    gumpclose 3897999232
+endif   
+
+#Set up tracking sate 1=tracking 0=not
+@setvar 'trackState' 0
+
+#set pets if they exist
+if skill "Veterinary" > 50 and followers >= 1
+    overhead "Target pet 1" 
+    setvar! pet1
+    wait 250
+    overhead "Target pet 2"
+    setvar! pet2
+    wait 250
+    overhead "Target pet 3"
+    setvar! pet3 
+endif   
+   
+if followers > 1
+    say "All guard me"
+endif   
+
+
+@setvar goHomeBotYouAreDrunk 0
+#Populate our runes
+createlist 'runes'
+clearlist  'runes'
+if skill "Magery" >= 40
+    #gumps here for recall spell use
+    pushlist 'runes' 1
+    pushlist 'runes' 11
+    pushlist 'runes' 17
+    pushlist 'runes' 23
+    pushlist 'runes' 29
+    pushlist 'runes' 35
+    pushlist 'runes' 41
+    pushlist 'runes' 47
+    pushlist 'runes' 53
+    pushlist 'runes' 59
+    pushlist 'runes' 65
+    pushlist 'runes' 71
+    pushlist 'runes' 77
+    pushlist 'runes' 83
+    pushlist 'runes' 89
+    pushlist 'runes' 95
+else
+    #need gumps here for recall scroll use
+    pushlist 'runes' 1
+    pushlist 'runes' 8
+    pushlist 'runes' 14
+    pushlist 'runes' 20
+    pushlist 'runes' 26
+    pushlist 'runes' 32
+    pushlist 'runes' 38
+    pushlist 'runes' 44
+    pushlist 'runes' 50
+    pushlist 'runes' 56
+    pushlist 'runes' 62
+    pushlist 'runes' 68
+    pushlist 'runes' 74
+    pushlist 'runes' 80
+    pushlist 'runes' 86
+    pushlist 'runes' 92
+endif   
+
+@setvar goToNextRune 0
+
+while not dead
+    foreach rune in runes
+        clearsysmsg
+        #stop if dead
+        if dead
+            stop
+        endif
+        
+        if rune != 1
+            #Recall to next rune
+            overhead "Heading to Rune: [{{rune}}]"
+            if skill "Magery" > 40
+                while mana < 25
+                    overhead "Waiting on mana to be safe levels"
+                    wait 1000
+                endwhile
+            endif    
+            dclick runeBookFarm
+            waitforgump 1551740969
+            gumpresponse rune 1551740969
+            #gumpresponse rune
+            for 3 
+                wait 900       
+                if followers > 1
+                    say "All guard me"
+                endif   
+            endfor
+        else
+            overhead "Setup run, dclick dagger when done"
+        endif
+        dress "bow"
+        clearsysmsg
+        settimer "atThisSpot" 0     
+        settimer 'allKillTimer' 100000
+        #kill stuff until we see loot message
+        while goToNextRune = 0
+            if insysmsg "Now tracking"
+                overhead "Red Alert!"
+                @setvar goToNextRune 1
+                setvar targetDead 0
+            endif        
+            if rune != 1 and targetDead = 1 and timer "targetDeadTimer" > 7000
+                overhead "Target dead can we leave?"
+                setvar targetDead 0
+                @setvar goToNextRune 1
+            endif   
+            if timer "atThisSpot" > 120000 and rune != 1
+                overhead "Been here too damn long"
+                setvar targetDead 0
+                @setvar goToNextRune 1
+            endif
+            if timer "redCheck" > 750
+                hotkey "Target random murderer" 
+                wait 100
+                if insysmsg 'No one matching that'  
+                    #we are fine continue on
+                    settimer "redCheck" 0
+                else
+                    overhead "Red!  GTFO"                   
+                    @setvar goToNextRune 1
+                    @setvar goHomeBotYouAreDrunk 1
+                    continue
+                endif
+            endif
+
+            #put in a pause so we dont spam 
+            #wait 250    
  
-endwhile
+            ###############                                             ###############
+            ###############Start routines that keep us alive or set vars###############
+            ###############                                             ###############   
+            
+            #make sure a cursor does not exist from before
+            if targetexists
+               hotkey "Cancel Current Target"
+                wait 350
+            endif   
+            
+            #Pouch
+            if insysmsg 'you cannot move!'
+                overhead 'Paralyzed!' 34
+                overhead [pouch
+            endif
+            
+            
+            #dont let this guy die routine
+            if hp < 55 
+                overhead 'Drinking heal!'
+                potion "heal"
+                wait 200
+            endif
+            #Chiv Poisoned
+            if skill "Chivalry" > 50 and poisoned 
+                say "[cleansebyfire"
+            endif
+            if poisoned 
+                potion 'heal'
+                wait 200
+            endif
+            #Magery Survival
+            if skill "Magery" > 50
+                #we cast arch here bc it probably hit whole crew
+                if poisoned 'self'
+                    cast 'Arch Cure'
+                    waitfortarget 1755
+                    target 'self'
+                    wait 666
+                endif
+                if diffhits > 18
+                    cast "greater heal"
+                    wft 3500
+                    target self
+                    wait 650 
+                endif   
+                #Eat a magic mushroom if we have 
+                #25  less mana than full
+                if mana < 70 and timer "shroomy" >= 65000
+                    dclicktype '29012'
+                    overhead 'Mushroom Power!'
+                    settimer "shroomy" 0
+                endif
+            endif
+            # Bandage Survival
+            if skill 'Healing' > 50
+                if insysmsg 'You begin applying the bandages'
+                    settimer 'aid time' 0
+                endif
+                if diffhits > 10 and timer 'aid time' > 10250 
+                    hotkey 'bandage self'
+                    settimer 'aid time' 0
+                endif
+                if insysmsg 'You begin applying the bandages'
+                    settimer 'aid time' 0
+                endif
+            endif
+                        
+            #Pet Healing    
+            if skill "Veterinary" > 50 and followers >= 1 and diffhits <= 10
+                 if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+                    dclicktype 3617
+                    wft 2500
+                    target pet1         
+                    wait 600
+                    if insysmsg 'You begin applying the bandages'
+                        settimer 'aid time' 4500
+                        settimer 'crewHealing' 0
+                    endif
+                 endif
+                 if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+                    dclicktype 3617
+                    wft 2500
+                    target pet2       
+                    wait 600 
+                    if insysmsg 'You begin applying the bandages'
+                        settimer 'aid time' 4500
+                        settimer 'crewHealing' 0
+                    endif
+                 endif
+                 if timer 'aid time' > 10250 and timer 'crewHealing' > 5050
+                    dclicktype 3617
+                    wft 2500
+                    target pet3      
+                    wait 250  
+                    if insysmsg 'You begin applying the bandages'
+                        settimer 'aid time' 4500
+                        settimer 'crewHealing' 0
+                    endif
+                 endif       
+                #We checked all - pause for spam
+                if timer 'crewHealing' > 5050 and skill 'Healing' <= 50
+                    settimer 'crewHealing' 1000
+                endif
+            endif
+            
+            ###############                                           ###############
+            ###############   Start buff routines                     ###############
+            ###############                                           ###############           
+            #Tracking Routine - Turn it on if we have not yet
+            if skill 'Tracking' > 80 and 'trackState' = 0
+                while not insysmsg "You will receive"
+                    hotkey 'Tracking'
+                    gumpresponse 6 4267467659
+                    wait 500
+                endwhile    
+                gumpclose 4267467659
+                @setvar 'trackState' 1
+            endif
+            
+            #food buff routine
+            if timer 'foodCheck' > 60000 and not findbuff 'food satisfaction'
+                if not findtype tray backpack
+                    say  "I am out of food!"
+                    wait 500
+                    say  "I am out of food!"
+                    wait 500
+                    say  "I am out of food!"
+                    wait 500
+                else
+                    dclicktype tray backpack
+                endif
+                settimer 'foodCheck' 0
+            endif
+            
+            #Follower Routine
+            if skill "Necromancy" > 80 or skill "Spirit Speak" > 80
+                if followers < 4 and mana > 50
+                    #Lost a big pet, resummon
+                    settimer "bardLock" 0
+                    if skill "Necromancy" > 80
+                        say "[VengefulSpirit"
+                        wait 1000
+                    endif
+                    #check for pure summons they do not require as much logic
+                    if 'fireElem' = 2
+                        cast 'Fire Elemental'
+                    elseif 'airElem' = 2
+                        cast 'Air Elemental'
+                    elseif 'daemonSum' = 2
+                        cast 'Summon Daemon'
+                    elseif 'earthElem' = 2
+                        cast 'Earth Elemental'
+                    elseif 'waterElem' = 2
+                        cast 'Water Elemental'
+                    endif
+                    
+                    #Check for single summons               
+                    if 'fireElem' = 1 
+                        if skill "Necromancy" > 80
+                            if not findtype "a lich" ground any any 12 
+                                overhead "Casting one lich"
+                                say "a fire elemental release"
+                                cast 'Fire Elemental'
+                            endif
+                        else
+                            if not findtype "a fire elemental" ground any any 12 
+                                overhead "Casting plain fire elem"
+                                cast 'Fire Elemental' 
+                            endif
+                        endif
+                    endif           
+                    if 'airElem' = 1 
+                        if skill "Necromancy" > 80
+                            if not findtype "a skeletal fiend" ground any any 12 
+                                say "an air elemental release"
+                                cast 'Air Elemental'
+                            endif
+                        else
+                            if not findtype "an air elemental"  ground any any 12 
+                                cast 'Air Elemental'
+                            endif
+                        endif
+                    endif       
+                    if 'earthElem' = 1 
+                        if skill "Necromancy" > 80
+                            if not findtype "an ancient mummy" ground any any 12 
+                                say "an earth elemental release"
+                                cast 'Earth Elemental'
+                            endif
+                        else
+                            if not findtype "an earth elemental"  ground any any 12 
+                                cast 'Earth Elemental'
+                            endif
+                        endif
+                    endif       
+                    if 'waterElem' = 1 
+                        if skill "Necromancy" > 80
+                            if not findtype "a rag witch" ground any any 12 
+                                say "a water elemental release"
+                                cast 'Water Elemental'
+                            endif
+                        else
+                            if not findtype "a water elemental"  ground any any 12 
+                                cast 'Water Elemental'
+                            endif
+                        endif
+                    endif           
+                    if 'waterElem' = 1 
+                        if skill "Necromancy" > 80
+                            if not findtype "a vampire thrall" ground any any 12 
+                                say "a daemon release"
+                                cast 'Summon Daemon'
+                            endif
+                        else
+                            if not findtype "a daemon"  ground any any 12 
+                                cast 'Summon Daemon'
+                            endif
+                        endif
+                    endif           
+                    wait 6000
+                    say "All Guard Me"
+                    
+                    #rebuff to get pet buffed
+                    if mana > 15 and followers >= 4
+                        cast 'Bless'
+                        waitfortarget 2500
+                        target 'self'
+                        wait 750
+                    endif
+                endif
+            endif
+            #Summon Creature Routine
+            if skill "Necromancy" > 80 or skill "Spirit Speak" > 80
+                if followers = 4 and mana > 30
+                    settimer "bardLock" 0
+                    if skill "Necromancy" > 80
+                        say "[VengefulSpirit"
+                        wait 1000
+                    endif
+                    cast 'Summ. Creature'
+                    wait 5000
+                    say "All Guard Me"
+                endif   
+            endif
+            #camping buff
+            if skill "Camping" > 50 and not findbuff "Campfire Visit"
+                if not findtype "kindling" backpack
+                    say "Need more kindling" 
+                    wait 355
+                    say "Need more kindling" 
+                    wait 355
+                    say "Need more kindling" 
+                    wait 355
+                endif
+            
+                if not findtype "campfire" true
+                    dclicktype "kindling" backpack
+                    wait 350
+                    while insysmsg "You fail to ignite"
+                        wait 3000    
+                        dclicktype "kindling" backpack
+                        wait 350
+                    endwhile
+                endif
+                wait 600
+            endif      
+            #spirit speak only if on own boat and corpses present.  Do not SS if we have necromancy as we have liches and this is wasted time
+            if skill "Spirit Speak" > 50 and timer "bardLock" > 10000 and timer "spiritSpeakCheck" > 30000 and skill "Necromancy" < 50
+                if findtype 'corpse' ground any any 12 as found
+                    overhead "spirit speak"
+                    hotkey 'Spirit Speak'
+                    settimer "spiritSpeakCheck" 0
+                    settimer "bardLock" 8000
+                endif
+            endif
+            if skill "Discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 300000
+                overhead "Disco Buff"
+                skill "Discordance" 
+                wft 2500
+                targettype "backpack"
+                settimer "buffDisco" 0
+                settimer "bardLock" 0
+            endif
+            if skill "Provocation" > 50 and timer "bardLock" > 11000 and timer "buffProvo" > 300000
+                overhead "Provo Buff"
+                skill "Provocation" 
+                wft 2500
+                targettype "backpack"
+                settimer "buffProvo" 0
+                settimer "bardLock" 0
+            endif
+            if skill "Peacemaking" > 50 and timer "bardLock" > 11000 and timer "buffPeace" > 300000
+                overhead "Peace Buff"
+                skill "Peacemaking" 
+                wft 2500
+                targettype "backpack"
+                settimer "buffPeace" 0
+                settimer "bardLock" 0
+            endif
+            #Arch Protection
+            if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 11000 and not findbuff "Protection"
+                cast 'Arch Protection'
+                waitfortarget 2500
+                target 'self'
+            endif
+            #Bless
+            if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 11000 and not findbuff "Strength" 
+                overhead "Mage Buff"
+                cast 'Bless'
+                waitfortarget 2500
+                target 'self'
+                wait 750
+            endif
+            if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Reactive Armor" and defensiveBuffs = 1
+                cast 'Reactive Armor'
+                wait 750
+            endif
+            if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Magic Reflection" and defensiveBuffs = 1
+                cast 'Magic Reflection'
+                wait 750
+            endif
+
+            if skill "Taste Identification" > 50 and timer "bardLock" > 10000 and timer "buffTaste" > 60000
+                overhead "tasteidentification Buff"
+                skill "tasteid"
+                wft 2500
+                targettype "backpack" backpack
+                settimer "buffTaste" 0
+                settimer "bardLock" 5000
+            endif
+            
+            ###############                                                   ###############
+            ###############    Start routines that do not require target      ###############
+            ###############                                                   ###############   
+            #Check if we broke an instrument
+            if skill "Musicianship" > 50
+                if insysmsg "What instrument shall you play"
+                    @setvar newInstrument 0 
+                    foreach instrumentType in 'instrumentTypes'
+                        if findtype instrumentType as foundInstrument
+                            dclick foundInstrument              
+                            @setvar newInstrument 1
+                        endif
+                    endfor
+                    if newInstrument = 0
+                        say "I am out of instruments!!!"
+                        wait 500
+                        say "I am out of instruments!!!"
+                        wait 500
+                        say "I am out of instruments!!!"
+                        wait 500
+                    endif
+                endif
+            endif   
+            
+            #meditation routine 
+            if skill "Meditation" > 80 and mana < 30 and timer bardLock >= 10000
+                skill 'meditation'
+                settimer "bardLock" 0
+            endif
+
+            #Vampiric Embrace
+            if skill "Necromancy" > 80 
+                if timer "vampTimer" > 35000
+                    if findtype 'corpse' ground any any 10 as found
+                        say '[vampiricembrace' 
+                        wft 500
+                        target found
+                        settimer "vampTimer" 0
+                        wait 350
+                    endif    
+                endif
+            endif  
+            
+            #Skin corpses if we have been here 7s
+            if timer "atThisSpot" > 7000 and findtype 'corpse' ground any any 1 as found
+                #Check for a blade
+                if findtype '11552' backpack
+                    hotkey 'Forensics'
+                    wft 500
+                    target 'self'
+                    wait 255
+                    if not insysmsg "You carve" and not insysmsg  "anything nearby" and not insysmsg "must wait"
+                        while not insysmsg "successful" and not insysmsg "What do you want to use this item on" and not insysmsg "save complete"
+                            overhead  "I am broken in a Captcha loop.  Fix me or double click dagger" 
+                            wait 2500
+                        endwhile                   
+                    endif
+                else
+                    #No blade, open corpses
+                    @clearignore
+                    while findtype 0x2006 'ground' 'any' 1 2 as 'found'
+                        dclick 'found'
+                        pause 400
+                        @ignore 'found'
+                    endwhile
+                endif               
+                @ignore 'found'
+            endif           
+            
+            #Put on your clothes
+            if timer "dressTimer" > 10000
+                #Try to dress 
+                dress "bow"   
+                settimer "dressTimer" 0
+                
+                if followers > 1
+                    say "All guard me"
+                endif   
+                
+                if skill "Magery" > 50
+                    foreach reg in 'regTypes'
+                        if counttype reg < 3
+                            wait 500
+                            overhead "Hey! I am Low on regs!" 23
+                            wait 500
+                            overhead "Hey! I am Low on regs!" 23
+                            wait 500
+                            overhead "Hey! I am Low on regs!" 23
+                            @setvar goHomeBotYouAreDrunk 1
+                            @setvar goToNextRune 1
+                        endif
+                    endfor
+                endif
+            endif
+            
+            ###############                                         ###############
+            ###############    Start target search / embark routine ###############
+            ###############                                         ###############   
+            if timer "newTargetCheck" > 2500 and goToNextRune = 0
+                #reset timer
+                settimer "newTargetCheck" 0
+                @setvar closeEnemy 0
+                @setvar targetDead 0
+                foreach 'killThis' in 'stuffToKill'
+                    if findtype 'killThis' ground any any 8 as found
+                        if noto 'lastserial' = friend   
+                            overhead 'Targeted Our Own Pet'
+                            ignore 'found'
+                        else
+                            overhead "Target aquired: [[{{killThis}}]]"
+                            @setvar! 'lastserial' 'found'
+                            @setvar closeEnemy 1
+                            settimer targetDeadTimer 0
+                        endif
+                    endif
+                endfor
+                
+                if 'closeEnemy' = 0 and rune != 1
+                    overhead "Think it is all dead"
+                    @setvar targetDead 1
+                endif
+                    
+                  
+            endif    
+            
+            ###############                                     ###############
+            ###############Start routines that  require a target###############
+            ###############                                     ###############   
+            
+            if closeEnemy = 1    and goToNextRune = 0
+                #Turn on war mode because why not
+                if not warmode
+                    warmode on
+                endif               
+                
+                #attack routine  - Always attack so pets go aggro at least if we are not a melee class   
+                attack 'lastserial'                
+                if followers > 1 and timer "allKillTimer" > 3000
+                    say "All attack"
+                    wft 500
+                    target 'lastserial'
+                    settimer "allKillTimer" 0
+                endif
+                
+                #painspike
+                if skill "Necromancy" > 80 and timer "painSpkeTimer" > 35000
+                    if findtype 'corpse' ground any any 10 as found
+                        say '[painspike'
+                        wft 500
+                        target found
+                        wait 350
+                        settimer "painSpkeTimer" 0
+                    endif  
+                endif
+                                                        
+                #herding
+                if skill 'Herding' > 50 and timer "crookCheck" > 3000  and followers > 1
+                    #Wait on skill usage CD
+                    while timer "bardLock" < 10000
+                        wait 100
+                    endwhile
+                    #use a crook
+                    say "[FocusAggression"
+                    wft 500
+                    target 'lastserial'
+                    settimer "crookCheck" 0
+                    settimer "bardLock" 7000                    
+                    
+                    say "All kill"
+                    wft 1500
+                    target 'lastserial'
+                endif
+                
+                #poison routine 
+                if  skill "Poisoning" > 50 and mana >= 45  and followers >= 4
+                    overhead "Poison Target!" 33
+                    cast "Poison"
+                    wft 4500
+                    target 'lastserial'
+                    wait 400
+                    if timer "poisonStrikeTimer" > 35000
+                        #try to poison strike
+                        say "[poisonStrike"
+                        wft 500
+                        target 'lastserial'
+                        settimer "poisonStrikeTimer" 0
+                    endif
+                    if skill "Discordance" <= 50 
+                        #Bump timer so we jump to a new target 
+                        settimer newTargetCheck 5000
+                    endif
+                endif
+                                
+                #disco routine
+                if discoLock = 0 or targetLockType = 2
+                    if  skill "Discordance" > 50 and timer "discoTimer" > 5050              
+                        while timer "bardLock" < 10000
+                            wait 100
+                        endwhile
+                        overhead "Disco Target!" 33
+                        skill "Discordance" 
+                        wft 2500
+                        target 'lastserial'
+                        settimer "discoTimer" 0
+                        settimer "bardLock" 5000
+                    endif
+                endif
+                
+                #Provoke or peace routine
+                if  skill "Peacemaking" > 50 and timer "provkeBossTimer" > 17500 
+                    while timer "bardLock" < 10000
+                        wait 100
+                    endwhile
+                    overhead "Peacing Target!" 33
+                    skill "Peacemaking" 
+                    wft 2500
+                    target 'lastserial'
+                    settimer "discoTimer" 0
+                    settimer "bardLock" 5000
+                    settimer "provkeBossTimer" 0
+                elseif  skill "Provocation" > 50 and timer "provkeBossTimer" > 10500          
+                    while timer "bardLock" < 10000
+                        wait 100
+                    endwhile
+                    overhead "Provocation Target!" 33
+                    skill "Provocation" 
+                    wft 2500
+                    target 'lastserial'
+                    wft 2500 
+                    hotkey 'Next Grey Monster Target' 
+                    hotkey 'Last Target'
+                    settimer "discoTimer" 0
+                    settimer "bardLock" 5000
+                    settimer "provkeBossTimer" 0
+                endif
+                
+                #Flamestrike
+                if skill 'Magery' > 80 and skill 'Archery' < 80
+                    if mana >= 80 and followers >= 4              
+                        #Above check is because we would rather not FS spam if poisoning is better
+                        wait 400
+                        cast "Flamestrike"
+                        wft 3500
+                        target 'lastserial'
+                        wait 400
+                        if sayLess = 0 
+                            overhead "So anyway I started blastin" 33
+                        endif
+                        wait 300
+                    endif
+                endif   
+            #end target required routines
+            endif
+            if insysmsg "What do you want to use this item on"
+                overhead "Time to move on"
+                @setvar goToNextRune 1
+            endif
+        endwhile
+        
+        #reset go to next rune variable     
+        setvar goToNextRune 0
+        unsetvar 'lastserial'
+
+        if diffweight <= 50           
+            overhead "Too fat recall"
+            @setvar goHomeBotYouAreDrunk 1
+            setvar targetDead 0                
+        endif
+        
+        #Go home, dump loot, and restock
+        if diffweight <= 50 or goHomeBotYouAreDrunk = 1
+            #Cast recall til you are home
+            #Walk this way
+            #Change the 3 numbers at the end of this to where land at recall location
+            while not position 4007 909 0
+                if skill "Magery" > 40
+                    cast "Recall"
+                    wft 2500
+                    target runeBookFarm
+                    wait 500
+                else                    
+                    dclick 'runeBookFarm'
+                    wait 250
+                    gumpresponse 2    
+                    wait 3000               
+                endif
+            endwhile    
+            #Loot Routine
+            #WALK THIS WAY
+            #Change the 3 numbers at the end of this to where you want to stop and ressupply.  Change the walk direction to the direction you need to go
+            while not position 4007 904 5
+                walk 'North'
+                wait 150
+            endwhile
+            if findtype 'storage shelf' ground any any 2 as found
+                menu found 0 
+                wft 2500
+                target self
+                menu found 1
+                gumpclose 3232825965
+            endif
+
+            #If you need to open chests do so here
+            dclick 0x5B7C7BBD
+            wait 600
+
+            #"Starting Organizers"
+            organizer 1
+            while queued
+                wait 1000
+            endwhile
+            organizer 2
+            while queued
+                wait 1000
+            endwhile
+            organizer 3
+            while queued
+                wait 1000
+            endwhile
+            organizer 4
+            while queued
+                wait 1000
+            endwhile
+            organizer 5
+            while queued
+                wait 1000
+            endwhile
+            organizer 6
+            while queued
+                wait 1000
+            endwhile
+            organizer 7
+            while queued
+                wait 1000
+            endwhile
+            organizer 8
+            while queued
+                wait 1000
+            endwhile
+            organizer 9
+            while queued
+                wait 1000
+            endwhile
+            wait 1000
+
+
+            //dump all resources
+            if findtype 23035 ground as myStockpile
+                menu myStockpile 0
+                waitfortarget
+                target 'self'
+            endif    
+
+            #drop gold on vault
+            if findtype 41518 ground as myVault
+                while findtype 3821 self as 'myGold'
+                    lift myGold 60000
+                    drop '0x40820133' -1 -1 0 
+                    wait 600
+                endwhile
+            endif
+        #End weight check recall home routine   
+        endif
+        
+        #update recall home variable        
+        @setvar goHomeBotYouAreDrunk 0
+        @setvar goToNextRune 0
+        setvar targetDead 0
+        settimer "targetDeadTimer" 0
+        
+    #end foreach rune routine   
+    endfor  
+    
+    #drop off startup rune
+    poplist 'runes' '1'
+#End while not dead routine
+endwhile    
