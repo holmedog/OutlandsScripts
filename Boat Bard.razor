@@ -22,7 +22,7 @@
 @setvar triggerOverboard 2
 
 #Set this to 1 to attempt to keep the bot from repairing within the combat repair window (only repairs 60-120s after boarding an NPC ship)
-@setvar repairLockdown 1
+@setvar repairLockdown 0
 
 #Set this to 1 if you want to keep up buffs for Reactive Armour and Magic Reflect
 @setvar defensiveBuffs 0
@@ -33,8 +33,14 @@
 #Set this to 0 if you want to keep my super awesome say commands (1 mutes the bot except important stuff like food or fighting party)
 @setvar sayLess 0
 
+#Set this to 1 if you want to be a super fucking awesome pirate
+@setvar sayMore 1
+
 #Set this to 1 if you want bot to defuse close by bombs and reembark
 @setvar defuseBombs 1
+
+#Set this to 1 to have bot reload right after embarking
+@setvar reloadCannons 1
 
 #Set this if you want to have bot recall on dock.  Must have a book in pack named Home and first rune be the house to recall to if not magery.  If magery make home the default rune
 #IF YOU TURN THIS ON YOU MUST GO TO THE SECTION NAMED "WALK THIS WAY" AND SET UP DIRECTIONS INTO YOUR HOUSE FROM RECALL LOCATION
@@ -50,6 +56,10 @@
 ##################################################################################
 
 clearsysmsg 
+
+if 'sayMore' = 1
+	say "YO HO MATEY AWAY!" 33
+endif
 
 #Timers.  We used to do these on an if exists basis, but it fubard too much stuff if you leave client open forever
 createtimer 'petAttack' 
@@ -435,7 +445,7 @@ while not dead
     
     
     #Tracking Routine - Turn it on if we have not yet
-    if skill 'Tracking' > 20 and 'trackState' = 0
+    if skill 'Tracking' >= 20 and 'trackState' = 0
         while not insysmsg "You will receive"
             hotkey 'Tracking'
             gumpresponse 6 4267467659
@@ -1018,7 +1028,13 @@ while not dead
                 say "[embark"
                 wait 500
                 say "[embarkfollowers"
-                wait 350
+                wait 500
+				
+				if reloadCannons = 1
+					wait 100
+					say "[reload"
+					wait 500
+				endif	
                 
                 #Reset Variables                
                 @setvar 'boardState' 0
@@ -1091,18 +1107,15 @@ while not dead
             settimer "crookCheck" 0
             settimer "bardLock" 7000
         endif
-        if followers > 1 and timer "petAttack" > 2500
-            say "All kill"
-            wft 1500
-            target 'lastserial'
-            settimer "petAttack" 0
-        endif
-        
+		
         #Boss provoke or peace routine
         if discoLock = 0 or targetLockType = 2 
-            if  skill "Peacemaking" > 50 and timer "provkeBossTimer" > 17500 and bossFight = 1 and provokeBoss = 1
+            if  skill "Peacemaking" > 50 and timer "provkeBossTimer" > 10500 and bossFight = 1 and provokeBoss = 1
                 while timer "bardLock" < 10000
                     wait 100
+					if diffhits >= 18 
+						continue
+					endif
                 endwhile
                 overhead "Peacing Target!" 33
                 skill "Peacemaking" 
@@ -1111,9 +1124,12 @@ while not dead
                 settimer "discoTimer" 0
                 settimer "bardLock" 5000
                 settimer "provkeBossTimer" 0
-            elseif  skill "Provocation" > 50 and timer "provkeBossTimer" > 17500 and bossFight = 1 and provokeBoss = 1              
+            elseif  skill "Provocation" > 50 and timer "provkeBossTimer" > 10500 and bossFight = 1 and provokeBoss = 1              
                 while timer "bardLock" < 10000
                     wait 100
+					if diffhits >= 18 
+						continue
+					endif
                 endwhile
                 overhead "Provocation Target!" 33
                 skill "Provocation" 
@@ -1133,6 +1149,9 @@ while not dead
             if  skill "Discordance" > 50 and timer "discoTimer" > 5050              
                 while timer "bardLock" < 10000
                     wait 100
+					if diffhits >= 18 
+						continue
+					endif
                 endwhile
                 overhead "Disco Target!" 33
                 skill "Discordance" 
@@ -1144,7 +1163,7 @@ while not dead
         endif
         
         #poison routine 
-        if  skill "Poisoning" > 50 and mana >= 35
+        if  skill "Poisoning" > 50 and mana >= 35 and diffhits <= 18
             overhead "Poison Target!" 33
             cast "Poison"
             wft 4500
@@ -1164,20 +1183,27 @@ while not dead
         endif
         
         #Flamestrike
-        if skill 'Magery' > 80 and skill 'Archery' < 80
-            if counttype "Spider's Silk" > 15 and counttype "Sulfurous Ash" > 15 and 'boardState' = 1 and mana >= 51
-                # put an extra ' here to fix formatting
-                wait 400
-                cast "Flamestrike"
-                wft 3500
-                target 'lastserial'
-                wait 400
-                if sayLess = 0 
-                    say "So anyway I started blastin" 33
-                endif
-                wait 300
-            endif
+        if skill 'Magery' > 80 and skill 'Archery' < 80 and diffhits <= 18 and 'boardState' = 1 and mana >= 61
+			# put an extra  here to fix formatting
+			wait 400
+			cast "Flamestrike"
+			wft 3500
+			target 'lastserial'
+			wait 400
+			if sayLess = 0 
+				say "So anyway I started blastin" 33
+			endif
+			wait 300
         endif   
+		
+		#Pet attack
+        if followers > 1 and timer "petAttack" > 2500
+            say "All kill"
+            wft 1500
+            target 'lastserial'
+            settimer "petAttack" 0
+        endif
+        
     #end target required routines
     endif
 endwhile   

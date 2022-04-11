@@ -21,8 +21,8 @@
 #Summon Type Selector.  Having Necromancy skill will still summon necro version.  We will always use Summon Creature as 5th slot.  Still requires 80 SS or Necro to trigger
 #MAKE SURE you only select two here.  Selecting more will break stuff.  
 #Valid Values are 0, 1, or 2 and it will summon that many of that type: Example setting fireElem to 2 will summon 2 fire elems.  Setting earthEleme to 1 and waterElem to 1 will summon 1 earth elemental and 1 waterElem
-@setvar fireElem 1
-@setvar earthElem 1
+    @setvar fireElem 1
+    @setvar earthElem 1
 @setvar airElem 0
 @setvar waterElem 0
 @setvar daemonSum 0
@@ -125,8 +125,10 @@ pushlist 'stuffToKill' '1504'
 pushlist 'stuffToKill' '1419' 
 pushlist 'stuffToKill' '138' 
 pushlist 'stuffToKill' '310'
-pushlist 'stuffToKill' '721 '
+pushlist 'stuffToKill' '721'
+pushlist 'stuffToKill' 'an angelic stonework'
 pushlist 'stuffToKill' 'a sunken sorcerer'
+pushlist 'stuffToKill' 'an earth sorcerer'
 
 
 #Create list of instrument types and dclick if found
@@ -243,32 +245,36 @@ while not dead
         if rune != 1
             #Recall to next rune
             overhead "Heading to Rune: [{{rune}}]"
-            if skill "Magery" > 40
-                while mana < 55
-                    if timer "recallSpam" > 1000
-                        overhead "Waiting on mana to be safe levels"                    
-                        settimer "recallSpam" 0
-                    endif
-                    hotkey "Target random murderer" 
-                    wait 100
-                    if insysmsg 'No one matching that'  
-                        #we are fine continue on
-                        settimer "redCheck" 0
-                    else
-                        overhead "Red!  GTFO"       
-                        break
-                    endif
-                endwhile
-            endif    
-            dclick runeBookFarm
-            waitforgump 1551740969
-            gumpresponse rune 1551740969
-            for 3 
-                wait 900       
-                if followers > 1
-                    say "All guard me"
-                endif   
-            endfor
+            @setvar recallOnce 1
+            while insysmsg "Your concentration is disturbed" or insysmsg "book needs time" or recallOnce = 1                
+                @setvar recallOnce 0
+                if skill "Magery" > 40
+                    while mana < 55
+                        if timer "recallSpam" > 2000
+                            overhead "Waiting on mana to be safe levels"                    
+                            settimer "recallSpam" 0
+                        endif
+                        hotkey "Target random murderer" 
+                        wait 100
+                        if insysmsg 'No one matching that'  
+                            #we are fine continue on
+                            settimer "redCheck" 0
+                        else
+                            overhead "Red!  GTFO"       
+                            break
+                        endif
+                    endwhile
+                endif    
+                dclick runeBookFarm
+                waitforgump 1551740969
+                gumpresponse rune 1551740969
+                for 3 
+                    wait 900       
+                    if followers > 1
+                        say "All guard me"
+                    endif   
+                endfor
+            endwhile
         else
             overhead "Setup run, dclick dagger when done"
         endif
@@ -277,6 +283,22 @@ while not dead
         settimer "atThisSpot" 0     
         settimer 'allKillTimer' 100000
         
+        #Reset so we peace first
+        @setvar discoSwitch 0
+		
+        #Reset go away vars 
+        @setvar goToNextRune 0 
+        @setvar goHomeBotYouAreDrunk 0
+        @setvar targetDead 0
+        @setvar discordOn 0
+        @setvar closeEnemy 0
+        settimer "newTargetCheck" 0
+        clearignore
+		
+		#We set this high so that it will recall faster if all is dead
+        settimer "targetDeadTimer" 6000
+        
+        
         #kill stuff
         while goToNextRune = 0
             if insysmsg "Now tracking"
@@ -284,7 +306,7 @@ while not dead
                 @setvar goToNextRune 1
                 setvar targetDead 0
             endif        
-            if rune != 1 and targetDead = 1 and timer "targetDeadTimer" > 4000
+            if rune != 1 and targetDead = 1 and timer "targetDeadTimer" > 10000
                 overhead "Target dead can we leave?"
                 setvar targetDead 0
                 @setvar goToNextRune 1
@@ -678,7 +700,7 @@ while not dead
             endif  
             
             #Skin corpses if we have been here 7s
-            if timer "atThisSpot" > 7000 and findtype 'corpse' ground any any 1 as found
+            if timer "atThisSpot" > 7000 and findtype 'corpse' ground any any 2 as found
                 #Check for a blade
                 if findtype '11552' backpack
                     hotkey 'Forensics'
@@ -738,16 +760,18 @@ while not dead
                 @setvar closeEnemy 0
                 @setvar targetDead 0
                 foreach 'killThis' in 'stuffToKill'
-                    if findtype 'killThis' ground any any 7 as found
+                    if findtype 'killThis' ground any any 10 as found
                         @setvar! 'lastserial' 'found'
-                        if noto 'lastserial' = hostile 
+                        @setvar closeEnemy 1
+                        if noto 'lastserial' = hostile or noto 'lastserial' = criminal
                             overhead "Target aquired: [[{{killThis}}]]"
                             @setvar closeEnemy 1
                             settimer targetDeadTimer 0
                         else
-                            overhead 'Targeted Bad Target'
+                            overhead 'Bad Target: [[{{killThis}}]]'
                             ignore 'found'
                             unsetvar 'lastserial'
+                            @setvar closeEnemy 0
                             settimer "newTargetCheck" 0
                         endif
                     endif
@@ -850,7 +874,7 @@ while not dead
                         settimer "poisonStrikeTimer" 0
                     endif
                 endif
-				
+                
                 #Provoke or peace routine
                 if  skill "Peacemaking" > 50 and timer "provkeBossTimer" > 5500 and 'discoSwitch' = 0 and timer "bardLock" > 10500
                     overhead "Peacing Target!" 33
@@ -867,7 +891,11 @@ while not dead
                     wft 2500
                     target 'lastserial'
                     wft 2500 
-                    hotkey 'Next Grey Monster Target' 
+                    hotkey 'Next Grey Humanoid Target'
+                    wait 255
+                    if insysmsg 'No one matching that'      
+                        hotkey 'Next Grey Monster Target' 
+                    endif
                     hotkey 'Last Target'
                     settimer "discoTimer" 0
                     settimer "bardLock" 4750
@@ -885,22 +913,24 @@ while not dead
                         settimer "discoTimer" 0
                         settimer "bardLock" 4750
                         @setvar discoSwitch 0
+                        @setvar discordOn 1
                     endif
                 endif                
                 
                 #Flamestrike
                 if skill 'Magery' > 80 and skill 'Archery' < 80 and diffhits <= 18
                     if mana >= 80 and followers >= 4              
-                        #Above check is because we would rather not FS spam if poisoning is better
-                        wait 400
-                        cast "Flamestrike"
-                        wft 3500
-                        target 'lastserial'
-                        wait 400
-                        if sayLess = 0 
-                            overhead "So anyway I started blastin" 33
+                        if skill "Musicianship" > 50 and discordOn = 0
+                            #overhead "Skipping FS til discord"
+                        else
+                            #Above check is because we would rather not FS spam if poisoning is better
+                            wait 400
+                            cast "Flamestrike"
+                            wft 3500
+                            target 'lastserial'
+                            wait 400
+                            wait 300
                         endif
-                        wait 300
                     endif
                 endif   
             #end target required routines           
@@ -945,13 +975,12 @@ while not dead
                     cast "Recall"
                     wft 2500
                     target runeBookFarm
-                    wait 500
                 else                    
                     dclick 'runeBookFarm'
                     wait 250
-                    gumpresponse 2    
-                    wait 3000               
-                endif
+                    gumpresponse 2            
+                endif 
+                wait 3000      
             endwhile    
             #Loot Routine
             #WALK THIS WAY
@@ -1038,13 +1067,7 @@ while not dead
                 endwhile
             endif
         #End weight check recall home routine   
-        endif
-        
-        #update recall home variable        
-        @setvar goHomeBotYouAreDrunk 0
-        @setvar goToNextRune 0
-        setvar targetDead 0
-        settimer "targetDeadTimer" 0
+        endif        
         
     #end foreach rune routine   
     endfor  
