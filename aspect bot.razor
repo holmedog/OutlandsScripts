@@ -21,11 +21,20 @@
 #Summon Type Selector.  Having Necromancy skill will still summon necro version.  We will always use Summon Creature as 5th slot.  Still requires 80 SS or Necro to trigger
 #MAKE SURE you only select two here.  Selecting more will break stuff.  
 #Valid Values are 0, 1, or 2 and it will summon that many of that type: Example setting fireElem to 2 will summon 2 fire elems.  Setting earthEleme to 1 and waterElem to 1 will summon 1 earth elemental and 1 waterElem
-    @setvar fireElem 1
-    @setvar earthElem 1
+@setvar fireElem 1
+@setvar earthElem 1
 @setvar airElem 0
 @setvar waterElem 0
 @setvar daemonSum 0
+
+#Change summon lineup if peace or provo (Remove this if you want these hardcoded)
+if skill "Peacemaking" > 80 or skill "Provocation" > 80
+	@setvar fireElem 2
+	@setvar earthElem 0
+	@setvar airElem 0
+	@setvar waterElem 0
+	@setvar daemonSum 0
+endif
 
 #Set this to 1 if you want to keep up buffs for Reactive Armour and Magic Reflect
 @setvar defensiveBuffs 0
@@ -426,6 +435,11 @@ while not dead
                     settimer 'crewHealing' 1000
                 endif
             endif
+			
+			#reset peace switch if we failed
+			if insysmsg "fail to pacify your opponent"
+				@setvar discoSwitch 0
+			endif
             
             ###############                                           ###############
             ###############   Start buff routines                     ###############
