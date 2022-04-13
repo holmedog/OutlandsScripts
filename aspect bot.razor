@@ -29,11 +29,11 @@
 
 #Change summon lineup if peace or provo (Remove this if you want these hardcoded)
 if skill "Peacemaking" > 80 or skill "Provocation" > 80
-	@setvar fireElem 2
-	@setvar earthElem 0
-	@setvar airElem 0
-	@setvar waterElem 0
-	@setvar daemonSum 0
+    @setvar fireElem 2
+    @setvar earthElem 0
+    @setvar airElem 0
+    @setvar waterElem 0
+    @setvar daemonSum 0
 endif
 
 #Set this to 1 if you want to keep up buffs for Reactive Armour and Magic Reflect
@@ -135,10 +135,13 @@ pushlist 'stuffToKill' '1419'
 pushlist 'stuffToKill' '138' 
 pushlist 'stuffToKill' '310'
 pushlist 'stuffToKill' '721'
+pushlist 'stuffToKill' '281'
+pushlist 'stuffToKill' '75'
+pushlist 'stuffToKill' '18'
+pushlist 'stuffToKill' '58'
 pushlist 'stuffToKill' 'an angelic stonework'
 pushlist 'stuffToKill' 'a sunken sorcerer'
 pushlist 'stuffToKill' 'an earth sorcerer'
-
 
 #Create list of instrument types and dclick if found
 removelist 'instrumentTypes'
@@ -173,7 +176,7 @@ endif
 #open necro book
 if skill "Necromancy" > 50
     dclicktype "8787"
-    waitforgump 3897999232
+    wait 200
     gumpresponse 2 3897999232
     wait 250
     gumpclose 3897999232
@@ -274,8 +277,10 @@ while not dead
                         endif
                     endwhile
                 endif    
-                dclick runeBookFarm
-                waitforgump 1551740969
+                while not gumpexists 1551740969
+                    dclick runeBookFarm
+                    wait 200
+                endwhile
                 gumpresponse rune 1551740969
                 for 3 
                     wait 900       
@@ -294,7 +299,7 @@ while not dead
         
         #Reset so we peace first
         @setvar discoSwitch 0
-		
+        
         #Reset go away vars 
         @setvar goToNextRune 0 
         @setvar goHomeBotYouAreDrunk 0
@@ -303,8 +308,8 @@ while not dead
         @setvar closeEnemy 0
         settimer "newTargetCheck" 0
         clearignore
-		
-		#We set this high so that it will recall faster if all is dead
+        
+        #We set this high so that it will recall faster if all is dead
         settimer "targetDeadTimer" 6000
         
         
@@ -435,11 +440,11 @@ while not dead
                     settimer 'crewHealing' 1000
                 endif
             endif
-			
-			#reset peace switch if we failed
-			if insysmsg "fail to pacify your opponent"
-				@setvar discoSwitch 0
-			endif
+            
+            #reset peace switch if we failed
+            if insysmsg "fail to pacify your opponent"
+                @setvar discoSwitch 0
+            endif
             
             ###############                                           ###############
             ###############   Start buff routines                     ###############
@@ -918,17 +923,15 @@ while not dead
                 endif
                                 
                 #disco routine
-                if discoLock = 0 or targetLockType = 2 and discoSwitch = 1  and timer "bardLock" > 10500
-                    if  skill "Discordance" > 50 and timer "discoTimer" > 5050          
-                        overhead "Disco Target!" 33
-                        skill "Discordance" 
-                        wft 2500
-                        target 'lastserial'
-                        settimer "discoTimer" 0
-                        settimer "bardLock" 4750
-                        @setvar discoSwitch 0
-                        @setvar discordOn 1
-                    endif
+                if  skill "Discordance" > 50 and timer "discoTimer" > 5050 and discoSwitch = 1  and timer "bardLock" > 10500         
+                    overhead "Disco Target!" 33
+                    skill "Discordance" 
+                    wft 2500
+                    target 'lastserial'
+                    settimer "discoTimer" 0
+                    settimer "bardLock" 4750
+                    @setvar discoSwitch 0
+                    @setvar discordOn 1
                 endif                
                 
                 #Flamestrike
@@ -1068,7 +1071,7 @@ while not dead
             //dump all resources
             if findtype 23035 ground as myStockpile
                 menu myStockpile 0
-                waitfortarget
+                waitfortarget 1000
                 target 'self'
             endif    
 
