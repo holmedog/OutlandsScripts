@@ -1,19 +1,21 @@
-while skill 'necromancy' < 120
+while skill 'Magery' < 100
     cast 'Earth Elemental'
-    wait 3000
-    cast 'Dispel'
-    wft
-    targettype 'an Earth Elemental'
-    wait 500
-    #create shrooms
-    while counttype 29012 backpack < 5
-        cast "create food"
-        wait 1000
-    endwhile
-
-    if mana < 70
-        dclicktype 29012
+    wait 6000
+    if findtype 'an Earth Elemental' as found
+        cast 'Dispel'
+        wft 
+        targettype 'an Earth Elemental'
+        wait 500
     endif
+    #create shrooms
+    #while counttype 29012 backpack < 5
+    #    cast "create food"
+    #    wait 1000
+    #endwhile
+
+    #if mana < 70
+    #    dclicktype 29012
+    #endif
 
     if findtype 'storage shelf' ground any any 2 as found
         menu found 1
