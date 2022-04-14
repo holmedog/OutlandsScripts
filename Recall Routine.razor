@@ -56,4 +56,18 @@ else
     gumpresponse 2        
 endif
 
+wait 2000
+
+hotkey 'Cancel Current Target'
+skill 'detectinghidden'
+waitfortarget 5000
+target 'self'
+wait 200
+if not insysmsg "no one hiding" 
+    for 5 
+        overhead "SHIT SHIT SHIT SHIT"
+        WAIT 500
+    endfor
+endif
+
 script "stayalive2"

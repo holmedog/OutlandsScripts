@@ -139,6 +139,13 @@ pushlist 'stuffToKill' '281'
 pushlist 'stuffToKill' '75'
 pushlist 'stuffToKill' '18'
 pushlist 'stuffToKill' '58'
+pushlist 'stuffToKill' '15'
+pushlist 'stuffToKill' '85'
+pushlist 'stuffToKill' '86'
+pushlist 'stuffToKill' '93'
+pushlist 'stuffToKill' '94'
+pushlist 'stuffToKill' '33'
+pushlist 'stuffToKill' '36'
 pushlist 'stuffToKill' 'an angelic stonework'
 pushlist 'stuffToKill' 'a sunken sorcerer'
 pushlist 'stuffToKill' 'an earth sorcerer'
@@ -497,6 +504,10 @@ while not dead
                 overhead [pouch
             endif
             
+            #move out of fire
+            if findtype 14732 ground any any 0
+                walk north
+            endif
             
             #dont let this guy die routine
             if hp < 55 
@@ -506,6 +517,7 @@ while not dead
             endif
             #Chiv Poisoned
             if skill "Chivalry" > 50 and poisoned 
+                wait 500
                 say "[cleansebyfire"
             endif
             if poisoned 
@@ -609,11 +621,11 @@ while not dead
             #food buff routine
             if timer 'foodCheck' > 60000 and not findbuff 'food satisfaction'
                 if not findtype tray backpack
-                    say  "I am out of food!"
+                    overhead "I am out of food!"
                     wait 500
-                    say  "I am out of food!"
+                    overhead  "I am out of food!"
                     wait 500
-                    say  "I am out of food!"
+                    overhead  "I am out of food!"
                     wait 500
                 else
                     dclicktype tray backpack
@@ -627,8 +639,8 @@ while not dead
                     #Lost a big pet, resummon
                     settimer "bardLock" 0
                     if skill "Necromancy" > 80
+                        wait 600
                         say "[VengefulSpirit"
-                        wait 1000
                     endif
                     #check for pure summons they do not require as much logic
                     if 'fireElem' = 2
@@ -717,7 +729,7 @@ while not dead
                             interrupt
                             @setvar goToNextRune 1
                             @setvar goHomeBotYouAreDrunk 1
-                            continue
+                            break
                         endif
                     endfor
                     say "All Guard Me"
@@ -736,8 +748,8 @@ while not dead
                 if followers = 4 and mana > 30
                     settimer "bardLock" 0
                     if skill "Necromancy" > 80
+                        wait 500
                         say "[VengefulSpirit"
-                        wait 1000
                     endif
                     cast 'Summ. Creature'                          
                     for 28
@@ -760,11 +772,11 @@ while not dead
             #camping buff
             if skill "Camping" > 50 and not findbuff "Campfire Visit"
                 if not findtype "kindling" backpack
-                    say "Need more kindling" 
+                    overhead "Need more kindling" 
                     wait 355
-                    say "Need more kindling" 
+                    overhead "Need more kindling" 
                     wait 355
-                    say "Need more kindling" 
+                    overhead "Need more kindling" 
                     wait 355
                 endif
             
@@ -858,11 +870,11 @@ while not dead
                         endif
                     endfor
                     if newInstrument = 0
-                        say "I am out of instruments!!!"
+                        overhead "I am out of instruments!!!"
                         wait 500
-                        say "I am out of instruments!!!"
+                        overhead "I am out of instruments!!!"
                         wait 500
-                        say "I am out of instruments!!!"
+                        overhead "I am out of instruments!!!"
                         wait 500
                     endif
                 endif
@@ -878,6 +890,7 @@ while not dead
             if skill "Necromancy" > 80 
                 if timer "vampTimer" > 35000
                     if findtype 'corpse' ground any any 10 as found
+                        wait 500
                         say '[vampiricembrace' 
                         wft 500
                         target found
@@ -923,12 +936,13 @@ while not dead
                 settimer "dressTimer" 0
                 
                 if followers > 1
+                    wait 500
                     say "All guard me"
                 endif   
                 
                 if skill "Magery" > 50
                     foreach reg in 'regTypes'
-                        if counttype reg < 3
+                        if counttype reg < 7
                             wait 500
                             overhead "Hey! I am Low on regs!" 23
                             wait 500
@@ -989,6 +1003,7 @@ while not dead
                 #attack routine  - Always attack so pets go aggro at least if we are not a melee class   
                 attack 'lastserial'                
                 if followers > 1 and timer "allKillTimer" > 3000
+                    wait 500
                     say "All attack"
                     wft 500
                     target 'lastserial'
@@ -998,6 +1013,7 @@ while not dead
                 #painspike
                 if skill "Necromancy" > 80 and timer "painSpkeTimer" > 35000 and timer "atThisSpot" > 7000
                     if findtype 'corpse' ground any any 10 as found
+                        wait 500
                         say '[painspike'
                         wft 500
                         target 'lasttarget'
@@ -1018,15 +1034,12 @@ while not dead
                         wait 100
                     endwhile
                     #use a crook
+                    wait 500
                     say "[FocusAggression"
                     wft 500
                     target 'lastserial'
                     settimer "crookCheck" 0
-                    settimer "bardLock" 7000                    
-                    
-                    say "All kill"
-                    wft 1500
-                    target 'lastserial'
+                    settimer "bardLock" 7000                                        
                 endif
                 
                 #poison routine 
@@ -1043,26 +1056,32 @@ while not dead
                     @setvar castPoison 1
                 endif
                 
-                if castPoison = 1
-                    overhead "Poison Target!" 33
-                    cast "Poison"
-                    wft 4500
-                    target 'lastserial'
-                    wait 400
-                    settimer "poisonTimer" 0
+                
+                if castPoison = 1  
+                    if noto 'lastserial' = hostile or noto 'lastserial' = criminal
+                        overhead "Poison Target!" 33
+                        cast "Poison"
+                        wft 4500
+                        target 'lastserial'
+                        wait 400
+                        settimer "poisonTimer" 0
+                    endif
                 endif
                 
                 #Poison Strike Routine
-                if timer "poisonStrikeTimer" > 35000 and skill "Poisoning" > 50 and skill "Necromancy" > 50 and timer "atThisSpot" > 7000
-                    #try to poison strike
-                    say "[poisonStrike"
-                    wft 500
-                    target 'lastserial'
-                    wait 100
-                    if insysmsg "You do not have enough unholy symbols for that"
-                        settimer "poisonStrikeTimer" 30000
-                    else
-                        settimer "poisonStrikeTimer" 0
+                if timer "poisonStrikeTimer" > 35000 and skill "Poisoning" > 50 and skill "Necromancy" > 50 and timer "atThisSpot" > 7000               
+                    if noto 'lastserial' = hostile or noto 'lastserial' = criminal
+                        #try to poison strike
+                        wait 500
+                        say "[poisonStrike"
+                        wft 500
+                        target 'lastserial'
+                        wait 100
+                        if insysmsg "You do not have enough unholy symbols for that"
+                            settimer "poisonStrikeTimer" 30000
+                        else
+                            settimer "poisonStrikeTimer" 0
+                        endif
                     endif
                 endif
                 
@@ -1107,8 +1126,8 @@ while not dead
                 endif                
                 
                 #Flamestrike
-                if skill 'Magery' > 80 and skill 'Archery' < 80 and diffhits <= 18
-                    if mana >= 80 and followers >= 4              
+                if skill 'Magery' > 80 and skill 'Archery' < 80 and diffhits <= 18 and mana >= 80 and followers >= 4   
+                    if noto 'lastserial' = hostile or noto 'lastserial' = criminal
                         if skill "Musicianship" > 50 and discordOn = 0
                             #overhead "Skipping FS til discord"
                         else
@@ -1116,7 +1135,8 @@ while not dead
                             wait 400
                             hotkey "Cancel Current Target"
                             cast "Flamestrike"
-                            while not targetexists and not insysmsg "Your concentration is disturbed"                    
+                            @setvar getOuttaFS 0
+                            while not targetexists and not insysmsg "Your concentration is disturbed" and getOuttaFS = 0         
                                 hotkey "Target random murderer" 
                                 wait 100
                                 if insysmsg 'No one matching that'  
@@ -1128,11 +1148,16 @@ while not dead
                                     @setvar goToNextRune 1
                                     @setvar goHomeBotYouAreDrunk 1
                                     continue
+                                endif                               
+                                if noto 'lastserial' = hostile or noto 'lastserial' = criminal
+                                    #do nothing
+                                else 
+                                    @setvar getOuttaFS 1
                                 endif
                             endwhile
                             target 'lastserial'
-                            wait 400
-                            wait 300
+                            #wait 400
+                            #wait 300
                         endif
                     endif
                 endif   
@@ -1176,17 +1201,19 @@ while not dead
             while not position 4007 909 0
                 if skill "Magery" > 40
                     cast "Recall"
-                    wft 2500
+                    while not targetexists and not insysmsg "Your concentration is disturbed" and not position 4007 909 0
+                        wait 100
+                    endwhile
                     target runeBookFarm
                 else                    
                     dclick 'runeBookFarm'
                     wait 250
-                    gumpresponse 2            
+                    gumpresponse 2    
+                    wait 3000              
                 endif 
-                wait 3000      
-				if insysmsg "too encumbered"
-					hotkey "Drink Strength"
-				endif
+                if insysmsg "too encumbered"
+                    hotkey "Drink Strength"
+                endif
             endwhile    
             #Loot Routine
             #WALK THIS WAY
@@ -1202,7 +1229,7 @@ while not dead
                 menu found 1                
                 gumpclose 3232825965        
                 if skill "Magery" > 50
-                    while counttype 29012 backpack < 35
+                    while counttype 29012 backpack < 35 and not insysmsg "cheese"
                         cast "create food"
                         wait 1000
                         if mana < 70 and insysmsg "use another magic"
@@ -1211,6 +1238,7 @@ while not dead
                         menu found 1
                     endwhile
                 endif
+                menu found 1
             endif           
 
             #If you need to open chests do so here

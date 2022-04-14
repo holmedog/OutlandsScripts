@@ -74,6 +74,9 @@ if findtype 'storage shelf' ground any any 2 as found
                 dclicktype 29012
             endif
             menu found 1
+            if insysmsg "cheese"
+                break
+            endif
         endwhile
     endif
 endif        
