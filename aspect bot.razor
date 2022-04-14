@@ -1116,7 +1116,7 @@ while not dead
                             wait 400
                             hotkey "Cancel Current Target"
                             cast "Flamestrike"
-                            while not targetexists                              
+                            while not targetexists and not insysmsg "Your concentration is disturbed"                    
                                 hotkey "Target random murderer" 
                                 wait 100
                                 if insysmsg 'No one matching that'  
@@ -1184,6 +1184,9 @@ while not dead
                     gumpresponse 2            
                 endif 
                 wait 3000      
+				if insysmsg "too encumbered"
+					hotkey "Drink Strength"
+				endif
             endwhile    
             #Loot Routine
             #WALK THIS WAY
