@@ -1,4 +1,3 @@
-#Script by Brozan
 #Make sure to have a runebook
 # or recall rune
 # named with Home in the name
@@ -64,10 +63,10 @@ waitfortarget 5000
 target 'self'
 wait 200
 if not insysmsg "no one hiding" 
-    for 5 
-        overhead "SHIT SHIT SHIT SHIT"
-        wait 500
-    endfor
+    hotkey 'Next Grey Humanoid Target'
+    say "I ban thee"
+	wft 1000
+	hotkey 'Last Target'
 endif
 
 script "stayalive2"

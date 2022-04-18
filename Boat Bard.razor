@@ -22,6 +22,9 @@
 @setvar repairGunsOrder 2
 @setvar repairSailsOrder 1
 
+#Dynamic Boss Repair - Switches to hull priority on bosses.  Set to 1 to turn on.  Have to restart script to reset after bosses
+@setvar dynamicBossRepair 1
+
 #Set this to 1 if you want to throw self overboard if a ship repair kit is on the deck
 @setvar triggerOverboard 2
 
@@ -943,9 +946,14 @@ while not dead
     endif   
     #Repair Routine - 
     if 'closeEnemy' = 0 or bossFight = 1
+		if bossFight = 1
+			@setvar repairGunsOrder 3
+			@setvar repairSailsOrder 2
+			@setvar repairHullOrder 1
+		endif
         if timer "RepairHull" > 4000
             @setvar startRepairs 0
-            if repairLockdown = 0
+            if repairLockdown = 0 or bossFight = 1
                 @setvar startRepairs 1          
             elseif timer "onBoard" > 62000 and timer "onBoard" <= 125000    
                 @setvar startRepairs 1
