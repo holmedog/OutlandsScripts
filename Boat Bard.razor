@@ -17,6 +17,11 @@
 @setvar waterElem 0
 @setvar daemonSum 0
 
+#Repair Priority Queue.  Set these as 1/2/3.  If you fail to put one for each of these it will break shit.  Just leave it alone if you do not care
+@setvar repairHullOrder 3
+@setvar repairGunsOrder 2
+@setvar repairSailsOrder 1
+
 #Set this to 1 if you want to throw self overboard if a ship repair kit is on the deck
 @setvar triggerOverboard 2
 
@@ -57,7 +62,8 @@
 clearsysmsg 
 
 if 'sayMore' = 1
-	say "YO HO MATEY AWAY!" 33
+    say "YO HO MATEY AWAY!" 33
+    wait 500
 endif
 
 #Timers.  We used to do these on an if exists basis, but it fubard too much stuff if you leave client open forever
@@ -111,6 +117,10 @@ createtimer 'goHomeBotYouAreDrunkTimer'
 settimer 'goHomeBotYouAreDrunkTimer' 100000
 createtimer 'scriptRunning'
 settimer 'scriptRunning' 100000
+createtimer 'singSeaShanties'
+settimer 'singSeaShanties' 70000
+createtimer 'sanityEmbarkCheck'
+settimer 'sanityEmbarkCheck' 0
 
 #Clear lastt t arget from last run - this can cause a weird bug
 unsetvar 'lastserial' 
@@ -171,6 +181,8 @@ endif
 @setvar 'provokeBoss' 0
 #set bot at home flag
 @setvar 'botAtHome' 0
+#set where we are on wellerman
+@setvar wellerManProgress 0
 
 #set pets if they exist
 if skill "Veterinary" > 50 and followers >= 1
@@ -241,12 +253,45 @@ while not dead
     endif
 
     #put in a pause so we dont spam 
-    wait 350    
+    #wait 350    
     
     if alwaysBoarded = 1
         @setvar boardState 1
     endif
     
+    #Be a real pirate
+    if wellerManProgress = 0 and sayMore = 1 and timer "singSeaShanties" > 20000 and boardState = 0
+        wait 500
+        say "There once was a ship that put to sea / The name of the ship was the Billy of Tea " 45
+        wait 500
+        say "/ The winds blew up, her bow dipped down / Oh blow, my bully boys, blow" 45
+        settimer 'singSeaShanties' 0
+        @setvar wellerManProgress 1
+    elseif wellerManProgress = 1 and sayMore = 1 and timer "singSeaShanties" > 20000 and boardState = 0
+        wait 500
+        say "Soon may the Wellerman come / To bring us sugar and tea and rum " 45
+        wait 500
+        say "/ One day, when the tonguing is done / Well take our leave and go"  45
+        settimer 'singSeaShanties' 0
+        @setvar wellerManProgress 2
+    elseif wellerManProgress = 2 and sayMore = 1 and timer "singSeaShanties" > 20000 and boardState = 0
+        wait 500
+        say "Shed not been two weeks from shore / When down on her a right whale bore " 45
+        wait 500
+        say "/ The captain called all hands and swore / Hed take that whale in tow" 45
+        settimer 'singSeaShanties' 0
+        @setvar wellerManProgress 3
+    elseif wellerManProgress = 3 and sayMore = 1 and timer "singSeaShanties" > 20000 and boardState = 0
+        wait 500
+        say "Soon may the Wellerman come / To bring us sugar and tea and rum / One day, when the tonguing is done / Well take our leave and go" 45
+        settimer 'singSeaShanties' 0
+        @setvar wellerManProgress 4
+    elseif wellerManProgress = 4 and sayMore = 1 and timer "singSeaShanties" > 20000 and boardState = 0
+        wait 500
+        say "Da-da-da-da-da / Da-da-da-da-da-da-da / Da-da-da-da-da-da-da-da-da-da-da" 45 
+        settimer 'singSeaShanties' 0
+        @setvar wellerManProgress 0
+    endif
     
     ###############                                             ###############
     ###############Start routines that keep us alive or set vars###############
@@ -274,6 +319,11 @@ while not dead
             settimer "discoTimer" 0
             settimer "bardLock" 4750
         endif
+    endif
+    
+    #hidden check
+    if hidden and boardState = 0
+        continue
     endif
     
     #dont let this guy die routine
@@ -696,6 +746,37 @@ while not dead
     ###############    Start routines that do not require target      ###############
     ###############                                                   ###############   
     
+    
+    #Sanity Embark Check every 20s
+    if timer "sanityEmbarkCheck" > 20000 and varexist 'tillerDude' and boardState = 0
+        hotkey 'Cancel Current Target'
+        dclick tillerDude
+        wait 200
+        if insysmsg "were not found"
+            say "[embark"                   
+            if findtype "tiller man" ground as found
+                overhead "Tillerman Set"
+                setvar 'tillerDude' 'found'
+                dclick 'tillerDude'
+                wait 500
+            endif
+        endif
+        gumpresponse 21 4216593270
+        wait 100
+        gumpresponse 22 4216593270
+        wait 100
+        #we do this to make sure embark worked
+        say "[embark"
+        wait 500
+        say "[embarkfollowers"
+        settimer 'sanityEmbarkCheck' 0
+    endif
+    
+    if timer "sanityEmbarkCheck" > 70000 and not varexist 'tillerDude'
+        wait 500
+        say "Why the hell have we not found a tillerman yet???"
+    endif
+                
     #Yell if we are not in fighting party
     if insysmsg "You must be a part of your initial embarking"
         say "Hey! I am not in the fighting party!!!" 23
@@ -863,28 +944,43 @@ while not dead
     #Repair Routine - 
     if 'closeEnemy' = 0 or bossFight = 1
         if timer "RepairHull" > 4000
-            if repairLockdown = 0 
-                say '[RepairHull'
-                wait 355
-                if insysmsg 'hull does not need'
-                    say '[RepairSails'
-                    wait 355
-                    if insysmsg 'sails do not need'
-                        say '[RepairGuns'
-                    endif
-                endif
-			elseif timer "onBoard" > 62000 and timer "onBoard" <= 125000
-                say '[RepairHull'
-                wait 355
-                if insysmsg 'hull does not need'
-                    say '[RepairSails'
-                    wait 355
-                    if insysmsg 'sails do not need'
-                        say '[RepairGuns'
-                    endif
-                endif
+            @setvar startRepairs 0
+            if repairLockdown = 0
+                @setvar startRepairs 1          
+            elseif timer "onBoard" > 62000 and timer "onBoard" <= 125000    
+                @setvar startRepairs 1
             endif
-            settimer "RepairHull" 0
+            
+            if startRepairs = 1
+                if repairHullOrder = 1                  
+                    say '[RepairHull'
+                elseif repairGunsOrder = 1                  
+                    say '[RepairGuns'
+                else 
+                    say '[RepairSails'  
+                endif
+                wait 200                
+                if insysmsg "guns do not need" or insysmsg 'hull does not need' or insysmsg 'sails do not need'
+                    if repairHullOrder = 2
+                        say '[RepairHull'
+                    elseif repairSailsOrder = 2
+                        say '[RepairSails'  
+                    else 
+                        say '[RepairGuns'
+                    endif
+                endif
+                wait 200
+                if insysmsg "guns do not need" or insysmsg 'hull does not need' or insysmsg 'sails do not need'
+                    if repairGunsOrder = 3
+                        say '[RepairGuns'
+                    elseif repairSailsOrder = 3
+                        say '[RepairSails'  
+                    else 
+                        say '[RepairHull'
+                    endif
+                endif
+                settimer "RepairHull" 0
+            endif
         endif
     endif    
     
@@ -1028,12 +1124,12 @@ while not dead
                 wait 500
                 say "[embarkfollowers"
                 wait 500
-				
-				if reloadCannons = 1
-					wait 100
-					say "[reload"
-					wait 500
-				endif	
+                
+                if reloadCannons = 1
+                    wait 100
+                    say "[reload"
+                    wait 500
+                endif   
                 
                 #Reset Variables                
                 @setvar 'boardState' 0
@@ -1106,15 +1202,15 @@ while not dead
             settimer "crookCheck" 0
             settimer "bardLock" 7000
         endif
-		
+        
         #Boss provoke or peace routine
         if discoLock = 0 or targetLockType = 2 
             if  skill "Peacemaking" > 50 and timer "provkeBossTimer" > 10500 and bossFight = 1 and provokeBoss = 1
                 while timer "bardLock" < 10000
                     wait 100
-					if diffhits >= 18 
-						continue
-					endif
+                    if diffhits >= 18 
+                        continue
+                    endif
                 endwhile
                 overhead "Peacing Target!" 33
                 skill "Peacemaking" 
@@ -1126,9 +1222,9 @@ while not dead
             elseif  skill "Provocation" > 50 and timer "provkeBossTimer" > 10500 and bossFight = 1 and provokeBoss = 1              
                 while timer "bardLock" < 10000
                     wait 100
-					if diffhits >= 18 
-						continue
-					endif
+                    if diffhits >= 18 
+                        continue
+                    endif
                 endwhile
                 overhead "Provocation Target!" 33
                 skill "Provocation" 
@@ -1148,9 +1244,9 @@ while not dead
             if  skill "Discordance" > 50 and timer "discoTimer" > 5050              
                 while timer "bardLock" < 10000
                     wait 100
-					if diffhits >= 18 
-						continue
-					endif
+                    if diffhits >= 18 
+                        continue
+                    endif
                 endwhile
                 overhead "Disco Target!" 33
                 skill "Discordance" 
@@ -1183,19 +1279,19 @@ while not dead
         
         #Flamestrike
         if skill 'Magery' > 80 and skill 'Archery' < 80 and diffhits <= 18 and 'boardState' = 1 and mana >= 61
-			# put an extra  here to fix formatting
-			wait 400
-			cast "Flamestrike"
-			wft 3500
-			target 'lastserial'
-			wait 400
-			if sayLess = 0 
-				say "So anyway I started blastin" 33
-			endif
-			wait 300
+            # put an extra  here to fix formatting
+            wait 400
+            cast "Flamestrike"
+            wft 3500
+            target 'lastserial'
+            wait 400
+            if sayLess = 0 
+                say "So anyway I started blastin" 33
+            endif
+            wait 300
         endif   
-		
-		#Pet attack
+        
+        #Pet attack
         if followers > 1 and timer "petAttack" > 2500
             say "All kill"
             wft 1500

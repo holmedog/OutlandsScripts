@@ -31,7 +31,7 @@
 if skill "Peacemaking" > 80 or skill "Provocation" > 80
     @setvar fireElem 2
     @setvar earthElem 0
-    @setvar airElem 0
+    @setvar airElem 0 
     @setvar waterElem 0
     @setvar daemonSum 0
 endif
@@ -57,61 +57,65 @@ overhead "Select your runebook"
 setvar runeBookFarm
 
 #Timers.  
-createtimer 'targetDeadTimer'
-settimer 'targetDeadTimer' 0
-createtimer 'discoTimer'
-settimer 'discoTimer' 5000
-createtimer "shroomy"
-settimer "shroomy" 61000
-createtimer 'buffDisco'
-settimer 'buffDisco' 300000
-createtimer 'buffProvo'
-settimer 'buffProvo' 300000
-createtimer 'buffPeace'
-settimer 'buffPeace' 300000
-createtimer 'buffBeg'
-settimer 'buffBeg' 300000 
-createtimer 'bardLock'
-settimer 'bardLock' 0
-createtimer "aid time"
-settimer "aid time" 8000
-createtimer 'RepairHull'
-settimer 'RepairHull' 0
-createtimer 'buffTaste'
-settimer 'buffTaste' 15000
-createtimer 'newTargetCheck'
-settimer 'newTargetCheck' 15000
-createtimer 'spiritSpeakCheck'
-settimer 'spiritSpeakCheck' 15000
-createtimer 'foodCheck'
-settimer 'foodCheck' 120000
-createtimer 'crookCheck'
-settimer 'crookCheck' 120000
-createtimer 'crewHealing'
-settimer 'crewHealing' 120000
-createtimer 'painSpkeTimer'
-settimer 'painSpkeTimer' 120000
-createtimer 'poisonStrikeTimer'
-settimer 'poisonStrikeTimer' 120000
-createtimer 'vampTimer'
-settimer 'vampTimer' 120000
-createtimer 'dressTimer'
-settimer 'dressTimer' 120000
-createtimer 'provkeBossTimer' 
-settimer 'provkeBossTimer' 1500000
-createtimer 'goHomeBotYouAreDrunkTimer'
-settimer 'goHomeBotYouAreDrunkTimer' 100000
-createtimer 'atThisSpot'
-settimer 'atThisSpot' 100000
-createtimer 'allKillTimer'
-settimer 'allKillTimer' 100000
-createtimer 'redCheck' 
-settimer 'redCheck' 100000
-createtimer 'recallSpam' 
-settimer 'recallSpam' 5000
-createtimer 'poisonTimer' 
-settimer 'poisonTimer' 5000
 
+if not timerexists "targetDeadTimer"
+    createtimer 'targetDeadTimer'
+    settimer 'targetDeadTimer' 0
+    createtimer 'discoTimer'
+    settimer 'discoTimer' 5000
+    createtimer "shroomy"
+    settimer "shroomy" 61000
+    createtimer 'buffDisco'
+    settimer 'buffDisco' 300000
+    createtimer 'buffProvo'
+    settimer 'buffProvo' 300000
+    createtimer 'buffPeace'
+    settimer 'buffPeace' 300000
+    createtimer 'buffBeg'
+    settimer 'buffBeg' 300000 
+    createtimer 'bardLock'
+    settimer 'bardLock' 0
+    createtimer "aid time"
+    settimer "aid time" 8000
+    createtimer 'RepairHull'
+    settimer 'RepairHull' 0
+    createtimer 'buffTaste'
+    settimer 'buffTaste' 15000
+    createtimer 'newTargetCheck'
+    settimer 'newTargetCheck' 15000
+    createtimer 'spiritSpeakCheck'
+    settimer 'spiritSpeakCheck' 15000
+    createtimer 'foodCheck'
+    settimer 'foodCheck' 120000
+    createtimer 'crookCheck'
+    settimer 'crookCheck' 120000
+    createtimer 'crewHealing'
+    settimer 'crewHealing' 120000
+    createtimer 'painSpkeTimer'
+    settimer 'painSpkeTimer' 120000
+    createtimer 'poisonStrikeTimer'
+    settimer 'poisonStrikeTimer' 120000
+    createtimer 'vampTimer'
+    settimer 'vampTimer' 120000
+    createtimer 'dressTimer'
+    settimer 'dressTimer' 120000
+    createtimer 'provkeBossTimer' 
+    settimer 'provkeBossTimer' 1500000
+    createtimer 'goHomeBotYouAreDrunkTimer'
+    settimer 'goHomeBotYouAreDrunkTimer' 100000
+    createtimer 'atThisSpot'
+    settimer 'atThisSpot' 100000
+    createtimer 'allKillTimer'
+    settimer 'allKillTimer' 100000
+    createtimer 'redCheck' 
+    settimer 'redCheck' 100000
+    createtimer 'recallSpam' 
+    settimer 'recallSpam' 5000
+    createtimer 'poisonTimer' 
+    settimer 'poisonTimer' 5000
+    createtimer 'castTimer' 
+    settimer 'castTimer' 5000
+endif
 
 #Clear lastt target from last run - this can cause a weird bug
 unsetvar 'lastserial' 
@@ -124,9 +128,14 @@ createlist 'stuffToKill'
 pushlist 'stuffToKill' 'a lich magus'
 pushlist 'stuffToKill' 'an ancient oak'
 #daemon body type
-pushlist 'stuffToKill' '9' 
+pushlist 'stuffToKill' '1'
+pushlist 'stuffToKill' '27'
+pushlist 'stuffToKill' '380'
+pushlist 'stuffToKill' '25'
 pushlist 'stuffToKill' 'a water spirit' 
 pushlist 'stuffToKill' '280' 
+pushlist 'stuffToKill' '970' 
+pushlist 'stuffToKill' '54' 
 pushlist 'stuffToKill' '281' 
 pushlist 'stuffToKill' '375' 
 pushlist 'stuffToKill' '173' 
@@ -146,6 +155,10 @@ pushlist 'stuffToKill' '93'
 pushlist 'stuffToKill' '94'
 pushlist 'stuffToKill' '33'
 pushlist 'stuffToKill' '36'
+pushlist 'stuffToKill' '35'
+pushlist 'stuffToKill' '34'
+pushlist 'stuffToKill' '32'
+pushlist 'stuffToKill' '9' 
 pushlist 'stuffToKill' 'an angelic stonework'
 pushlist 'stuffToKill' 'a sunken sorcerer'
 pushlist 'stuffToKill' 'an earth sorcerer'
@@ -426,6 +439,11 @@ while not dead
                         else
                             overhead "Red!  GTFO"       
                             break
+                        endif                       
+                        if timer "shroomy" >= 63000
+                            dclicktype '29012'
+                            overhead 'Mushroom Power!'
+                            settimer "shroomy" 0
                         endif
                     endwhile
                 endif    
@@ -505,16 +523,16 @@ while not dead
             endif
             
             #move out of fire
-            if findtype 14732 ground any any 0
+            if findtype 14732 ground any any 1
                 walk north
+                wait 200
+            endif
+            if findtype 14732 ground any any 1
+                walk west
+                wait 200
             endif
             
             #dont let this guy die routine
-            if hp < 55 
-                overhead 'Drinking heal!'
-                potion "heal"
-                wait 200
-            endif
             #Chiv Poisoned
             if skill "Chivalry" > 50 and poisoned 
                 wait 500
@@ -524,29 +542,60 @@ while not dead
                 potion 'heal'
                 wait 200
             endif
-            #Magery Survival
-            if skill "Magery" > 50
-                #we cast arch here bc it probably hit whole crew
-                if poisoned 'self'
-                    cast 'Arch Cure'
-                    waitfortarget 1755
-                    target 'self'
-                    wait 666
-                endif
-                if diffhits > 18
-                    cast "greater heal"
-                    wft 3500
-                    target self
-                    wait 650 
-                endif   
-                #Eat a magic mushroom if we have 
-                #25  less mana than full
-                if mana < 70 and timer "shroomy" >= 65000
-                    dclicktype '29012'
-                    overhead 'Mushroom Power!'
-                    settimer "shroomy" 0
-                endif
+            
+            #pot
+            if hp < 55 
+                overhead 'Drinking heal!'
+                potion "heal"
+                wait 200
             endif
+            
+            #heal loop
+            while diffhits > 15 and skill "Magery" >= 50
+                if hp < 55 
+                    overhead 'Drinking heal!'
+                    potion "heal"
+                    wait 200
+                endif
+                #Magery Survival
+                if skill "Magery" >= 50
+                    #we cast arch here bc it probably hit whole crew
+                    if poisoned 'self'
+                        cast 'Cure'
+                        waitfortarget 1755
+                        target 'self'
+                        wait 600
+                    endif
+                    if diffhits > 15
+                        cast "greater heal"
+                        wft 3500
+                        target self
+                        wait 450 
+                    endif   
+                    #Eat a magic mushroom if we have 
+                    #25  less mana than full
+                    if mana < 70 and timer "shroomy" >= 65000
+                        dclicktype '29012'
+                        overhead 'Mushroom Power!'
+                        settimer "shroomy" 0
+                    endif
+                endif
+                
+                #Check for reds and try to GTFO
+                hotkey "Target random murderer" 
+                wait 200
+                if insysmsg 'No one matching that'  
+                    #we are fine continue on
+                    settimer "redCheck" 0
+                else
+                    overhead "Red!  GTFO"        
+                    interrupt
+                    @setvar goToNextRune 1
+                    @setvar goHomeBotYouAreDrunk 1
+                    break
+                endif
+            endwhile
+            
             # Bandage Survival
             if skill 'Healing' > 50
                 if insysmsg 'You begin applying the bandages'
@@ -606,7 +655,34 @@ while not dead
             
             ###############                                           ###############
             ###############   Start buff routines                     ###############
-            ###############                                           ###############           
+            ###############                                           ###############      
+            
+            #Skin corpses if we have been here 4s
+            if timer "atThisSpot" > 4000 and findtype 'corpse' ground any any 2 as found
+                #Check for a blade
+                if findtype '11552' backpack
+                    hotkey 'Forensics'
+                    wft 500
+                    target 'self'
+                    wait 255
+                    #if not insysmsg "You carve" and not insysmsg  "anything nearby" and not insysmsg "must wait"
+                    #    while not insysmsg "successful" and not insysmsg "What do you want to use this item on" and not insysmsg "save complete"
+                    #        overhead  "I am broken in a Captcha loop.  Fix me or double click dagger" 
+                    #        wait 2500
+                    #    endwhile                   
+                    #endif
+                else
+                    #No blade, open corpses
+                    while findtype 0x2006 'ground' 'any' 1 2 as 'found'
+                        dclick 'found'
+                        pause 400
+                        @ignore 'found'
+                    endwhile
+                endif               
+                @ignore 'found'
+            endif          
+
+            
             #Tracking Routine - Turn it on if we have not yet
             if skill 'Tracking' > 80 and 'trackState' = 0
                 while not insysmsg "You will receive"
@@ -717,8 +793,9 @@ while not dead
                                 cast 'Summon Daemon'
                             endif
                         endif
-                    endif         
-                    for 28                                  
+                    endif                    
+                    settimer 'castTimer' 0
+                    while 'castTimer' <= 5200 and not insysmsg "Your concentration is disturbed"                             
                         hotkey "Target random murderer" 
                         wait 200
                         if insysmsg 'No one matching that'  
@@ -731,7 +808,7 @@ while not dead
                             @setvar goHomeBotYouAreDrunk 1
                             break
                         endif
-                    endfor
+                    endwhile
                     say "All Guard Me"
                     
                     #rebuff to get pet buffed
@@ -752,7 +829,8 @@ while not dead
                         say "[VengefulSpirit"
                     endif
                     cast 'Summ. Creature'                          
-                    for 28
+                    settimer 'castTimer' 0
+                    while 'castTimer' <= 5200 and not insysmsg "Your concentration is disturbed" 
                         hotkey "Target random murderer"                         
                         wait 200
                         if insysmsg 'No one matching that'  
@@ -765,7 +843,7 @@ while not dead
                             @setvar goHomeBotYouAreDrunk 1
                             continue
                         endif
-                    endfor
+                    endwhile
                     say "All Guard Me"
                 endif   
             endif
@@ -903,32 +981,6 @@ while not dead
                 endif
             endif  
             
-            #Skin corpses if we have been here 7s
-            if timer "atThisSpot" > 7000 and findtype 'corpse' ground any any 2 as found
-                #Check for a blade
-                if findtype '11552' backpack
-                    hotkey 'Forensics'
-                    wft 500
-                    target 'self'
-                    wait 255
-                    #if not insysmsg "You carve" and not insysmsg  "anything nearby" and not insysmsg "must wait"
-                    #    while not insysmsg "successful" and not insysmsg "What do you want to use this item on" and not insysmsg "save complete"
-                    #        overhead  "I am broken in a Captcha loop.  Fix me or double click dagger" 
-                    #        wait 2500
-                    #    endwhile                   
-                    #endif
-                else
-                    #No blade, open corpses
-                    @clearignore
-                    while findtype 0x2006 'ground' 'any' 1 2 as 'found'
-                        dclick 'found'
-                        pause 400
-                        @ignore 'found'
-                    endwhile
-                endif               
-                @ignore 'found'
-            endif           
-            
             #Put on your clothes
             if timer "dressTimer" > 10000
                 #Try to dress 
@@ -1002,7 +1054,7 @@ while not dead
                 
                 #attack routine  - Always attack so pets go aggro at least if we are not a melee class   
                 attack 'lastserial'                
-                if followers > 1 and timer "allKillTimer" > 3000
+                if followers > 1 and timer "allKillTimer" > 7000
                     wait 500
                     say "All attack"
                     wft 500
@@ -1098,15 +1150,31 @@ while not dead
                 elseif  skill "Provocation" > 50 and timer "provkeBossTimer" > 5500 and 'discoSwitch' = 0 and timer "bardLock" > 10500
                     overhead "Provocation Target!" 33
                     skill "Provocation" 
-                    wft 2500
+                    wft 500
                     target 'lastserial'
-                    wft 2500 
+                    wft 500 
+					#Cycle nearby targets
                     hotkey 'Next Grey Humanoid Target'
                     wait 255
-                    if insysmsg 'No one matching that'      
-                        hotkey 'Next Grey Monster Target' 
+                    if insysmsg 'No one matching that'
+						hotkey 'Next Grey Monster Target' 
+                        @setvar 'testProvo' lasttarget
+						if 'testProvo' = 'lastserial'							
+                            hotkey 'Next Friendly Monster Target'
+						endif
                     endif
                     hotkey 'Last Target'
+					wait 200
+					#check if next monster targeted our target
+					if insysmsg 'tell someone to attack themselves'
+						overhead 'Target pet for provocation routine'
+						skill "Provocation" 
+						wft 500
+						target 'lastserial'
+						wft 500 					
+						hotkey 'Next Friendly Monster Target'
+						hotkey 'Last Target'
+					endif
                     settimer "discoTimer" 0
                     settimer "bardLock" 4750
                     settimer "provkeBossTimer" 0
@@ -1198,6 +1266,10 @@ while not dead
             #Cast recall til you are home
             #Walk this way
             #Change the 3 numbers at the end of this to where land at recall location
+			
+			if diffweight < 5
+				hotkey "Drink Strength"
+			endif
             while not position 4007 909 0
                 if skill "Magery" > 40
                     cast "Recall"
@@ -1211,9 +1283,6 @@ while not dead
                     gumpresponse 2    
                     wait 3000              
                 endif 
-                if insysmsg "too encumbered"
-                    hotkey "Drink Strength"
-                endif
             endwhile    
             #Loot Routine
             #WALK THIS WAY
