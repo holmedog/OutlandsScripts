@@ -1,68 +1,122 @@
+#Set to 1 for fishing and boats and bosses.  Set to anything else for just boats/bosses
+@setvar huntingType 0
 
 if not timerexists "glass"
     createtimer "glass"
     settimer "glass" 99999
 endif
-if not timerexists "glassBoat"
-    createtimer "glassBoat"
-    settimer "glassBoat" 99999
-endif
+
+@setvar glassSwap 0
 
 while not dead
-if timer "glass" > 7000     
-        gumpclose 2890020940
-        dclicktype 'spyglass'
-        waitfortarget 1200
-        target 'self'
-        waitforgump 2890020940
-        gumpresponse 11
-        waitforgump 2890020940
-        gumpresponse 4
-        waitforgump 2890020940
-        if ingump "a fishing" 2890020940 
-            say "stop"
-            dclicktype 3763
-            wait 500
-            say "stop"
-            wait 500
-            dclicktype 3763
-            stop
-        endif
-        settimer "glass" 0
-    endif
-    
-    if timer "glassBoat" > 6500 
-        gumpclose 2890020940
-        wait 250
-        gumpclose 2890020940
-        wait 250
-        dclicktype 'spyglass'
-        waitfortarget 1200
-        target 'self'
-        wait 350 
-        gumpresponse 4 2890020940
-        wait 350 
-        if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
-                overhead "Player BOAT" 43
-                wait 250
-                overhead "Player BOAT" 43
-                wait 250
-                overhead "Player BOAT" 43
+    if huntingType = 1
+        if timer "glass" > 4000 and glassSwap = 0  
+            overhead "Fishing Spot"
+            gumpclose 2890020940
+            dclicktype 'spyglass'
+            waitfortarget 1200
+            target 'self'
+            waitforgump 2890020940
+            gumpresponse 11
+            waitforgump 2890020940
+            gumpresponse 4
+            waitforgump 2890020940
+            if ingump "a fishing" 2890020940 
+                say "stop"
                 dclicktype 3763
-        endif
-        while ingump "Next" 2890020940
-            gumpresponse 3 2890020940
-            wait 350
-            if ingump "a small ship" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
-                overhead "Player BOAT" 43
-                wait 250
-                overhead "Player BOAT" 43
-                wait 250
-                overhead "Player BOAT" 43
+                wait 500
+                say "stop"
+                wait 500
                 dclicktype 3763
+                stop
             endif
-        endwhile    
-    endif
-    
-    
+            settimer "glass" 0
+            @setvar glassSwap 1
+        endif
+        
+        if timer "glass" > 4000 and glassSwap = 1
+            overhead "Boat Check"
+            gumpclose 2890020940
+            wait 250
+            gumpclose 2890020940
+            wait 250
+            dclicktype 'spyglass'
+            waitfortarget 1200
+            target 'self'
+            wait 350 
+            gumpresponse 4 2890020940
+            wait 350 
+            
+            @setvar blueFound 0
+            if ingump "a small ship" 2890020940 or ingump "Maw" 2890020940 or ingump "Fury"  or ingump "maw" 2890020940 or ingump "fury" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
+                    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                    wait 250
+                    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                    wait 250
+                    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                    @setvar blueFound 1
+            endif
+            while ingump "Next" 2890020940 and blueFound = 0
+                gumpresponse 3 2890020940
+                wait 350
+                if ingump "a small ship" 2890020940 or ingump "Maw" 2890020940 or ingump "Fury"  or ingump "maw" 2890020940 or ingump "fury"  or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
+                    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                    wait 250
+                    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                    wait 250
+                    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                    @setvar blueFound 1
+                    say "Stop"
+                endif
+            endwhile   
+            while blueFound = 1 
+                overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                wait 1000
+            endwhile
+            settimer "glass" 0
+            @setvar glassSwap 0
+        endif
+    else
+        if timer "glass" > 6500 
+            overhead "Boat Check"
+            gumpclose 2890020940
+            wait 250
+            gumpclose 2890020940
+            wait 250
+            dclicktype 'spyglass'
+            waitfortarget 1200
+            target 'self'
+            wait 350 
+            gumpresponse 4 2890020940
+            wait 350 
+            
+            @setvar blueFound 0
+            if ingump "a small ship" 2890020940 or ingump "Maw" 2890020940 or ingump "Fury"  or ingump "maw" 2890020940 or ingump "fury" 2890020940 or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
+                    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                    wait 250
+                    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                    wait 250
+                    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                    @setvar blueFound 1
+            endif
+            while ingump "Next" 2890020940 and blueFound = 0
+                gumpresponse 3 2890020940
+                wait 350
+                if ingump "a small ship" 2890020940 or ingump "Maw" 2890020940 or ingump "Fury"  or ingump "maw" 2890020940 or ingump "fury"  or  ingump "a small dragonship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragonship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragonship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
+                    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                    wait 250
+                    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                    wait 250
+                    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                    @setvar blueFound 1
+                    say "Stop"
+                endif
+            endwhile   
+            while blueFound = 1 
+                overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                wait 1000
+            endwhile
+            settimer "glass" 0
+        endif
+    endif   
 endwhile 
