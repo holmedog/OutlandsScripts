@@ -748,32 +748,33 @@ while not dead
     ###############                                                   ###############
     ###############    Start routines that do not require target      ###############
     ###############                                                   ###############   
-    
-    
+        
     #Sanity Embark Check every 20s
-    if timer "sanityEmbarkCheck" > 20000 and varexist 'tillerDude' and boardState = 0
-        hotkey 'Cancel Current Target'
-        dclick tillerDude
-        wait 200
-        if insysmsg "were not found"
-            say "[embark"                   
-            if findtype "tiller man" ground as found
-                overhead "Tillerman Set"
-                setvar 'tillerDude' 'found'
-                dclick 'tillerDude'
-                wait 500
-            endif
-        endif
-        gumpresponse 21 4216593270
-        wait 100
-        gumpresponse 22 4216593270
-        wait 100
-        #we do this to make sure embark worked
-        say "[embark"
-        wait 500
-        say "[embarkfollowers"
-        settimer 'sanityEmbarkCheck' 0
-    endif
+	if boardState = 0 and closeEnemy = 0
+		if timer "sanityEmbarkCheck" > 20000 and varexist 'tillerDude' 
+			hotkey 'Cancel Current Target'
+			dclick tillerDude
+			wait 200
+			if insysmsg "were not found"
+				say "[embark"                   
+				if findtype "tiller man" ground as found
+					overhead "Tillerman Set"
+					setvar 'tillerDude' 'found'
+					dclick 'tillerDude'
+					wait 500
+				endif
+			endif
+			gumpresponse 21 4216593270
+			wait 100
+			gumpresponse 22 4216593270
+			wait 100
+			#we do this to make sure embark worked
+			say "[embark"
+			wait 500
+			say "[embarkfollowers"
+			settimer 'sanityEmbarkCheck' 0
+		endif
+	endif
     
     if timer "sanityEmbarkCheck" > 70000 and not varexist 'tillerDude'
         wait 500
@@ -845,7 +846,7 @@ while not dead
             if insysmsg "You must be closer"
                 clearignore 
                 unsetvar 'gfto'
-                while findtype 8901 'backpack' as 'runeBook'
+                while not dead and findtype 8901 'backpack' as 'runeBook'
                     getlabel 'runeBook' 'runeBookLabel'
                     if 'Home' in 'runeBookLabel'
                         setvar 'gtfo' 'runeBook'
@@ -854,7 +855,7 @@ while not dead
                     endif
                     @ignore 'runeBook'
                 endwhile
-                while findtype 7956 'backpack' as 'runeBook'
+                while not dead and findtype 7956 'backpack' as 'runeBook'
                     getlabel 'runeBook' 'runeBookLabel'
                     if 'Home' in 'runeBookLabel'
                         setvar 'gtfo' 'runeBook'
@@ -899,7 +900,7 @@ while not dead
                 
                 #WALK THIS WAY
                 #Change the 3 numbers at the end of this to where you want to stop and ressupply.  Change the walk direction to the direction you need to go
-                while not position 4006 904 5
+                while not dead and not position 4006 904 5
                     walk 'North'
                     wait 150
                 endwhile
@@ -910,7 +911,7 @@ while not dead
                     menu found 1
                 endif
                 #Change the 3 numbers at the end of this to where you want to stop and wait on a gate.  Change the walk direction to the direction you need to go
-                while not position 4006 909 0
+                while not dead and not position 4006 909 0
                     walk 'South'
                     wait 150
                 endwhile
