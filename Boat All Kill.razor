@@ -2,17 +2,8 @@ unsetvar allkill_target
 overhead '[All Kill]' 44
 @setvar! 'allkill_target'
 
-if skill "begging" > 50
-    skill "begging"
-endif
-    menu 'pet1' 1
-    wft 1000
-    target 'allkill_target'
-    menu 'pet2' 1
-    wft 1000
-    target 'allkill_target'
-    menu 'pet3' 1
-    wft 1000
-    target 'allkill_target'
+say "[focusaggression"
+wft 500
+target allkill_target
 
     script "stayalive2"

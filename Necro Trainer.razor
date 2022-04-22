@@ -1,12 +1,12 @@
-while skill 'Necromancy' < 100
+while skill 'Magery' < 100
     cast 'Earth Elemental'
-    wait 3000
-    if findtype 'an Earth Elemental' as found
+    wait 6000
+    while findtype 'an Earth Elemental' as found
         cast 'Dispel'
         wft 
         targettype 'an Earth Elemental'
         wait 500
-    endif
+    endwhile
     #create shrooms
     while counttype 29012 backpack < 5
         cast "create food"
