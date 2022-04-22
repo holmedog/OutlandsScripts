@@ -120,7 +120,11 @@ endif
 #Clear lastt target from last run - this can cause a weird bug
 unsetvar 'lastserial' 
 @setvar targetDead 0
-@setvar discoSwitch 0
+if skill "Provocation" >= 50 or skill "Peacemaking" >= 50
+	@setvar discoSwitch 0
+else 
+	@setvar discoSwitch 1
+endif
 
 #valuable target list
 removelist 'stuffToKill'
@@ -467,7 +471,11 @@ while not dead
         clearsysmsg
         
         #Reset so we peace first
-        @setvar discoSwitch 0
+        if skill "Provocation" >= 50 or skill "Peacemaking" >= 50
+			@setvar discoSwitch 0
+		else 
+			@setvar discoSwitch 1
+		endif
         
         #Reset go away vars 
         @setvar goToNextRune 0 
@@ -1190,7 +1198,11 @@ while not dead
                     target 'lastserial'
                     settimer "discoTimer" 0
                     settimer "bardLock" 4750
-                    @setvar discoSwitch 0
+                    if skill "Provocation" >= 50 or skill "Peacemaking" >= 50
+						@setvar discoSwitch 0
+					else 
+						@setvar discoSwitch 1
+					endif
                     @setvar discordOn 1
                 endif                
                 
@@ -1200,7 +1212,7 @@ while not dead
                         if skill "Musicianship" > 50 and discordOn = 0
                             #overhead "Skipping FS til discord"
                         else
-                            #Above check is because we would rather not FS spam if poisoning is better
+                            #Above check is because we would rather not FS spam if not discorded
                             wait 400
                             hotkey "Cancel Current Target"
                             cast "Flamestrike"
