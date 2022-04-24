@@ -2,8 +2,14 @@ unsetvar allkill_target
 overhead '[All Kill]' 44
 @setvar! 'allkill_target'
 
-say "[focusaggression"
-wft 500
-target allkill_target
+
+if varexist 'pet1' and varexist 'pet2'
+    menu 'pet1' 1
+    wft 1000
+    target 'allkill_target'
+    menu 'pet2' 1
+    wft 1000
+    target 'allkill_target'
+endif
 
     script "stayalive2"

@@ -25,6 +25,9 @@
 #Dynamic Boss Repair - Switches to hull priority on bosses.  Set to 1 to turn on.  Have to restart script to reset after bosses
 @setvar dynamicBossRepair 1
 
+#Set this to 1 if you do not  want to select your own tillerman (useful for recall or if you switch boats a lot.  Causes issues sometimes if it finds a friends dynamically)
+@setvar dynamicTiller 0
+
 #Set this to 1 if you want to throw self overboard if a ship repair kit is on the deck
 @setvar triggerOverboard 2
 
@@ -57,7 +60,9 @@
 ##################################################################################
 ##################################################################################
 ##################################################################################
+##############                                                 ###################
 ##############              No setup below here                ###################
+##############                                                 ###################
 ##################################################################################
 ##################################################################################
 ##################################################################################
@@ -67,6 +72,20 @@ clearsysmsg
 if 'sayMore' = 1
     say "YO HO MATEY AWAY!" 33
     wait 500
+endif
+
+unsetvar 'tillerDude'
+if dynamicTiller = 0
+	overhead "Target Tillerman"
+	@setvar tillerDude 
+else
+	#try to find tillerman
+	if findtype "tiller man" ground as found
+		overhead "Tillerman Set"
+		setvar 'tillerDude' 'found'
+		dclick 'tillerDude' 
+		wait 500
+	endif
 endif
 
 #Timers.  We used to do these on an if exists basis, but it fubard too much stuff if you leave client open forever
@@ -197,15 +216,6 @@ if skill "Veterinary" > 50 and followers >= 1
     setvar! pet3 
 endif   
 
-#try to find tillerman
-unsetvar tillerDude
-if findtype "tiller man" ground as found
-    overhead "Tillerman Set"
-    setvar 'tillerDude' 'found'
-    dclick 'tillerDude'
-    wait 500
-endif
-
 if skill "Healing" > 50
     say '[ShipHotbars'
     wait 500
@@ -256,7 +266,7 @@ while not dead
     endif
 
     #put in a pause so we dont spam 
-    #wait 350    
+    wait 100    
     
     if alwaysBoarded = 1
         @setvar boardState 1

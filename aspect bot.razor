@@ -121,9 +121,9 @@ endif
 unsetvar 'lastserial' 
 @setvar targetDead 0
 if skill "Provocation" >= 50 or skill "Peacemaking" >= 50
-	@setvar discoSwitch 0
+    @setvar discoSwitch 0
 else 
-	@setvar discoSwitch 1
+    @setvar discoSwitch 1
 endif
 
 #valuable target list
@@ -472,10 +472,10 @@ while not dead
         
         #Reset so we peace first
         if skill "Provocation" >= 50 or skill "Peacemaking" >= 50
-			@setvar discoSwitch 0
-		else 
-			@setvar discoSwitch 1
-		endif
+            @setvar discoSwitch 0
+        else 
+            @setvar discoSwitch 1
+        endif
         
         #Reset go away vars 
         @setvar goToNextRune 0 
@@ -626,7 +626,11 @@ while not dead
                     target pet1         
                     wait 600
                     if insysmsg 'You begin applying the bandages'
-                        settimer 'aid time' 4500
+                        if dex <= 40
+                            settimer 'aid time' 2000
+                        else
+                            settimer 'aid time' 4500
+                        endif
                         settimer 'crewHealing' 0
                     endif
                  endif
@@ -636,7 +640,11 @@ while not dead
                     target pet2       
                     wait 600 
                     if insysmsg 'You begin applying the bandages'
-                        settimer 'aid time' 4500
+                        if dex <= 40
+                            settimer 'aid time' 2000
+                        else
+                            settimer 'aid time' 4500
+                        endif
                         settimer 'crewHealing' 0
                     endif
                  endif
@@ -646,7 +654,11 @@ while not dead
                     target pet3      
                     wait 250  
                     if insysmsg 'You begin applying the bandages'
-                        settimer 'aid time' 4500
+                        if dex <= 40
+                            settimer 'aid time' 2000
+                        else
+                            settimer 'aid time' 4500
+                        endif
                         settimer 'crewHealing' 0
                     endif
                  endif       
@@ -1027,7 +1039,7 @@ while not dead
                 foreach 'killThis' in 'stuffToKill'
                     if findtype 'killThis' ground any any 10 as found
                         @setvar! 'lastserial' 'found'
-						getlabel 'lastserial' myLabel
+                        getlabel 'lastserial' myLabel
                         @setvar closeEnemy 1
                         if noto 'lastserial' = hostile or noto 'lastserial' = criminal
                             overhead "Target aquired: [[{{myLabel}}]]"
@@ -1055,7 +1067,11 @@ while not dead
             ###############Start routines that  require a target###############
             ###############                                     ###############   
             
-            if closeEnemy = 1    and goToNextRune = 0
+            if noto 'lastserial' != hostile and noto 'lastserial' != criminal
+                @setvar closeEnemy 0
+            endif
+            
+            if closeEnemy = 1 and goToNextRune = 0 
                 #Turn on war mode because why not
                 if not warmode
                     warmode on
@@ -1199,10 +1215,10 @@ while not dead
                     settimer "discoTimer" 0
                     settimer "bardLock" 4750
                     if skill "Provocation" >= 50 or skill "Peacemaking" >= 50
-						@setvar discoSwitch 0
-					else 
-						@setvar discoSwitch 1
-					endif
+                        @setvar discoSwitch 0
+                    else 
+                        @setvar discoSwitch 1
+                    endif
                     @setvar discordOn 1
                 endif                
                 
