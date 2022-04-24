@@ -252,10 +252,13 @@ endif
 
 
 while not dead
+	#Announce we are running
     if timer "scriptRunning" > 15000
         overhead "Bot is running"
         settimer "scriptRunning" 0
     endif
+	
+	#Dynamic Tillerman Check
 	if dynamicTiller = 1
 		if not varexist 'tillerDude'
 			if findtype "tiller man" ground as found
