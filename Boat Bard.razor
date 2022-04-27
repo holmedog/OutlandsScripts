@@ -1,6 +1,4 @@
-#Part of the attack routine is to call a Razor Dress routine named "bow".  
-#   If you do not have that it will not stop the script but it is 
-#   a good idea to have one in case you unequip weapon
+#Part of the attack routine is to call a Razor Dress routine named "bow".  Create it if you want it.  Will not break script if it does not exist
 
 #Target Lock:
 #0=default behavior (Let the script try to be intelligent)
@@ -56,6 +54,14 @@
 #IF YOU TURN THIS ON YOU MUST GO TO THE SECTION NAMED "WALK THIS WAY" AND SET UP DIRECTIONS INTO YOUR HOUSE FROM RECALL LOCATION
 @setvar goHomeBotYouAreDrunk 1
 
+#Set this to 1 if you want the bot to try to loot holds using RESTOCK-2 restock agent.  Update the ship hue list below if you are using this. 
+@setvar stealTheBooty 1
+
+#push your ship hues to this list for dynamic looting
+createlist shipHues
+clearlist shipHues
+pushlist shipHues 1059
+
 
 ##################################################################################
 ##################################################################################
@@ -68,6 +74,7 @@
 ##################################################################################
 
 clearsysmsg 
+clearignore
 
 if 'sayMore' = 1
     say "YO HO MATEY AWAY!" 33
@@ -76,16 +83,16 @@ endif
 
 unsetvar 'tillerDude'
 if dynamicTiller = 0
-	overhead "Target Tillerman"
-	@setvar tillerDude 
+    overhead "Target Tillerman"
+    @setvar tillerDude 
 else
-	#try to find tillerman
-	if findtype "tiller man" ground as found
-		overhead "Tillerman Set"
-		setvar 'tillerDude' 'found'
-		dclick 'tillerDude' 
-		wait 500
-	endif
+    #try to find tillerman
+    if findtype "tiller man" ground as found
+        overhead "Tillerman Set"
+        setvar 'tillerDude' 'found'
+        dclick 'tillerDude' 
+        wait 500
+    endif
 endif
 
 #Timers.  We used to do these on an if exists basis, but it fubard too much stuff if you leave client open forever
@@ -143,6 +150,8 @@ createtimer 'singSeaShanties'
 settimer 'singSeaShanties' 70000
 createtimer 'sanityEmbarkCheck'
 settimer 'sanityEmbarkCheck' 0
+createtimer "walkingTooMuch" 
+settimer "walkingTooMuch" 0
 
 #Clear lastt t arget from last run - this can cause a weird bug
 unsetvar 'lastserial' 
@@ -168,6 +177,186 @@ clearlist regTypes
 @pushlist 'regTypes' 'Nightshade' 
 @pushlist 'regTypes' 'Mandrake Root%s%' 
 # ' for formatting reasons
+
+#Hold IDs
+createlist holdIDs
+clearlist holdIDs
+pushlist holdIDs 16019
+pushlist holdIDs 16046
+pushlist holdIDs 15973
+pushlist holdIDs 16057
+
+#Set up walking list for dymanic loot
+createlist walking
+clearlist walking
+
+#list for dump stuff
+createlist lootTypes
+clearlist lootTypes
+@pushlist 'lootTypes' 'cooked fish'
+@pushlist 'lootTypes' 'Crab SOUTH'
+@pushlist 'lootTypes' 'Lobster SOUTH'
+@pushlist 'lootTypes' 'raw fish steak%s%'
+@pushlist 'lootTypes' 'Blood Moss'
+@pushlist 'lootTypes' 'Black Pearl%s%'
+@pushlist 'lootTypes' 'Ginseng'
+@pushlist 'lootTypes' 'Garlic'
+@pushlist 'lootTypes' 'Sulfurous Ash'
+@pushlist 'lootTypes' "Spider's Silk" 
+@pushlist 'lootTypes' 'Nightshade'
+@pushlist 'lootTypes' 'Mandrake Root%s%' //MR
+@pushlist 'lootTypes' 'cut%s% of raw ribs'
+@pushlist 'lootTypes' 'cut up leather'
+@pushlist 'lootTypes' 'clean bandage%s%'
+@pushlist 'lootTypes' 'arrow'
+@pushlist 'lootTypes' 'crossbow bolt'
+@pushlist 'lootTypes' 'muffins'
+@pushlist 'lootTypes' 'gold coin'
+# ' for formatting reasons
+
+createlist ItemTypes
+clearlist ItemTypes
+//martial manual
+@pushlist 'ItemTypes' 22187
+//Shields
+@pushlist 'ItemTypes' 0x1b72 //BronzeShields
+@pushlist 'ItemTypes' 0x1b73 //Buckler
+@pushlist 'ItemTypes' 0x1b7b //MetalShield
+@pushlist 'ItemTypes' 0x1b74 //MetalKiteShield
+@pushlist 'ItemTypes' 0x1b79 //TearKiteShield
+@pushlist 'ItemTypes' 0x1b7a //WoodenShield
+@pushlist 'ItemTypes' 0x1b76 //HeaterShield
+@pushlist 'ItemTypes' 0x1b77 //HeaterShield
+//Platemail
+@pushlist 'ItemTypes' 0x1408 //CloseHelmet
+@pushlist 'ItemTypes' 0x1410 //PlatemailArms
+@pushlist 'ItemTypes' 0x1417 //PlatemailArms
+@pushlist 'ItemTypes' 0x1411 //PlatemailLegs
+@pushlist 'ItemTypes' 0x1412 //PlateHelm
+@pushlist 'ItemTypes' 0x1413 //PlateGorget
+@pushlist 'ItemTypes' 0x1418 //PlatemailGloves
+@pushlist 'ItemTypes' 0x1415 //PlateChest
+@pushlist 'ItemTypes' 0x140a //Helmet
+@pushlist 'ItemTypes' 0x140c //Bascinet
+@pushlist 'ItemTypes' 0x140e //NorseHelm
+//Chainmail
+@pushlist 'ItemTypes' 0x13bb //ChainmailCoif
+@pushlist 'ItemTypes' 0x13c3 //ChainmailLeggins
+@pushlist 'ItemTypes' 0x13c4 //ChainmailChest
+@pushlist 'ItemTypes' 0x13c0 //ChainmailHelm
+//Ringmail
+@pushlist 'ItemTypes' 0x13ef //RingmailArms
+@pushlist 'ItemTypes' 0x13f2 //RingmailGloves
+@pushlist 'ItemTypes' 0x13ed //RingmailChest
+@pushlist 'ItemTypes' 0x13f1 //RingmailLeggins
+@pushlist 'ItemTypes' 0x140b //RingmailHelm
+//Studded
+@pushlist 'ItemTypes' 0x1dba //Studdedcap
+@pushlist 'ItemTypes' 0x13e1 //StuddedLeggings
+@pushlist 'ItemTypes' 0x13db //StuddedTunic
+@pushlist 'ItemTypes' 0x13d5 //StuddedGloves
+@pushlist 'ItemTypes' 0x13d6 //StuddedGorget
+@pushlist 'ItemTypes' 0x13dc //StuddedSleeves
+//Leather
+@pushlist 'ItemTypes' 0x13ce //LeatherGloves
+@pushlist 'ItemTypes' 0x13cd //LeatherSleeves
+@pushlist 'ItemTypes' 0x13d3 //LeatherChest
+@pushlist 'ItemTypes' 0x13cb //LeatherPants
+@pushlist 'ItemTypes' 0x13c7 //LeatherGorget
+@pushlist 'ItemTypes' 0x1db9 //LeatherCap
+@pushlist 'ItemTypes' 0x13c5 //LeatherArms
+//FemaleArmor
+@pushlist 'ItemTypes' 0x1c04 //FemalePlate
+@pushlist 'ItemTypes' 0x1c09 //FemalePlateSkirt
+@pushlist 'ItemTypes' 0x1c0c //FemaleStuddedBustier
+@pushlist 'ItemTypes' 0x1c02 //FemaleStuddedArmor
+@pushlist 'ItemTypes' 0x1c09 //FemaleRingmailSkirt
+@pushlist 'ItemTypes' 0x1c00 //FemaleLeatherShorts
+@pushlist 'ItemTypes' 0x1c09 //FemaleLeatherSkirt
+@pushlist 'ItemTypes' 0x1c06 //FemaleLeatherArmor
+@pushlist 'ItemTypes' 0x1c0b //FemaleLeatherBustier
+@pushlist 'ItemTypes' 0x1c09 //FemaleBoneSkirt
+//Fencing
+@pushlist 'ItemTypes' 0xf62  //Spear
+@pushlist 'ItemTypes' 0x1403 //ShortSpear
+@pushlist 'ItemTypes' 0xe87  //Pitchfork
+@pushlist 'ItemTypes' 0x1405 //Warfork
+@pushlist 'ItemTypes' 0x1401 //Kryss
+@pushlist 'ItemTypes' 0xf52  //Dagger
+//Macing
+@pushlist 'ItemTypes' 0x13b0 //Waraxe
+@pushlist 'ItemTypes' 0xdf0  //BlackStaff
+@pushlist 'ItemTypes' 0x1439 //WarHammer
+@pushlist 'ItemTypes' 0x1407 //WarMace
+@pushlist 'ItemTypes' 0xe89  //QuarterStaff
+@pushlist 'ItemTypes' 0x143d //HammerPick
+@pushlist 'ItemTypes' 0x13b4 //Club
+@pushlist 'ItemTypes' 0xe81  //ShepherdsCrook
+@pushlist 'ItemTypes' 0x13f8 //GnarledStaff
+@pushlist 'ItemTypes' 0xf5c  //Mace
+@pushlist 'ItemTypes' 0x143b //Maul
+//Swords
+@pushlist 'ItemTypes' 0x13b9 //VikingSword
+@pushlist 'ItemTypes' 0xf61  //Longsword
+@pushlist 'ItemTypes' 0x1441 //Cutlass
+@pushlist 'ItemTypes' 0x13b6 //Scimitar
+@pushlist 'ItemTypes' 0xec4  //SkinningKnife
+@pushlist 'ItemTypes' 0x13f6 //ButcherKnife
+@pushlist 'ItemTypes' 0xf5e  //Broadsword
+@pushlist 'ItemTypes' 0x13ff //Katana
+@pushlist 'ItemTypes' 0xec3  //Cleaver
+//Axes
+@pushlist 'ItemTypes' 0xf43 //Hatchet
+@pushlist 'ItemTypes' 0xf45 //ExecutionersAxe
+@pushlist 'ItemTypes' 0xf4d //Bardiche
+@pushlist 'ItemTypes' 0xf4b  //DoubleAxe
+@pushlist 'ItemTypes' 0x143e //Halberd
+@pushlist 'ItemTypes' 0x13fb //LargeBattleAxe
+@pushlist 'ItemTypes' 0x1443 //TwoHandedAxe
+@pushlist 'ItemTypes' 0xf47  //BattleAxe
+@pushlist 'ItemTypes' 0xf49  //Axe
+//Bows
+@pushlist 'ItemTypes' 0x13fd //HeavyXbow
+@pushlist 'ItemTypes' 0xf50  //Xbow
+@pushlist 'ItemTypes' 0x13b2 //bow
+//Instruments
+@pushlist 'ItemTypes' 0xeb2 //Harp
+@pushlist 'ItemTypes' 0xe9c //Drums
+@pushlist 'ItemTypes' 0xeb3 //Lute
+@pushlist 'ItemTypes' 0xe9e //Tambourine
+@pushlist 'ItemTypes' 0x2805 //BambooFlute
+//Other Helmets
+@pushlist 'ItemTypes' 0x140f //NorseHelm
+//BoneArmor
+@pushlist 'ItemTypes' 0x1451 //BoneHelm
+@pushlist 'ItemTypes' 0x1457 //BoneLegs
+@pushlist 'ItemTypes' 0x1453 //BoneArms
+@pushlist 'ItemTypes' 0x1455 //BoneGloves
+//SlayerWands
+@pushlist 'ItemTypes' 0xdf2 //SlayerWands
+@pushlist 'ItemTypes' 0xdf3 //SlayerWands
+@pushlist 'ItemTypes' 0xdf4 //SlayerWands
+@pushlist 'ItemTypes' 0xdf5 //SlayerWands
+//OtherSTuff, that wasnt in list...
+@pushlist 'ItemTypes' 0xdf5 //SlayerWands
+@pushlist 'ItemTypes' 0xefa //SpellBook
+@pushlist 'ItemTypes' 0x141a //platemailleggings
+@pushlist 'ItemTypes' 0x1b7a //woodenshield
+@pushlist 'ItemTypes' 0x13e2 //studdedchets
+@pushlist 'ItemTypes' 0x1b79 //woodenkiteshield
+@pushlist 'ItemTypes' 0x26bd //harpoon
+@pushlist 'ItemTypes' 0x1c05 //Femaleplatechest
+@pushlist 'ItemTypes' 0x1c0d //studdedbrasier
+@pushlist 'ItemTypes' 0x1c01 //leathershorts
+@pushlist 'ItemTypes' 0x1b75 //metalkiteshield
+@pushlist 'ItemTypes' 0x1c07 //Femaleleather
+@pushlist 'ItemTypes' 0x1416 //platemailchest
+@pushlist 'ItemTypes' 0x13dd //studdedgloves
+@pushlist 'ItemTypes' 0x1454 //Bonechest
+@pushlist 'ItemTypes' 0x13d2 //leatherleggings
+@pushlist 'ItemTypes' 0x1409 //closehelm
+@pushlist 'ItemTypes' 0x13d4 //studdedarms
+
 
 #Loop through instruments and dclick one
 if skill "Musicianship" > 50
@@ -205,6 +394,13 @@ endif
 @setvar 'botAtHome' 0
 #set where we are on wellerman
 @setvar wellerManProgress 0
+#Var to track if we found hold
+@setvar stopWalking 0
+#Set up hold tracker
+@setvar holdToLoot 0
+#Set up hold tracker for own boat
+@setvar myShipHold 0
+
 
 #set pets if they exist
 if skill "Veterinary" > 50 and followers >= 1
@@ -252,23 +448,23 @@ endif
 
 
 while not dead
-	#Announce we are running
+    #Announce we are running
     if timer "scriptRunning" > 15000
         overhead "Bot is running"
         settimer "scriptRunning" 0
     endif
-	
-	#Dynamic Tillerman Check
-	if dynamicTiller = 1
-		if not varexist 'tillerDude'
-			if findtype "tiller man" ground as found
-				overhead "Tillerman Set"
-				setvar 'tillerDude' 'found'
-				dclick 'tillerDude'
-				wait 500
-			endif
-		endif
-	endif
+    
+    #Dynamic Tillerman Check
+    if dynamicTiller = 1
+        if not varexist 'tillerDude'
+            if findtype "tiller man" ground as found
+                overhead "Tillerman Set"
+                setvar 'tillerDude' 'found'
+                dclick 'tillerDude'
+                wait 500
+            endif
+        endif
+    endif
     #put in a pause so we dont spam 
     wait 100    
     
@@ -324,6 +520,7 @@ while not dead
     if insysmsg "You board the ship"
         @setvar 'boardState' 1 
         settimer "onBoard" 0
+        @setvar stopWalking 0
     endif
     
     #disco routine if target lock is 1 or we are on a humanoid boat
@@ -762,33 +959,96 @@ while not dead
     ###############                                                   ###############
     ###############    Start routines that do not require target      ###############
     ###############                                                   ###############   
+
+    #Dynamic walk to hold
+    if stealTheBooty = 1 and boardState = 1 and bossFight = 0 and stopWalking = 0
+        #we are looting and we are on an NPC and we are not on a boss
+        overhead "Move to hold" 23
+        #ignore our own boat
+        clearignore
+        #ignore my own ships hold
+        foreach holdID in holdIDs
+            foreach shipHue in shipHues
+                if findtype holdID ground shipHue as found                  
+                    ignore found
+                endif
+            endfor
+        endfor
         
+        if findtype 16046 ground 
+            #overhead "North Facing Boat"
+            pushlist walking  "Right, running"
+            pushlist walking  "Up, running"
+        elseif findtype 15973 ground
+            #overhead "East Facing Boat"
+            pushlist walking  "Down, running"
+            pushlist walking  "Right, running"
+        elseif findtype 16057 ground
+            #overhead "South Facing Boat"
+            pushlist walking  "Down, running"
+            pushlist walking  "Left, running"
+        elseif findtype 16019 ground
+            #overhead "West Facing Boat"
+            pushlist walking  "Up, running"
+            pushlist walking  "Left, running"
+        endif
+        
+        #start actual walking
+        settimer "walkingTooMuch" 0
+        foreach walkDir in walking
+            while timer "walkingTooMuch" < 2500 and stopWalking = 0
+                #Roam the boat
+                walk walkDir
+                #are we by a hold?
+                foreach holdID in holdIDs
+                    if findtype holdID ground any any 2 as found
+                        @setvar stopWalking 1
+                        @setvar holdToLoot found
+                    endif
+                endfor
+            endwhile
+            settimer "walkingTooMuch" 0
+        endfor
+        
+        if stopWalking = 1 and sayLess = 0
+            wait 500
+            say "Yarr we got the hold.  Lets loot this sucker dry.  Just kill tha crew now!" 33
+        endif   
+    #End of dynamic loot routine
+    endif   
+    
     #Sanity Embark Check every 20s
-	if boardState = 0 and closeEnemy = 0
-		if timer "sanityEmbarkCheck" > 20000 and varexist 'tillerDude' 
-			hotkey 'Cancel Current Target'
-			dclick tillerDude
-			wait 200
-			if insysmsg "were not found"
-				say "[embark"                   
-				if findtype "tiller man" ground as found
-					overhead "Tillerman Set"
-					setvar 'tillerDude' 'found'
-					dclick 'tillerDude'
-					wait 500
-				endif
-			endif
-			gumpresponse 21 4216593270
-			wait 100
-			gumpresponse 22 4216593270
-			wait 100
-			#we do this to make sure embark worked
-			say "[embark"
-			wait 500
-			say "[embarkfollowers"
-			settimer 'sanityEmbarkCheck' 0
-		endif
-	endif
+    if boardState = 0 and closeEnemy = 0
+        if timer "sanityEmbarkCheck" > 20000 and varexist 'tillerDude' 
+            hotkey 'Cancel Current Target'
+            dclick tillerDude
+            wait 200
+            if insysmsg "were not found"
+                say "[embark"                   
+                if findtype "tiller man" ground as found
+                    overhead "Tillerman Set"
+                    setvar 'tillerDude' 'found'
+                    dclick 'tillerDude'
+                    wait 500
+                endif
+            endif
+            gumpresponse 21 4216593270
+            wait 200
+            if insysmsg "do you wish to disembark"
+                #cancel current target, we are on a boat                
+                hotkey 'Cancel Current Target'
+            else 
+                gumpresponse 22 4216593270
+                wait 100
+                #we do this to make sure embark worked
+                say "[embark"
+                wait 500
+                say "[embarkfollowers"
+            endif
+            
+            settimer 'sanityEmbarkCheck' 0
+        endif
+    endif
     
     if timer "sanityEmbarkCheck" > 70000 and not varexist 'tillerDude'
         wait 500
@@ -961,11 +1221,11 @@ while not dead
     endif   
     #Repair Routine - 
     if 'closeEnemy' = 0 or bossFight = 1
-		if bossFight = 1
-			@setvar repairGunsOrder 3
-			@setvar repairSailsOrder 2
-			@setvar repairHullOrder 1
-		endif
+        if bossFight = 1
+            @setvar repairGunsOrder 3
+            @setvar repairSailsOrder 2
+            @setvar repairHullOrder 1
+        endif
         if timer "RepairHull" > 4000
             @setvar startRepairs 0
             if repairLockdown = 0 or bossFight = 1
@@ -1120,6 +1380,25 @@ while not dead
                         endif
                     endfor 
                 endif
+                
+                #Dynamic Looting Routine
+                if stealTheBooty = 1 and stopWalking = 1
+                    if sayLess = 0
+                        say "Crews Dead!  I got the gold!" 33
+                    endif
+                    #Open NPC Hold
+                    dclick holdToLoot
+                    wait 250
+                    #Call restock agent
+                    restock 2
+                    wait 250
+                    target holdToLoot
+                    
+                    #Wait on looting
+                    while queued
+                        wait 1000
+                    endwhile
+                endif
                 #Start Embarking
                 hotkey 'Cancel Current Target'
                 dclick tillerDude
@@ -1147,6 +1426,7 @@ while not dead
                 wait 500
                 say "[embarkfollowers"
                 wait 500
+                hotkey 'Cancel Current Target'
                 
                 if reloadCannons = 1
                     wait 100
@@ -1154,10 +1434,105 @@ while not dead
                     wait 500
                 endif   
                 
+                #dump loot Dynamic Looting
+                if stealTheBooty = 1 and stopWalking = 1
+                    #Find my ship hold and reset ignore since we ignored our own earlier
+                    clearignore
+                    clearlist walking
+                    
+                    #set orientation
+                    foreach shipHue in shipHues
+                        if findtype 16046  ground shipHue as found  
+                            #overhead "North Facing Boat"
+                            @setvar myShipHold found
+                            pushlist walking  "Right, running"
+                            pushlist walking  "Up, running"
+                        elseif findtype 15973  ground shipHue as found 
+                            #overhead "East Facing Boat"
+                            @setvar myShipHold found
+                            pushlist walking  "Down, running"
+                            pushlist walking  "Right, running"
+                        elseif findtype 16057  ground shipHue as found 
+                            #overhead "South Facing Boat"
+                            @setvar myShipHold found
+                            pushlist walking  "Down, running"
+                            pushlist walking  "Left, running"
+                        elseif findtype 16019  ground shipHue as found 
+                            #overhead "West Facing Boat"
+                            @setvar myShipHold found
+                            pushlist walking  "Up, running"
+                            pushlist walking  "Left, running"
+                        endif
+                    endfor
+
+                    #start actual walking
+                    settimer "walkingTooMuch" 0
+                    @setvar dumpDynamicLoot 0
+                    while dumpDynamicLoot = 0
+                        foreach walkDir in walking
+                            while timer "walkingTooMuch" < 2500 and dumpDynamicLoot = 0
+                                #Roam the boat
+                                walk walkDir
+                                #are we by a hold?
+                                foreach holdID in holdIDs
+                                    if findtype holdID ground any any 2 as found
+                                        @setvar dumpDynamicLoot 1
+                                    endif
+                                endfor
+                            endwhile
+                            settimer "walkingTooMuch" 0
+                        endfor
+                    endwhile
+
+                    #found hold, time to dump
+                    #myShipHold
+                    dclick myShipHold
+                    wait 600
+                    foreach x in lootTypes
+                        while findtype x backpack any any 1 as found
+                            lift found 9999
+                            drop myShipHold -1 -1 0 
+                            @ignore myVariable
+                            wait 600
+                        endwhile
+                    endfor
+
+                    #Search for a pouch in hold
+                    if findtype 3705 myShipHold as foundPack
+                        foreach x in ItemTypes
+                            while findtype x backpack as found
+                                @hotkey 'set last target'
+                                @target found
+                                @setvar myVariable lasttarget
+                                wait 100
+                                @getlabel 'myVariable' myLabel
+                                if 'unidentified' in myLabel
+                                    sysmsg 'Dumping: ' 33
+                                    sysmsg  myLabel 65
+                                    lift myVariable 1
+                                    drop noidBag -1 -1 0 
+                                else 
+                                    sysmsg 'Skipping' 33
+                                sysmsg  myLabel 65
+                                endif
+                                @ignore myVariable
+                                wait 400
+                            endwhile
+                        endfor
+                    endif   
+                    overhead "Dump Done"
+                    if sayLess = 0
+                        say "We have successfully hidden the treasure!" 33
+                    endif
+                    
+                #end dump dynamic loot routine  
+                endif
+                
                 #Reset Variables                
                 @setvar 'boardState' 0
                 @setvar targetLock targetLockType
                 @setvar discoLock targetLockType
+                @setvar stopWalking 0
             endif
         #end enemy search routine
         endif       

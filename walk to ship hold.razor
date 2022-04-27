@@ -21,7 +21,7 @@ foreach holdID in holdIDs
     foreach shipHue in shipHues
         overhead "{{holdID}} : {{shipHue}}" 23
         if findtype holdID ground shipHue as found
-            overhead "Got our own boat!
+            overhead "Got our own boat!"
             ignore found
         endif
     endfor
