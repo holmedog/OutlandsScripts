@@ -60,7 +60,7 @@
 #push your ship hues to this list for dynamic looting
 createlist shipHues
 clearlist shipHues
-pushlist shipHues 1059
+pushlist shipHues 2933
 
 
 ##################################################################################
@@ -1464,8 +1464,9 @@ while not dead
                             pushlist walking  "Left, running"
                         endif
                     endfor
-
+            
                     #start actual walking
+                    overhead "Walking to own hold"
                     settimer "walkingTooMuch" 0
                     @setvar dumpDynamicLoot 0
                     while dumpDynamicLoot = 0
@@ -1486,6 +1487,7 @@ while not dead
 
                     #found hold, time to dump
                     #myShipHold
+                    overhead "At ship hold dumping gold"
                     dclick myShipHold
                     wait 600
                     foreach x in lootTypes
@@ -1496,7 +1498,7 @@ while not dead
                             wait 600
                         endwhile
                     endfor
-
+                    overhead "Before Dump"
                     #Search for a pouch in hold
                     if findtype 3705 myShipHold as foundPack
                         foreach x in ItemTypes
@@ -1515,7 +1517,7 @@ while not dead
                                     sysmsg 'Skipping' 33
                                 sysmsg  myLabel 65
                                 endif
-                                @ignore myVariable
+                                ignore myVariable
                                 wait 400
                             endwhile
                         endfor
