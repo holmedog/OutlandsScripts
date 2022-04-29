@@ -195,6 +195,8 @@ createlist lootTypes
 clearlist lootTypes
 @pushlist 'lootTypes' 'muffins'
 @pushlist 'lootTypes' 'gold coin'
+@pushlist 'lootTypes' 'arrow'
+@pushlist 'lootTypes' 'crossbow bolt'
 # ' for formatting reasons
 
 createlist ItemTypes
@@ -1526,7 +1528,7 @@ while not dead
                     if sayLess = 0
                         say "We have successfully hidden the treasure!" 33
                     endif
-					clearignore
+                    clearignore
                     
                 #end dump dynamic loot routine  
                 endif
