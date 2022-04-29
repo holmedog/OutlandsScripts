@@ -29,6 +29,10 @@ foreach x in coinTypes
   endwhile
 endfor
 
+sysmsg  'Target Item Dump Bag'
+overhead 'Target Item Dump Bag'
+setvar noidBag
+
 overhead "Hull Dump"
 clearignore  
 createlist regTypes
@@ -54,7 +58,7 @@ clearlist regTypes
 foreach x in regTypes
   while findtype x backpack any any 1 as found
     lift found 9999
-    drop myShipHold -1 -1 0 
+    drop noidBag -1 -1 0 
     @ignore myVariable
     wait 600
   endwhile
@@ -62,10 +66,6 @@ endfor
 
 overhead "Unid Dump"
 clearignore 
-
-sysmsg  'Target Item Dump Bag'
-overhead 'Target Item Dump Bag'
-setvar noidBag
 
 createlist ItemTypes
 clearlist ItemTypes

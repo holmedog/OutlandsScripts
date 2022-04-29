@@ -193,23 +193,6 @@ clearlist walking
 #list for dump stuff
 createlist lootTypes
 clearlist lootTypes
-@pushlist 'lootTypes' 'cooked fish'
-@pushlist 'lootTypes' 'Crab SOUTH'
-@pushlist 'lootTypes' 'Lobster SOUTH'
-@pushlist 'lootTypes' 'raw fish steak%s%'
-@pushlist 'lootTypes' 'Blood Moss'
-@pushlist 'lootTypes' 'Black Pearl%s%'
-@pushlist 'lootTypes' 'Ginseng'
-@pushlist 'lootTypes' 'Garlic'
-@pushlist 'lootTypes' 'Sulfurous Ash'
-@pushlist 'lootTypes' "Spider's Silk" 
-@pushlist 'lootTypes' 'Nightshade'
-@pushlist 'lootTypes' 'Mandrake Root%s%' //MR
-@pushlist 'lootTypes' 'cut%s% of raw ribs'
-@pushlist 'lootTypes' 'cut up leather'
-@pushlist 'lootTypes' 'clean bandage%s%'
-@pushlist 'lootTypes' 'arrow'
-@pushlist 'lootTypes' 'crossbow bolt'
 @pushlist 'lootTypes' 'muffins'
 @pushlist 'lootTypes' 'gold coin'
 # ' for formatting reasons
@@ -217,6 +200,23 @@ clearlist lootTypes
 createlist ItemTypes
 clearlist ItemTypes
 //martial manual
+@pushlist 'ItemTypes' 'cooked fish'
+@pushlist 'ItemTypes' 'Crab SOUTH'
+@pushlist 'ItemTypes' 'Lobster SOUTH'
+@pushlist 'ItemTypes' 'raw fish steak%s%'
+@pushlist 'ItemTypes' 'Blood Moss'
+@pushlist 'ItemTypes' 'Black Pearl%s%'
+@pushlist 'ItemTypes' 'Ginseng'
+@pushlist 'ItemTypes' 'Garlic'
+@pushlist 'ItemTypes' 'Sulfurous Ash'
+@pushlist 'ItemTypes' "Spider's Silk" 
+@pushlist 'ItemTypes' 'Nightshade'
+@pushlist 'ItemTypes' 'Mandrake Root%s%' //MR
+@pushlist 'ItemTypes' 'cut%s% of raw ribs'
+@pushlist 'ItemTypes' 'cut up leather'
+@pushlist 'ItemTypes' 'clean bandage%s%'
+@pushlist 'ItemTypes' 'arrow'
+@pushlist 'ItemTypes' 'crossbow bolt'
 @pushlist 'ItemTypes' 22187
 //Shields
 @pushlist 'ItemTypes' 0x1b72 //BronzeShields
@@ -1526,6 +1526,7 @@ while not dead
                     if sayLess = 0
                         say "We have successfully hidden the treasure!" 33
                     endif
+					clearignore
                     
                 #end dump dynamic loot routine  
                 endif
