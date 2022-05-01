@@ -189,6 +189,9 @@ pushlist holdIDs 16057
 #Set up walking list for dymanic loot
 createlist walking
 clearlist walking
+#Set up hold list for dymanic loot
+createlist lootedHolds
+clearlist lootedHolds
 
 #list for dump stuff
 createlist lootTypes
@@ -402,6 +405,8 @@ endif
 @setvar holdToLoot 0
 #Set up hold tracker for own boat
 @setvar myShipHold 0
+#Variable to track NPC Hold
+@setvar npcHold 0
 
 
 #set pets if they exist
@@ -962,63 +967,6 @@ while not dead
     ###############    Start routines that do not require target      ###############
     ###############                                                   ###############   
 
-    #Dynamic walk to hold
-    if stealTheBooty = 1 and boardState = 1 and bossFight = 0 and stopWalking = 0
-        #we are looting and we are on an NPC and we are not on a boss
-        overhead "Move to hold" 23
-        #ignore our own boat
-        clearignore
-        #ignore my own ships hold
-        foreach holdID in holdIDs
-            foreach shipHue in shipHues
-                if findtype holdID ground shipHue as found                  
-                    ignore found
-                endif
-            endfor
-        endfor
-        
-        if findtype 16046 ground 
-            #overhead "North Facing Boat"
-            pushlist walking  "Right, running"
-            pushlist walking  "Up, running"
-        elseif findtype 15973 ground
-            #overhead "East Facing Boat"
-            pushlist walking  "Down, running"
-            pushlist walking  "Right, running"
-        elseif findtype 16057 ground
-            #overhead "South Facing Boat"
-            pushlist walking  "Down, running"
-            pushlist walking  "Left, running"
-        elseif findtype 16019 ground
-            #overhead "West Facing Boat"
-            pushlist walking  "Up, running"
-            pushlist walking  "Left, running"
-        endif
-        
-        #start actual walking
-        settimer "walkingTooMuch" 0
-        foreach walkDir in walking
-            while timer "walkingTooMuch" < 2500 and stopWalking = 0
-                #Roam the boat
-                walk walkDir
-                #are we by a hold?
-                foreach holdID in holdIDs
-                    if findtype holdID ground any any 2 as found
-                        @setvar stopWalking 1
-                        @setvar holdToLoot found
-                    endif
-                endfor
-            endwhile
-            settimer "walkingTooMuch" 0
-        endfor
-        
-        if stopWalking = 1 and sayLess = 0
-            wait 500
-            say "Yarr we got the hold.  Lets loot this sucker dry.  Just kill tha crew now!" 33
-        endif   
-    #End of dynamic loot routine
-    endif   
-    
     #Sanity Embark Check every 20s
     if boardState = 0 and closeEnemy = 0
         if timer "sanityEmbarkCheck" > 20000 and varexist 'tillerDude' 
@@ -1395,6 +1343,7 @@ while not dead
                     restock 2
                     wait 250
                     target holdToLoot
+					pushlist lootedHolds holdToLoot
                     
                     #Wait on looting
                     while queued
@@ -1436,8 +1385,9 @@ while not dead
                     wait 500
                 endif   
                 
+				settimer "walkingTooMuch" 0 
                 #dump loot Dynamic Looting
-                if stealTheBooty = 1 and stopWalking = 1
+                if stealTheBooty = 1 and stopWalking = 1 and timer "walkingTooMuch" < 25000
                     #Find my ship hold and reset ignore since we ignored our own earlier
                     clearignore
                     clearlist walking
@@ -1704,4 +1654,69 @@ while not dead
         
     #end target required routines
     endif
+	
+	
+    ###############                                     ###############
+    ###############Start dynamic walking routine on NPC ###############
+    ###############                                     ###############   
+    
+	
+	
+	#Dynamic walk to hold
+    if stealTheBooty = 1 and boardState = 1 and bossFight = 0 and stopWalking = 0
+        #we are looting and we are on an NPC and we are not on a boss
+        overhead "Move to hold" 23
+        #ignore our own boat
+        clearignore
+        #ignore my own ships hold
+        foreach holdID in holdIDs
+            foreach shipHue in shipHues
+                if findtype holdID ground shipHue as found                  
+                    ignore found
+                endif
+            endfor
+        endfor
+        
+        if findtype 16046 ground as foundHold
+			@setvar npcHold foundHold
+            pushlist walking  "Right, running"
+            pushlist walking  "Up, running"
+        elseif findtype 15973 ground as foundHold
+			@setvar npcHold foundHold
+            pushlist walking  "Down, running"
+            pushlist walking  "Right, running"
+        elseif findtype 16057 ground as foundHold
+			@setvar npcHold foundHold
+            pushlist walking  "Down, running"
+            pushlist walking  "Left, running"
+        elseif findtype 16019 ground as foundHold
+			@setvar npcHold foundHold
+            pushlist walking  "Up, running"
+            pushlist walking  "Left, running"
+        endif
+		        
+        #start actual walking
+        settimer "walkingTooMuch" 0
+        foreach walkDir in walking
+            while timer "walkingTooMuch" < 2500 and stopWalking = 0 and not inlist 'lootedHolds' 'foundHold'
+                #Roam the boat
+                walk walkDir
+                #are we by a hold?
+                foreach holdID in holdIDs
+                    if findtype holdID ground any any 2 as found
+                        @setvar stopWalking 1
+                        @setvar holdToLoot found
+                    endif
+                endfor
+            endwhile
+            settimer "walkingTooMuch" 0
+        endfor
+        
+        if stopWalking = 1 and sayLess = 0
+            wait 500
+            say "Yarr we got the hold.  Lets loot this sucker dry.  Just kill tha crew now!" 33
+        endif   
+    #End of dynamic loot routine
+    endif   
+    
 endwhile   
