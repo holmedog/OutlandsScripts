@@ -50,6 +50,9 @@
 #Set this to 1 to have bot reload right after embarking
 @setvar reloadCannons 1
 
+#Set this to 1 if you want to upgrade greater poison casts
+@setvar upgradePoison 1
+
 #Set this if you want to have bot recall on dock.  Must have a book in pack named Home and first rune be the house to recall to if not magery.  If magery make home the default rune
 #IF YOU TURN THIS ON YOU MUST GO TO THE SECTION NAMED "WALK THIS WAY" AND SET UP DIRECTIONS INTO YOUR HOUSE FROM RECALL LOCATION
 @setvar goHomeBotYouAreDrunk 1
@@ -72,6 +75,12 @@ pushlist shipHues 2933
 ##################################################################################
 ##################################################################################
 ##################################################################################
+
+#NPC Ship Hues
+createlist NPCshipHues
+clearlist NPCshipHues
+pushlist NPCshipHues 2076
+
 
 clearsysmsg 
 clearignore
@@ -189,9 +198,6 @@ pushlist holdIDs 16057
 #Set up walking list for dymanic loot
 createlist walking
 clearlist walking
-#Set up hold list for dymanic loot
-createlist lootedHolds
-clearlist lootedHolds
 
 #list for dump stuff
 createlist lootTypes
@@ -425,15 +431,13 @@ endif
 #do camping buff at least once regardless of buff status
 #camping buff
 if skill "Camping" > 50 
+	#cut some kindling off our boat...seriously
     if not findtype "kindling" backpack
-        say "Need more kindling" 
-        wait 355
-        say "Need more kindling" 
-        wait 355
-        say "Need more kindling" 
-        wait 355
+        dclicktype 3922
+		waitfortarget 4500
+		target 'self'
+		wait 600
     endif
-
     if not findtype "campfire" true
         dclicktype "kindling" backpack
         wait 350
@@ -526,6 +530,10 @@ while not dead
         @setvar 'boardState' 1 
         settimer "onBoard" 0
         @setvar stopWalking 0
+		if sayLess = 0 
+			wait 500
+			say "***Lets Gooooo! (Lets Gooooo!) / If you want it you can get it let me know (let me know)**" 44
+		endif
     endif
     
     #disco routine if target lock is 1 or we are on a humanoid boat
@@ -905,7 +913,7 @@ while not dead
         settimer "buffProvo" 0
         settimer "bardLock" 0
     endif
-    if skill "Peacemaking" > 50 and timer "bardLock" > 10000 and timer "buffPeace" > 300000
+    if skill "Peacemaking" >= 20 and timer "bardLock" > 10000 and timer "buffPeace" > 300000
         overhead "Peace Buff"
         skill "Peacemaking" 
         wft 2500
@@ -922,6 +930,10 @@ while not dead
     #Bless
     if boardState = 0 and mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Strength" 
         overhead "Mage Buff"
+        cast 'Bless'
+        waitfortarget 2500
+        target 'self'
+        wait 750
         cast 'Bless'
         waitfortarget 2500
         target 'self'
@@ -983,24 +995,33 @@ while not dead
             @setvar npcHold foundHold
             pushlist walking  "Right, running"
             pushlist walking  "Up, running"
+            pushlist walking  "Right, running"
+            pushlist walking  "Up, running"
         elseif findtype 15973 ground as foundHold
             @setvar npcHold foundHold
+            pushlist walking  "Down, running"
+            pushlist walking  "Right, running"
             pushlist walking  "Down, running"
             pushlist walking  "Right, running"
         elseif findtype 16057 ground as foundHold
             @setvar npcHold foundHold
             pushlist walking  "Down, running"
             pushlist walking  "Left, running"
+            pushlist walking  "Down, running"
+            pushlist walking  "Left, running"
         elseif findtype 16019 ground as foundHold
             @setvar npcHold foundHold
+            pushlist walking  "Up, running"
+            pushlist walking  "Left, running"
             pushlist walking  "Up, running"
             pushlist walking  "Left, running"
         endif
                 
         #start actual walking
-        settimer "walkingTooMuch" 0
         foreach walkDir in walking
-            while timer "walkingTooMuch" < 2500 and stopWalking = 0 and not inlist 'lootedHolds' 'foundHold'
+			#reset walk timer
+			settimer "walkingTooMuch" 0
+            while timer "walkingTooMuch" < 750 and stopWalking = 0 
                 #Roam the boat
                 walk walkDir
                 #are we by a hold?
@@ -1009,6 +1030,15 @@ while not dead
                         @setvar stopWalking 1
                         @setvar holdToLoot found
                     endif
+					if findtype '5188' ground 
+						dclicktype '5188'  
+						say "[embark"
+						wait 600
+						say "[embarkfollowers"
+						wait 600
+                        @setvar stopWalking 1
+						@setvar boardState 0
+					endif
                 endfor
             endwhile
             settimer "walkingTooMuch" 0
@@ -1025,6 +1055,19 @@ while not dead
     ###############                                                   ###############
     ###############    Start routines that do not require target      ###############
     ###############                                                   ###############   
+
+
+    
+    #Check if we are on NPC ship AGAIN
+    if insysmsg "You board the ship"
+        @setvar 'boardState' 1 
+        settimer "onBoard" 0
+        @setvar stopWalking 0
+		if sayLess = 0 
+			wait 500
+			say "***Lets Gooooo! (Lets Gooooo!) / If you want it you can get it let me know (let me know)**" 44
+		endif
+	endif
 
     #Sanity Embark Check every 20s
     if boardState = 0 and closeEnemy = 0
@@ -1079,12 +1122,16 @@ while not dead
         if findtype '5188' ground -1 -1 2
             dclicktype '5188'
             say "[embark"
-            wait 500
+            wait 600
+            say "[embarkfollowers"
+            wait 600
         endif
         if findtype '5188' ground 
             dclicktype '5188'  
             say "[embark"
-            wait 500
+            wait 600
+            say "[embarkfollowers"
+            wait 600
         endif
     endif
     
@@ -1300,7 +1347,19 @@ while not dead
         endif
     endif
     endif
+	
+	
     
+    #Check if we are on NPC ship A THIRD TIME
+    if insysmsg "You board the ship"
+        @setvar 'boardState' 1 
+        settimer "onBoard" 0
+        @setvar stopWalking 0
+		if sayLess = 0 
+			wait 500
+			say "***Lets Gooooo! (Lets Gooooo!) / If you want it you can get it let me know (let me know)**" 44
+		endif
+    endif
     ###############                                         ###############
     ###############    Start target search / embark routine ###############
     ###############                                         ###############   
@@ -1343,6 +1402,7 @@ while not dead
                     else
                         #Found a boss so we want to pretend we are boarded
                         if sayLess = 0 
+							wait 500
                             say "***BOSS THEME INTENSIFIES**" 44
                         endif
                         @setvar 'boardState' 1
@@ -1402,7 +1462,6 @@ while not dead
                     restock 2
                     wait 250
                     target holdToLoot
-                    pushlist lootedHolds holdToLoot
                     
                     #Wait on looting
                     while queued
@@ -1413,7 +1472,6 @@ while not dead
                     restock 2
                     wait 250
                     target holdToLoot
-                    pushlist lootedHolds holdToLoot
                     
                     #Wait on looting
                     while queued
@@ -1682,11 +1740,18 @@ while not dead
         
         #poison routine 
         if  skill "Poisoning" > 50 and mana >= 35 and diffhits <= 18
-            overhead "Poison Target!" 33
+            #overhead "Poison Target!" 33
             cast "Poison"
             wft 4500
             target 'lastserial'
             wait 400
+			while upgradePoison = 1 and insysmsg "upgraded to greater"
+				overhead "Got it"
+				cast "Poison"
+				wft 4500
+				target 'lastserial'
+				wait 400
+			endwhile
             if 'boardState' = 1 and timer "poisonStrikeTimer" > 35000
                 #try to poison strike
                 say "[poisonStrike"
@@ -1702,7 +1767,6 @@ while not dead
         
         #Flamestrike
         if skill 'Magery' > 80 and skill 'Archery' < 80 and diffhits <= 18 and 'boardState' = 1 and mana >= 61
-            # put an extra  here to fix formatting
             wait 400
             cast "Flamestrike"
             wft 3500
@@ -1721,7 +1785,13 @@ while not dead
             target 'lastserial'
             settimer "petAttack" 0
         endif
-        
+		
+		#Check for humanoid type ships and set new target faster
+		if 'discoLock' = 1
+			#Bump timer so we jump to a new target 
+			settimer newTargetCheck 5000
+		endif
+			
     #end target required routines
     endif
 endwhile   
