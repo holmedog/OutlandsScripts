@@ -27,7 +27,7 @@ foreach($line in Get-Content $dir\$file) {
 		$cord_array += $bag_var + "`n"
 		$output_string = $output_string  + "lift $dump_item_string 1`ndrop dropBag$bag_var -1 -1 0 `n"
 		
-		$output_string =  $output_string  + "`n"
+		$output_string =  $output_string  + "`nwait 600`n"
 	}
 }
 
@@ -39,8 +39,10 @@ $cord_array = $cord_array | sort
 
 	foreach ($coord in $cord_array)
 	{
-		Add-Content $outfile "overhead 'Select drop bag $coord' 23"
-		Add-Content $outfile "@setvar dropBag$coord"
+		Add-Content $outfile "if not varexist dropBag$coord"
+		Add-Content $outfile "    overhead 'Select drop bag $coord' 23"
+		Add-Content $outfile "    @setvar dropBag$coord"
+		Add-Content $outfile "endif"
 	}
 
 

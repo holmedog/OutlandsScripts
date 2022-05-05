@@ -2,9 +2,9 @@
 
 #Target Lock:
 #0=default behavior (Let the script try to be intelligent)
-#1=Area discord -- kill one thing at a time (Good for things that do not want to spread damage.  BAD, like SUPER BAD, for poison
+#1=Area discord -- kill one thing at a time (Good for things that do not want to spread damage.  
 #2=Single target discord -- switch target after every round of skill usages (SPECIAL NOTE: Bosses will switch target type to this on purpose so you kill NPC spawns with bot and target disco boss)
-@setvar targetLockType 0 
+@setvar targetLockType 2 
 
 #Summon Type Selector.  Having Necromancy skill will still summon necro version.  We will always use Summon Creature as 5th slot.  Still requires 80 SS or Necro to trigger
 #MAKE SURE you only select two here.  Selecting more will break stuff.  
@@ -31,6 +31,9 @@
 
 #Set this to 1 to attempt to keep the bot from repairing within the combat repair window (only repairs 60-120s after boarding an NPC ship)
 @setvar repairLockdown 0
+
+#Set this to 1 to slow down repairs by 30s on bosses so you aren't always repairing
+@setvar slowRepairsBosses 1
 
 #Set this to 1 if you want to keep up buffs for Reactive Armour and Magic Reflect
 @setvar defensiveBuffs 0
@@ -431,12 +434,12 @@ endif
 #do camping buff at least once regardless of buff status
 #camping buff
 if skill "Camping" > 50 
-	#cut some kindling off our boat...seriously
+    #cut some kindling off our boat...seriously
     if not findtype "kindling" backpack
         dclicktype 3922
-		waitfortarget 4500
-		target 'self'
-		wait 600
+        waitfortarget 4500
+        target 'self'
+        wait 600
     endif
     if not findtype "campfire" true
         dclicktype "kindling" backpack
@@ -530,10 +533,10 @@ while not dead
         @setvar 'boardState' 1 
         settimer "onBoard" 0
         @setvar stopWalking 0
-		if sayLess = 0 
-			wait 500
-			say "***Lets Gooooo! (Lets Gooooo!) / If you want it you can get it let me know (let me know)**" 44
-		endif
+        if sayLess = 0 
+            wait 500
+            say "***Lets Gooooo! (Lets Gooooo!) / If you want it you can get it let me know (let me know)**" 44
+        endif
     endif
     
     #disco routine if target lock is 1 or we are on a humanoid boat
@@ -1019,9 +1022,9 @@ while not dead
                 
         #start actual walking
         foreach walkDir in walking
-			#reset walk timer
-			settimer "walkingTooMuch" 0
-            while timer "walkingTooMuch" < 750 and stopWalking = 0 
+            #reset walk timer
+            settimer "walkingTooMuch" 0
+            while timer "walkingTooMuch" < 1250 and stopWalking = 0 
                 #Roam the boat
                 walk walkDir
                 #are we by a hold?
@@ -1030,15 +1033,15 @@ while not dead
                         @setvar stopWalking 1
                         @setvar holdToLoot found
                     endif
-					if findtype '5188' ground 
-						dclicktype '5188'  
-						say "[embark"
-						wait 600
-						say "[embarkfollowers"
-						wait 600
+                    if findtype '5188' ground 
+                        dclicktype '5188'  
+                        say "[embark"
+                        wait 600
+                        say "[embarkfollowers"
+                        wait 600
                         @setvar stopWalking 1
-						@setvar boardState 0
-					endif
+                        @setvar boardState 0
+                    endif
                 endfor
             endwhile
             settimer "walkingTooMuch" 0
@@ -1063,11 +1066,11 @@ while not dead
         @setvar 'boardState' 1 
         settimer "onBoard" 0
         @setvar stopWalking 0
-		if sayLess = 0 
-			wait 500
-			say "***Lets Gooooo! (Lets Gooooo!) / If you want it you can get it let me know (let me know)**" 44
-		endif
-	endif
+        if sayLess = 0 
+            wait 500
+            say "***Lets Gooooo! (Lets Gooooo!) / If you want it you can get it let me know (let me know)**" 44
+        endif
+    endif
 
     #Sanity Embark Check every 20s
     if boardState = 0 and closeEnemy = 0
@@ -1275,6 +1278,7 @@ while not dead
             endif    
         endif
     endif   
+	
     #Repair Routine - 
     if 'closeEnemy' = 0 or bossFight = 1
         if bossFight = 1
@@ -1282,7 +1286,7 @@ while not dead
             @setvar repairSailsOrder 2
             @setvar repairHullOrder 1
         endif
-        if timer "RepairHull" > 4000
+        if timer "RepairHull" > 34000
             @setvar startRepairs 0
             if repairLockdown = 0 or bossFight = 1
                 @setvar startRepairs 1          
@@ -1318,10 +1322,28 @@ while not dead
                         say '[RepairHull'
                     endif
                 endif
-                settimer "RepairHull" 0
+				if bossFight = 1 and slowRepairsBosses = 1 
+					settimer "RepairHull" 0
+				else 
+					settimer "RepairHull" 30000
+				endif
             endif
         endif
     endif    
+	
+	#Check if we started ar epair and sit around.  Also if it's PvP related pouch	
+    if insysmsg 'you cannot move!'
+        overhead 'Paralyzed!' 34
+        say [pouch
+    endif
+    
+	while findbuff 'Paralyze'		
+		if insysmsg 'you cannot move!'
+			overhead 'Paralyzed!' 34
+			say [pouch
+		endif
+		wait 100
+	endwhile
     
     #Put on your clothes
     if timer "dressTimer" > 10000
@@ -1347,18 +1369,18 @@ while not dead
         endif
     endif
     endif
-	
-	
+    
+    
     
     #Check if we are on NPC ship A THIRD TIME
     if insysmsg "You board the ship"
         @setvar 'boardState' 1 
         settimer "onBoard" 0
         @setvar stopWalking 0
-		if sayLess = 0 
-			wait 500
-			say "***Lets Gooooo! (Lets Gooooo!) / If you want it you can get it let me know (let me know)**" 44
-		endif
+        if sayLess = 0 
+            wait 500
+            say "***Lets Gooooo! (Lets Gooooo!) / If you want it you can get it let me know (let me know)**" 44
+        endif
     endif
     ###############                                         ###############
     ###############    Start target search / embark routine ###############
@@ -1402,7 +1424,7 @@ while not dead
                     else
                         #Found a boss so we want to pretend we are boarded
                         if sayLess = 0 
-							wait 500
+                            wait 500
                             say "***BOSS THEME INTENSIFIES**" 44
                         endif
                         @setvar 'boardState' 1
@@ -1745,13 +1767,13 @@ while not dead
             wft 4500
             target 'lastserial'
             wait 400
-			while upgradePoison = 1 and insysmsg "upgraded to greater"
-				overhead "Got it"
-				cast "Poison"
-				wft 4500
-				target 'lastserial'
-				wait 400
-			endwhile
+            while upgradePoison = 1 and insysmsg "upgraded to greater"
+                overhead "Got it"
+                cast "Poison"
+                wft 4500
+                target 'lastserial'
+                wait 400
+            endwhile
             if 'boardState' = 1 and timer "poisonStrikeTimer" > 35000
                 #try to poison strike
                 say "[poisonStrike"
@@ -1785,13 +1807,13 @@ while not dead
             target 'lastserial'
             settimer "petAttack" 0
         endif
-		
-		#Check for humanoid type ships and set new target faster
-		if 'discoLock' = 1
-			#Bump timer so we jump to a new target 
-			settimer newTargetCheck 5000
-		endif
-			
+        
+        #Check for humanoid type ships and set new target faster
+        if 'discoLock' = 1
+            #Bump timer so we jump to a new target 
+            settimer newTargetCheck 5000
+        endif
+            
     #end target required routines
     endif
 endwhile   
