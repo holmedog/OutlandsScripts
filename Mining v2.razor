@@ -330,13 +330,15 @@ while not dead
 						break
 					endif
 					if insysmsg 'You have worn out your tool!'
-						break
+						wait 600
+						dclicktype '3718'
+						wait 600
 					endif 
 					
-					//captcha check
+					#captcha check
 					if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'World save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
-						//pause and check again
-						wait 500
+						#pause and check again
+						wait 1500
 						if not insysmsg "skill gain" and not insysmsg 'world  is saving' and not insysmsg 'world will save' and not insysmsg 'World save complete' and not insysmsg 'You dig' and not insysmsg 'You loosen' and not insysmsg 'Distance to destination' and not insysmsg  'Now tracking'
 							while not insysmsg "Captcha"
 								overhead 'Captcha break or Done!' 34
