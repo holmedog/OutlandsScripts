@@ -27,7 +27,7 @@
 @setvar dynamicTiller 0
 
 #Set this to 1 if you want to throw self overboard if a ship repair kit is on the deck
-@setvar triggerOverboard 2
+@setvar triggerOverboard 0
 
 #Set this to 1 to attempt to keep the bot from repairing within the combat repair window (only repairs 60-120s after boarding an NPC ship)
 @setvar repairLockdown 0
@@ -1549,9 +1549,13 @@ while not dead
                             @setvar myShipHold found
                             pushlist walking  "Right, running"
                             pushlist walking  "Up, running"
+                            pushlist walking  "Right, running"
+                            pushlist walking  "Up, running"
                         elseif findtype 15973  ground shipHue as found 
                             #overhead "East Facing Boat"
                             @setvar myShipHold found
+                            pushlist walking  "Down, running"
+                            pushlist walking  "Right, running"
                             pushlist walking  "Down, running"
                             pushlist walking  "Right, running"
                         elseif findtype 16057  ground shipHue as found 
@@ -1559,9 +1563,13 @@ while not dead
                             @setvar myShipHold found
                             pushlist walking  "Down, running"
                             pushlist walking  "Left, running"
+                            pushlist walking  "Down, running"
+                            pushlist walking  "Left, running"
                         elseif findtype 16019  ground shipHue as found 
                             #overhead "West Facing Boat"
                             @setvar myShipHold found
+                            pushlist walking  "Up, running"
+                            pushlist walking  "Left, running"
                             pushlist walking  "Up, running"
                             pushlist walking  "Left, running"
                         endif
@@ -1573,7 +1581,7 @@ while not dead
                     @setvar dumpDynamicLoot 0
                     while dumpDynamicLoot = 0
                         foreach walkDir in walking
-                            while timer "walkingTooMuch" < 2500 and dumpDynamicLoot = 0
+                            while timer "walkingTooMuch" < 1250 and dumpDynamicLoot = 0
                                 #Roam the boat
                                 walk walkDir
                                 #are we by a hold?
