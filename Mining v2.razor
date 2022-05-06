@@ -184,31 +184,9 @@ while not dead
 		@setvar recallOnce 1
 		while insysmsg "Your concentration is disturbed" or insysmsg "book needs time" or recallOnce = 1                
 			@setvar recallOnce 0
-			if skill "Magery" > 40
-				while mana < 55
-					if timer "recallSpam" > 2000
-						overhead "Waiting on mana to be safe levels"                    
-						settimer "recallSpam" 0
-					endif
-					hotkey "Target random murderer" 
-					wait 100
-					if insysmsg 'No one matching that'  
-						#we are fine continue on
-						settimer "redCheck" 0
-					else
-						overhead "Red!  GTFO"       
-						break
-					endif                       
-					if timer "shroomy" >= 63000
-						dclicktype '29012'
-						overhead 'Mushroom Power!'
-						settimer "shroomy" 0
-					endif
-				endwhile
-			endif    
 			while not gumpexists 1551740969
 				dclick runeBookFarm
-				wait 200
+				wait 250
 			endwhile
 			clearsysmsg 
 			gumpresponse rune 1551740969
