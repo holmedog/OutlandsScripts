@@ -36,7 +36,11 @@
 @setvar slowRepairsBosses 1
 
 #Set this to 1 if you want to keep up buffs for Reactive Armour and Magic Reflect
-@setvar defensiveBuffs 0
+@setvar buffRA 1
+@setvar buffMR 0 
+
+#Set this to 1 to cast Mass Curse on first new enemy  
+@setvar massCurseToggle 1
 
 #Set this to 1 if you want to simulate always being boarded on NPC ship for testing reasons
 @setvar alwaysBoarded 0
@@ -954,11 +958,11 @@ while not dead
             wait 15000          
         endif
     endif    
-    if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Reactive Armor" and defensiveBuffs = 1
+    if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Reactive Armor" and buffRA = 1
         cast 'Reactive Armor'
         wait 750
     endif
-    if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Magic Reflection" and defensiveBuffs = 1
+    if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Magic Reflection" and buffMR = 1
         cast 'Magic Reflection'
         wait 750
     endif
@@ -998,54 +1002,48 @@ while not dead
             @setvar npcHold foundHold
             pushlist walking  "Right, running"
             pushlist walking  "Up, running"
-            pushlist walking  "Right, running"
-            pushlist walking  "Up, running"
         elseif findtype 15973 ground as foundHold
             @setvar npcHold foundHold
-            pushlist walking  "Down, running"
-            pushlist walking  "Right, running"
             pushlist walking  "Down, running"
             pushlist walking  "Right, running"
         elseif findtype 16057 ground as foundHold
             @setvar npcHold foundHold
             pushlist walking  "Down, running"
             pushlist walking  "Left, running"
-            pushlist walking  "Down, running"
-            pushlist walking  "Left, running"
         elseif findtype 16019 ground as foundHold
             @setvar npcHold foundHold
-            pushlist walking  "Up, running"
-            pushlist walking  "Left, running"
             pushlist walking  "Up, running"
             pushlist walking  "Left, running"
         endif
                 
         #start actual walking
-        foreach walkDir in walking
-            #reset walk timer
-            settimer "walkingTooMuch" 0
-            while timer "walkingTooMuch" < 1250 and stopWalking = 0 
-                #Roam the boat
-                walk walkDir
-                #are we by a hold?
-                foreach holdID in holdIDs
-                    if findtype holdID ground any any 2 as found
-                        @setvar stopWalking 1
-                        @setvar holdToLoot found
-                    endif
-                    if findtype '5188' ground 
-                        dclicktype '5188'  
-                        say "[embark"
-                        wait 600
-                        say "[embarkfollowers"
-                        wait 600
-                        @setvar stopWalking 1
-                        @setvar boardState 0
-                    endif
-                endfor
-            endwhile
-            settimer "walkingTooMuch" 0
-        endfor
+        while stopWalking = 0
+            foreach walkDir in walking
+                #reset walk timer
+                settimer "walkingTooMuch" 0
+                while timer "walkingTooMuch" < 1250 and stopWalking = 0 
+                    #Roam the boat
+                    walk walkDir
+                    #are we by a hold?
+                    foreach holdID in holdIDs
+                        if findtype holdID ground any any 2 as found
+                            @setvar stopWalking 1
+                            @setvar holdToLoot found
+                        endif
+                        if findtype '5188' ground 
+                            dclicktype '5188'  
+                            say "[embark"
+                            wait 600
+                            say "[embarkfollowers"
+                            wait 600
+                            @setvar stopWalking 1
+                            @setvar boardState 0
+                        endif
+                    endfor
+                endwhile
+                settimer "walkingTooMuch" 0
+            endfor
+        endwhile
         
         if stopWalking = 1 and sayLess = 0
             wait 500
@@ -1278,7 +1276,7 @@ while not dead
             endif    
         endif
     endif   
-	
+    
     #Repair Routine - 
     if 'closeEnemy' = 0 or bossFight = 1
         if bossFight = 1
@@ -1322,28 +1320,28 @@ while not dead
                         say '[RepairHull'
                     endif
                 endif
-				if bossFight = 1 and slowRepairsBosses = 1 
-					settimer "RepairHull" 0
-				else 
-					settimer "RepairHull" 30000
-				endif
+                if bossFight = 1 and slowRepairsBosses = 1 
+                    settimer "RepairHull" 0
+                else 
+                    settimer "RepairHull" 30000
+                endif
             endif
         endif
     endif    
-	
-	#Check if we started ar epair and sit around.  Also if it's PvP related pouch	
+    
+    #Check if we started ar epair and sit around.  Also if it's PvP related pouch   
     if insysmsg 'you cannot move!'
         overhead 'Paralyzed!' 34
         say [pouch
     endif
     
-	while findbuff 'Paralyze'		
-		if insysmsg 'you cannot move!'
-			overhead 'Paralyzed!' 34
-			say [pouch
-		endif
-		wait 100
-	endwhile
+    while findbuff 'Paralyze'       
+        if insysmsg 'you cannot move!'
+            overhead 'Paralyzed!' 34
+            say [pouch
+        endif
+        wait 100
+    endwhile
     
     #Put on your clothes
     if timer "dressTimer" > 10000
@@ -1646,6 +1644,7 @@ while not dead
                 @setvar targetLock targetLockType
                 @setvar discoLock targetLockType
                 @setvar stopWalking 0
+				@setvar firstSighting 0
             endif
         #end enemy search routine
         endif       
@@ -1821,6 +1820,20 @@ while not dead
             #Bump timer so we jump to a new target 
             settimer newTargetCheck 5000
         endif
+		
+		#Mass Curse
+        if skill 'Magery' > 70 and skill 'Archery' < 80 and diffhits <= 18 and 'boardState' = 0 and mana >= 61 and massCurseToggle = 1 and firstSighting = 0
+            wait 400
+			cast 'Mass Curse'
+            wft 3500
+            target 'lastserial'
+            wait 400
+            if sayLess = 0 
+                say "I curse ye to a watery grave!" 33
+            endif
+            wait 300
+			@setvar firstSighting 1
+        endif   
             
     #end target required routines
     endif

@@ -4,6 +4,9 @@ clearignore
 dclick 0x5B7C7BBD
 wait 600
 
+//repair
+dclick 0x61F237E9
+wait 600
 
 overhead "Starting Organizers"
 organizer 1
@@ -65,7 +68,7 @@ if findtype 'storage shelf' ground any any 2 as found
     wft 2500
     target self
     menu found 1                
-    gumpclose 3232825965        
+    gumpclose 3232825965 
     if skill "Magery" > 50
         while counttype 29012 backpack < 35
             cast "create food"
@@ -80,7 +83,8 @@ if findtype 'storage shelf' ground any any 2 as found
         endwhile
     endif
 endif        
-overhead "Done with shelf"
+overhead "Done with shelf"     
+gumpclose 3232825965   
 
 //dump all resources
 dclick 0x4004288C
@@ -166,6 +170,8 @@ while findtype 291 ground any any 2 as found
     endwhile
 
     ignore found
-endwhile   
+endwhile    
+
+gumpclose 3232825965   
 
 script 'Bag Dumper'
