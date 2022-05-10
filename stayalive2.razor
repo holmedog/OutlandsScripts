@@ -73,14 +73,14 @@ while not dead
     endif
 
  
-    if not findtype "Yellow Potion" backpack
+    if not findtype 3852 backpack
         overhead 'Out of heal potions!' 34
         wait 200
     endif
     
     //Heal drinker if below 45
     if hp < 45
-        if findtype "Yellow Potion" backpack
+        if findtype 3852 backpack
             if timer "healpot" >= 1000
                     overhead 'Drinking heal!'
                     potion "heal"

@@ -98,7 +98,7 @@ if 'lockDisco' = 0 and skill "discordance" > 50 and timer "bardLock" > 10000
     overhead "Disco Buff"
     skill "discordance" 
     wft 2500
-    targettype "backpack"
+    targettype 3701
     settimer "bardLock" 0
     setvar 'lockDisco' 1
 endif
@@ -106,7 +106,7 @@ if  'lockProv' = 0 and skill "provocation" > 50 and timer "bardLock" > 10000
     overhead "Provo Buff"
     skill "provocation" 
     wft 2500
-    targettype "backpack"
+    targettype 3701
     settimer "bardLock" 0
     setvar 'lockProv' 1
 endif
@@ -114,7 +114,7 @@ if 'lockPeace' = 0  and skill "Peacemaking" > 50 and timer "bardLock" > 10000
     overhead "Peace Buff"
     skill "peacemaking" 
     wft 2500
-    targettype "backpack"
+    targettype 3701
     settimer "bardLock" 0
     setvar 'lockPeace' 1
 endif
@@ -128,7 +128,7 @@ if skill "taste identification" > 50 and not findbuff "Herbal Poultice"
     overhead "tasteidentification Buff"
     skill "tasteid"
     wft 2500
-    targettype "backpack" backpack
+    targettype 3701 backpack
     wait 700
 endif
 if skill "camping" > 50 and not findbuff "Campfire Visit"

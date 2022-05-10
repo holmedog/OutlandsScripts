@@ -1,0 +1,9 @@
+clearignore
+overhead "Target a bag of MIBs" 33
+setvar! mibBag
+while findtype 5357 mibBag as foundMIB
+    getlabel foundMIB 'mibLabel'
+    wait 200
+    sysmsg  "MIB variable: ({{foundMIB}})"
+    ignore foundMIB
+endwhile

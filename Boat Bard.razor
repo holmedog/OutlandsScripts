@@ -17,8 +17,8 @@
 
 #Repair Priority Queue.  Set these as 1/2/3.  If you fail to put one for each of these it will break shit.  Just leave it alone if you do not care
 @setvar repairHullOrder 3
-@setvar repairGunsOrder 2
-@setvar repairSailsOrder 1
+@setvar repairGunsOrder 1
+@setvar repairSailsOrder 2
 
 #Dynamic Boss Repair - Switches to hull priority on bosses.  Set to 1 to turn on.  Have to restart script to reset after bosses
 @setvar dynamicBossRepair 1
@@ -36,7 +36,7 @@
 @setvar slowRepairsBosses 1
 
 #Set this to 1 if you want to keep up buffs for Reactive Armour and Magic Reflect
-@setvar buffRA 1
+@setvar buffRA 0
 @setvar buffMR 0 
 
 #Set this to 1 to cast Mass Curse on first new enemy  
@@ -55,7 +55,7 @@
 @setvar defuseBombs 1
 
 #Set this to 1 to have bot reload right after embarking
-@setvar reloadCannons 1
+@setvar reloadCannons 0
 
 #Set this to 1 if you want to upgrade greater poison casts
 @setvar upgradePoison 1
@@ -72,6 +72,9 @@ createlist shipHues
 clearlist shipHues
 pushlist shipHues 2933
 
+#Set this to 1 if you want to target your captain for stuff
+@setvar captainToggle 1
+
 
 ##################################################################################
 ##################################################################################
@@ -83,32 +86,12 @@ pushlist shipHues 2933
 ##################################################################################
 ##################################################################################
 
-#NPC Ship Hues
-createlist NPCshipHues
-clearlist NPCshipHues
-pushlist NPCshipHues 2076
-
-
 clearsysmsg 
 clearignore
 
 if 'sayMore' = 1
     say "YO HO MATEY AWAY!" 33
     wait 500
-endif
-
-unsetvar 'tillerDude'
-if dynamicTiller = 0
-    overhead "Target Tillerman"
-    @setvar tillerDude 
-else
-    #try to find tillerman
-    if findtype "tiller man" ground as found
-        overhead "Tillerman Set"
-        setvar 'tillerDude' 'found'
-        dclick 'tillerDude' 
-        wait 500
-    endif
 endif
 
 #Timers.  We used to do these on an if exists basis, but it fubard too much stuff if you leave client open forever
@@ -184,15 +167,56 @@ pushlist 'instrumentTypes' 3763
 #Create list of reagents
 createlist regTypes
 clearlist regTypes
-@pushlist 'regTypes' 'Blood Moss'
-@pushlist 'regTypes' 'Black Pearl%s%'
-@pushlist 'regTypes' 'Ginseng'
-@pushlist 'regTypes' 'Garlic'
-@pushlist 'regTypes' 'Sulfurous Ash'
-@pushlist 'regTypes' "Spider's Silk" 
-@pushlist 'regTypes' 'Nightshade' 
-@pushlist 'regTypes' 'Mandrake Root%s%' 
-# ' for formatting reasons
+@pushlist 'regTypes' 3963
+@pushlist 'regTypes' 3962
+@pushlist 'regTypes' 3973
+@pushlist 'regTypes' 3972
+@pushlist 'regTypes' 3980
+@pushlist 'regTypes' 3981
+@pushlist 'regTypes' 3976
+@pushlist 'regTypes' 3974
+
+#create list of food types since tray does not work any more
+createlist foodTypes 
+clearlist foodTypes
+@pushlist 'foodTypes' 28879
+@pushlist 'foodTypes' 28888
+@pushlist 'foodTypes' 28885
+@pushlist 'foodTypes' 29774
+@pushlist 'foodTypes' 28883
+@pushlist 'foodTypes' 28880
+@pushlist 'foodTypes' 29773
+@pushlist 'foodTypes' 28881
+
+#create list of tillermen
+createlist tillerMenList
+clearlist tillerMenList
+@pushlist 'tillerMenList' 15952
+@pushlist 'tillerMenList' 15955
+@pushlist 'tillerMenList' 15950
+@pushlist 'tillerMenList' 15947
+
+unsetvar 'tillerDude'
+if dynamicTiller = 0
+    overhead "Target Tillerman"
+    @setvar tillerDude 
+else
+    #try to find tillerman    
+	foreach tillerMenVar in tillerMenList
+		if findtype tillerMenVar ground as found
+			overhead "Tillerman Set"
+			setvar 'tillerDude' 'found'
+			dclick 'tillerDude'
+			wait 500
+		endif
+	endfor
+endif
+
+if captainToggle = 1
+	wait 500 
+    overhead "Target Captain"
+    @setvar captainDude 
+else
 
 #Hold IDs
 createlist holdIDs
@@ -202,6 +226,39 @@ pushlist holdIDs 16046
 pushlist holdIDs 15973
 pushlist holdIDs 16057
 
+
+#NPC Ship Hues
+createlist NPCshipHues
+clearlist NPCshipHues
+#druid
+pushlist NPCshipHues 2845
+#Vile
+pushlist NPCshipHues 2841
+#Ossurary 
+pushlist NPCshipHues 2840
+#pirate
+pushlist NPCshipHues 2269
+#merchant
+pushlist NPCshipHues 2766
+#ghost
+pushlist NPCshipHues 2955
+#orc reaver
+pushlist NPCshipHues 2141
+#raider
+pushlist NPCshipHues 2927
+#tradesman
+pushlist NPCshipHues 2347
+#Lizardman
+pushlist NPCshipHues 2363
+#explorer
+pushlist NPCshipHues 2845
+#fisherman
+pushlist NPCshipHues 2076
+#daemon
+pushlist NPCshipHues 2740
+#submerged
+pushlist NPCshipHues 2826
+
 #Set up walking list for dymanic loot
 createlist walking
 clearlist walking
@@ -209,25 +266,22 @@ clearlist walking
 #list for dump stuff
 createlist lootTypes
 clearlist lootTypes
-@pushlist 'lootTypes' 'muffins'
-@pushlist 'lootTypes' 'gold coin'
-@pushlist 'lootTypes' 'cooked fish'
-@pushlist 'lootTypes' 'Crab SOUTH'
-@pushlist 'lootTypes' 'Lobster SOUTH'
-@pushlist 'lootTypes' 'raw fish steak%s%'
-@pushlist 'lootTypes' 'Blood Moss'
-@pushlist 'lootTypes' 'Black Pearl%s%'
-@pushlist 'lootTypes' 'Ginseng'
-@pushlist 'lootTypes' 'Garlic'
-@pushlist 'lootTypes' 'Sulfurous Ash'
-@pushlist 'lootTypes' "Spider's Silk" 
-@pushlist 'lootTypes' 'Nightshade'
-@pushlist 'lootTypes' 'Mandrake Root%s%' //MR
-@pushlist 'lootTypes' 'cut%s% of raw ribs'
-@pushlist 'lootTypes' 'cut up leather'
-@pushlist 'lootTypes' 'clean bandage%s%'
-@pushlist 'lootTypes' 'arrow'
-@pushlist 'lootTypes' 'crossbow bolt'
+@pushlist 'lootTypes' 2539
+@pushlist 'lootTypes' 3821
+@pushlist 'lootTypes' 3963
+@pushlist 'lootTypes' 3962
+@pushlist 'lootTypes' 3973
+@pushlist 'lootTypes' 3972
+@pushlist 'lootTypes' 3980
+@pushlist 'lootTypes' 3981
+@pushlist 'lootTypes' 3976
+@pushlist 'lootTypes' 3974
+@pushlist 'lootTypes' 4225
+@pushlist 'lootTypes' 3705
+@pushlist 'lootTypes' 3854
+@pushlist 'lootTypes' 3617
+@pushlist 'lootTypes' 3903
+@pushlist 'lootTypes' 7163
 # ' for formatting reasons
 
 createlist ItemTypes
@@ -439,14 +493,14 @@ endif
 #camping buff
 if skill "Camping" > 50 
     #cut some kindling off our boat...seriously
-    if not findtype "kindling" backpack
+    if not findtype 3553 backpack
         dclicktype 3922
         waitfortarget 4500
         target 'self'
         wait 600
     endif
-    if not findtype "campfire" true
-        dclicktype "kindling" backpack
+    if not findtype 3555 true
+        dclicktype 3553 backpack
         wait 350
         while insysmsg "You fail to ignite"
             wait 3000    
@@ -473,12 +527,14 @@ while not dead
     #Dynamic Tillerman Check
     if dynamicTiller = 1
         if not varexist 'tillerDude'
-            if findtype "tiller man" ground as found
-                overhead "Tillerman Set"
-                setvar 'tillerDude' 'found'
-                dclick 'tillerDude'
-                wait 500
-            endif
+			foreach tillerMenVar in tillerMenList
+				if findtype tillerMenVar ground as found
+					overhead "Tillerman Set"
+					setvar 'tillerDude' 'found'
+					dclick 'tillerDude'
+					wait 500
+				endif
+			endfor
         endif
     endif
     #put in a pause so we dont spam 
@@ -740,16 +796,22 @@ while not dead
     
     #food buff routine
     if timer 'foodCheck' > 60000 and not findbuff 'food satisfaction'
-        if not findtype tray backpack
-            say  "I am out of food!"
-            wait 500
-            say  "I am out of food!"
-            wait 500
-            say  "I am out of food!"
-            wait 500
-        else
-            dclicktype tray backpack
-        endif
+		@setvar foundFood 0
+		foreach foodStuff in foodTypes
+			if findtype foodStuff as found
+				wait 600
+				dclick found
+				@setvar foundFood 1
+			endif
+		endfor
+		if foundFood = 0
+			wait 600
+			say "I appear to be out of food!"
+			wait 600
+			say "I appear to be out of food!"
+			wait 600
+			say "I appear to be out of food!"
+		endif
         settimer 'foodCheck' 0
     endif
     
@@ -778,13 +840,13 @@ while not dead
             #Check for single summons               
             if 'fireElem' = 1 
                 if skill "Necromancy" > 80
-                    if not findtype "a lich" ground any any 12 
+                    if not findtype 24 ground any any 12 
                         overhead "Casting one lich"
                         say "a fire elemental release"
                         cast 'Fire Elemental'
                     endif
                 else
-                    if not findtype "a fire elemental" ground any any 12 
+                    if not findtype 15 ground any any 12 
                         overhead "Casting plain fire elem"
                         cast 'Fire Elemental' 
                     endif
@@ -792,48 +854,48 @@ while not dead
             endif           
             if 'airElem' = 1 
                 if skill "Necromancy" > 80
-                    if not findtype "a skeletal fiend" ground any any 12 
+                    if not findtype 306 ground any any 12 
                         say "an air elemental release"
                         cast 'Air Elemental'
                     endif
                 else
-                    if not findtype "an air elemental"  ground any any 12 
+                    if not findtype 13 ground any any 12 
                         cast 'Air Elemental'
                     endif
                 endif
             endif       
             if 'earthElem' = 1 
                 if skill "Necromancy" > 80
-                    if not findtype "an ancient mummy" ground any any 12 
+                    if not findtype 158 ground any any 12 
                         say "an earth elemental release"
                         cast 'Earth Elemental'
                     endif
                 else
-                    if not findtype "an earth elemental"  ground any any 12 
+                    if not findtype 14  ground any any 12 
                         cast 'Earth Elemental'
                     endif
                 endif
             endif       
             if 'waterElem' = 1 
                 if skill "Necromancy" > 80
-                    if not findtype "a rag witch" ground any any 12 
+                    if not findtype 740 ground any any 12 
                         say "a water elemental release"
                         cast 'Water Elemental'
                     endif
                 else
-                    if not findtype "a water elemental"  ground any any 12 
+                    if not findtype 16  ground any any 12 
                         cast 'Water Elemental'
                     endif
                 endif
             endif           
             if 'waterElem' = 1 
                 if skill "Necromancy" > 80
-                    if not findtype "a vampire thrall" ground any any 12 
+                    if not findtype 722 ground any any 12 
                         say "a daemon release"
                         cast 'Summon Daemon'
                     endif
                 else
-                    if not findtype "a daemon"  ground any any 12 
+                    if not findtype 9  ground any any 12 
                         cast 'Summon Daemon'
                     endif
                 endif
@@ -865,7 +927,7 @@ while not dead
     endif
     #camping buff
     if skill "Camping" > 50 and not findbuff "Campfire Visit"
-        if not findtype "kindling" backpack
+        if not findtype 3553 backpack
             say "Need more kindling" 
             wait 355
             say "Need more kindling" 
@@ -874,8 +936,8 @@ while not dead
             wait 355
         endif
     
-        if not findtype "campfire" true
-            dclicktype "kindling" backpack
+        if not findtype 3555 true
+            dclicktype 3553 backpack
             wait 350
             while insysmsg "You fail to ignite"
                 wait 3000    
@@ -891,7 +953,7 @@ while not dead
     endif
     #spirit speak only if on own boat and corpses present.  Do not SS if we have necromancy as we have liches and this is wasted time
     if skill "Spirit Speak" > 50 and timer "bardLock" > 10000 and timer "spiritSpeakCheck" > 30000 and 'boardState' = 0 and  skill "Necromancy" < 50
-        if findtype 'corpse' ground any any 12 as found
+        if findtype 8198 ground any any 12 as found
             overhead "spirit speak"
             hotkey 'Spirit Speak'
             settimer "spiritSpeakCheck" 0
@@ -902,7 +964,7 @@ while not dead
         overhead "Disco Buff"
         skill "Discordance" 
         wft 2500
-        targettype "backpack"
+        targettype 3701
         settimer "buffDisco" 0
         settimer "bardLock" 0
     endif
@@ -916,7 +978,7 @@ while not dead
         overhead "Provo Buff"
         skill "Provocation" 
         wft 2500
-        targettype "backpack"
+        targettype 3701
         settimer "buffProvo" 0
         settimer "bardLock" 0
     endif
@@ -924,16 +986,18 @@ while not dead
         overhead "Peace Buff"
         skill "Peacemaking" 
         wft 2500
-        targettype "backpack"
+        targettype 3701
         settimer "buffPeace" 0
         settimer "bardLock" 0
     endif
+	
     #Arch Protection
     if boardState = 0 and mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Protection"
         cast 'Arch Protection'
         waitfortarget 2500
         target 'self'
     endif
+	
     #Bless
     if boardState = 0 and mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Strength" 
         overhead "Mage Buff"
@@ -944,20 +1008,15 @@ while not dead
         cast 'Bless'
         waitfortarget 2500
         target 'self'
-        wait 750
-        cast 'Bless'
-        waitfortarget 2500
-        target 'self'
-        wait 750
+		wait 750
+		if captainToggle = 1	
+			cast 'Bless'
+			waitfortarget 2500
+			target 'self'
+			wait 750
+		endif		
     endif
-    #I do not know why you would want to do this
-    if findtype 3976 ground
-        if triggerOverboard != 2
-            @setvar defuseBombs 0
-            say "[reload"
-            wait 15000          
-        endif
-    endif    
+	
     if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Reactive Armor" and buffRA = 1
         cast 'Reactive Armor'
         wait 750
@@ -971,7 +1030,7 @@ while not dead
         overhead "tasteidentification Buff"
         skill "tasteid"
         wft 2500
-        targettype "backpack" backpack
+        targettype 3701 backpack
         settimer "buffTaste" 0
         settimer "bardLock" 5000
     endif
@@ -998,6 +1057,8 @@ while not dead
             endfor
         endfor
         
+        #Clear walklist
+        clearlist walking        
         if findtype 16046 ground as foundHold
             @setvar npcHold foundHold
             pushlist walking  "Right, running"
@@ -1007,6 +1068,7 @@ while not dead
             pushlist walking  "Down, running"
             pushlist walking  "Right, running"
         elseif findtype 16057 ground as foundHold
+            #south
             @setvar npcHold foundHold
             pushlist walking  "Down, running"
             pushlist walking  "Left, running"
@@ -1015,13 +1077,85 @@ while not dead
             pushlist walking  "Up, running"
             pushlist walking  "Left, running"
         endif
+		
+
+		#druid
+		if hue npcHold =  2845
+			wait 600
+			say "druid BOAT!"
+		endif
+		#Vile
+		if hue npcHold =  2841
+			wait 600
+			say "vile BOAT!"
+		endif
+		#ossuary 
+		if hue npcHold =  2840
+			wait 600
+			say "ossuary BOAT!"
+		endif
+		#pirate
+		if hue npcHold =  2269
+			wait 600
+			say "pirate BOAT!"
+		endif
+		#merchant
+		if hue npcHold =  2766
+			wait 600
+			say "merchant BOAT!"
+		endif
+		#ghost
+		if hue npcHold =  2955
+			wait 600
+			say "ghost BOAT!"
+		endif
+		#orc reaver
+		if hue npcHold =  2141
+			wait 600
+			say "reaver BOAT!"
+		endif
+		#raider
+		if hue npcHold =  2927
+			wait 600
+			say "raider BOAT!"
+		endif
+		#tradesman
+		if hue npcHold =  2347
+			wait 600
+			say "tradesman BOAT!"
+		endif
+		#Lizardman
+		if hue npcHold =  2363
+			wait 600
+			say "Lizardman BOAT!"
+		endif
+		#explorer
+		if hue npcHold =  2845
+			wait 600
+			say "explorer BOAT!"
+		endif
+		#fisherman
+		if hue npcHold =  2076
+			wait 600
+			say "fisherman BOAT!"
+		endif
+		#daemon
+		if hue npcHold =  2740
+			wait 600
+			say "daemon BOAT!"
+		endif
+		#submerged
+		if hue npcHold =  2826
+			wait 600
+			say "submerged BOAT!"
+		endif
                 
         #start actual walking
         while stopWalking = 0
             foreach walkDir in walking
                 #reset walk timer
                 settimer "walkingTooMuch" 0
-                while timer "walkingTooMuch" < 1250 and stopWalking = 0 
+                while timer "walkingTooMuch" < 2500 and stopWalking = 0 
                     #Roam the boat
                     walk walkDir
                     #are we by a hold?
@@ -1030,7 +1164,7 @@ while not dead
                             @setvar stopWalking 1
                             @setvar holdToLoot found
                         endif
-                        if findtype '5188' ground 
+                        if findtype 5188 ground 
                             dclicktype '5188'  
                             say "[embark"
                             wait 600
@@ -1076,14 +1210,18 @@ while not dead
             hotkey 'Cancel Current Target'
             dclick tillerDude
             wait 200
-            if insysmsg "were not found"
+            if insysmsg "were not found"	                
+				#try to find tillerman    
+				foreach tillerMenVar in tillerMenList
+					if findtype tillerMenVar ground as found
+						overhead "Tillerman Set"
+						setvar 'tillerDude' 'found'
+						dclick 'tillerDude'
+						wait 500
+					endif
+				endfor
+				wait 400
                 say "[embark"                   
-                if findtype "tiller man" ground as found
-                    overhead "Tillerman Set"
-                    setvar 'tillerDude' 'found'
-                    dclick 'tillerDude'
-                    wait 500
-                endif
             endif
             gumpresponse 21 4216593270
             wait 200
@@ -1258,7 +1396,7 @@ while not dead
     if skill "Necromancy" > 80 
         #painspike
         if 'boardState' = 1 and timer "painSpkeTimer" > 35000
-            if findtype 'corpse' ground any any 10 as found
+            if findtype 8198 ground any any 10 as found
                 say '[painspike'
                 wft 500
                 target found
@@ -1267,7 +1405,7 @@ while not dead
             endif  
         #Vamp 
         elseif 'boardState' = 0  and timer "vampTimer" > 35000
-            if findtype 'corpse' ground any any 10 as found
+            if findtype 8198 ground any any 10 as found
                 say '[vampiricembrace' 
                 wft 500
                 target found
@@ -1644,7 +1782,7 @@ while not dead
                 @setvar targetLock targetLockType
                 @setvar discoLock targetLockType
                 @setvar stopWalking 0
-				@setvar firstSighting 0
+                @setvar firstSighting 0
             endif
         #end enemy search routine
         endif       
@@ -1820,11 +1958,11 @@ while not dead
             #Bump timer so we jump to a new target 
             settimer newTargetCheck 5000
         endif
-		
-		#Mass Curse
+        
+        #Mass Curse
         if skill 'Magery' > 70 and skill 'Archery' < 80 and diffhits <= 18 and 'boardState' = 0 and mana >= 61 and massCurseToggle = 1 and firstSighting = 0
             wait 400
-			cast 'Mass Curse'
+            cast 'Mass Curse'
             wft 3500
             target 'lastserial'
             wait 400
@@ -1832,7 +1970,7 @@ while not dead
                 say "I curse ye to a watery grave!" 33
             endif
             wait 300
-			@setvar firstSighting 1
+            @setvar firstSighting 1
         endif   
             
     #end target required routines
