@@ -32,7 +32,7 @@
 #Set this to 1 to attempt to keep the bot from repairing within the combat repair window (only repairs 60-120s after boarding an NPC ship)
 @setvar repairLockdown 0
 
-#Set this to 1 to slow down repairs by 30s on bosses so you aren't always repairing
+#Set this to 1 to slow down repairs by 30s on bosses so you are not always repairing
 @setvar slowRepairsBosses 1
 
 #Set this to 1 if you want to keep up buffs for Reactive Armour and Magic Reflect
@@ -202,21 +202,21 @@ if dynamicTiller = 0
     @setvar tillerDude 
 else
     #try to find tillerman    
-	foreach tillerMenVar in tillerMenList
-		if findtype tillerMenVar ground as found
-			overhead "Tillerman Set"
-			setvar 'tillerDude' 'found'
-			dclick 'tillerDude'
-			wait 500
-		endif
-	endfor
+    foreach tillerMenVar in tillerMenList
+        if findtype tillerMenVar ground as found
+            overhead "Tillerman Set"
+            setvar 'tillerDude' 'found'
+            dclick 'tillerDude'
+            wait 500
+        endif
+    endfor
 endif
 
 if captainToggle = 1
-	wait 500 
+    wait 500 
     overhead "Target Captain"
     @setvar captainDude 
-else
+endif
 
 #Hold IDs
 createlist holdIDs
@@ -504,7 +504,7 @@ if skill "Camping" > 50
         wait 350
         while insysmsg "You fail to ignite"
             wait 3000    
-            dclicktype "kindling" backpack
+            dclicktype 3553 backpack
             wait 350
         endwhile
     endif
@@ -527,14 +527,14 @@ while not dead
     #Dynamic Tillerman Check
     if dynamicTiller = 1
         if not varexist 'tillerDude'
-			foreach tillerMenVar in tillerMenList
-				if findtype tillerMenVar ground as found
-					overhead "Tillerman Set"
-					setvar 'tillerDude' 'found'
-					dclick 'tillerDude'
-					wait 500
-				endif
-			endfor
+            foreach tillerMenVar in tillerMenList
+                if findtype tillerMenVar ground as found
+                    overhead "Tillerman Set"
+                    setvar 'tillerDude' 'found'
+                    dclick 'tillerDude'
+                    wait 500
+                endif
+            endfor
         endif
     endif
     #put in a pause so we dont spam 
@@ -796,22 +796,22 @@ while not dead
     
     #food buff routine
     if timer 'foodCheck' > 60000 and not findbuff 'food satisfaction'
-		@setvar foundFood 0
-		foreach foodStuff in foodTypes
-			if findtype foodStuff as found
-				wait 600
-				dclick found
-				@setvar foundFood 1
-			endif
-		endfor
-		if foundFood = 0
-			wait 600
-			say "I appear to be out of food!"
-			wait 600
-			say "I appear to be out of food!"
-			wait 600
-			say "I appear to be out of food!"
-		endif
+        @setvar foundFood 0
+        foreach foodStuff in foodTypes
+            if findtype foodStuff as found
+                wait 600
+                dclick found
+                @setvar foundFood 1
+            endif
+        endfor
+        if foundFood = 0
+            wait 600
+            say "I appear to be out of food!"
+            wait 600
+            say "I appear to be out of food!"
+            wait 600
+            say "I appear to be out of food!"
+        endif
         settimer 'foodCheck' 0
     endif
     
@@ -960,46 +960,44 @@ while not dead
             settimer "bardLock" 8000
         endif
     endif
-    if skill "Discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 300000
+    if skill "Discordance" >= 20 and timer "bardLock" > 10000 and findbuff "Song of Discordance" < 30
         overhead "Disco Buff"
         skill "Discordance" 
         wft 2500
         targettype 3701
-        settimer "buffDisco" 0
         settimer "bardLock" 0
     endif
-    if skill "Begging" > 50  and timer "bardLock" > 10000 and timer "buffBeg" > 60000
+    if skill "Begging" >= 20  and timer "bardLock" > 10000 and timer "buffBeg" > 120000
         overhead "Begging Buff"
         skill "Begging" 
         settimer "buffBeg" 0
         settimer "bardLock" 5000
     endif
-    if skill "Provocation" > 50 and timer "bardLock" > 11000 and timer "buffProvo" > 300000
+    if skill "Provocation" >= 20 and timer "bardLock" > 11000 and findbuff "Song of Provocation" < 30
         overhead "Provo Buff"
         skill "Provocation" 
         wft 2500
         targettype 3701
-        settimer "buffProvo" 0
         settimer "bardLock" 0
     endif
-    if skill "Peacemaking" >= 20 and timer "bardLock" > 10000 and timer "buffPeace" > 300000
+    if skill "Peacemaking" >= 20 and timer "bardLock" > 10000  and findbuff "Song of Peacemaking" < 30
         overhead "Peace Buff"
         skill "Peacemaking" 
         wft 2500
         targettype 3701
-        settimer "buffPeace" 0
         settimer "bardLock" 0
     endif
-	
+    
     #Arch Protection
-    if boardState = 0 and mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Protection"
+    if boardState = 0 and mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and findbuff "Protection" < 20
         cast 'Arch Protection'
         waitfortarget 2500
         target 'self'
     endif
-	
+    
     #Bless
-    if boardState = 0 and mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Strength" 
+    if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and findbuff "Strength" < 20
+		wait 500
         overhead "Mage Buff"
         cast 'Bless'
         waitfortarget 2500
@@ -1008,16 +1006,16 @@ while not dead
         cast 'Bless'
         waitfortarget 2500
         target 'self'
-		wait 750
-		if captainToggle = 1	
-			cast 'Bless'
-			waitfortarget 2500
-			target 'self'
-			wait 750
-		endif		
+        wait 750
+        if captainToggle = 1    
+            cast 'Bless'
+            waitfortarget 2500
+            target 'self'
+            wait 750
+        endif       
     endif
-	
-    if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Reactive Armor" and buffRA = 1
+    
+    if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and findbuff "Reactive Armor" < 20 and buffRA = 1
         cast 'Reactive Armor'
         wait 750
     endif
@@ -1026,12 +1024,11 @@ while not dead
         wait 750
     endif
 
-    if skill "Taste Identification" > 50 and timer "bardLock" > 10000 and timer "buffTaste" > 60000
+    if skill "Taste Identification" > 50 and timer "bardLock" > 10000 and findbuff "Herbal Poultice"  < 20
         overhead "tasteidentification Buff"
         skill "tasteid"
         wft 2500
         targettype 3701 backpack
-        settimer "buffTaste" 0
         settimer "bardLock" 5000
     endif
     
@@ -1077,78 +1074,78 @@ while not dead
             pushlist walking  "Up, running"
             pushlist walking  "Left, running"
         endif
-		
+        
 
-		#druid
-		if hue npcHold =  2845
-			wait 600
-			say "druid BOAT!"
-		endif
-		#Vile
-		if hue npcHold =  2841
-			wait 600
-			say "vile BOAT!"
-		endif
-		#ossuary 
-		if hue npcHold =  2840
-			wait 600
-			say "ossuary BOAT!"
-		endif
-		#pirate
-		if hue npcHold =  2269
-			wait 600
-			say "pirate BOAT!"
-		endif
-		#merchant
-		if hue npcHold =  2766
-			wait 600
-			say "merchant BOAT!"
-		endif
-		#ghost
-		if hue npcHold =  2955
-			wait 600
-			say "ghost BOAT!"
-		endif
-		#orc reaver
-		if hue npcHold =  2141
-			wait 600
-			say "reaver BOAT!"
-		endif
-		#raider
-		if hue npcHold =  2927
-			wait 600
-			say "raider BOAT!"
-		endif
-		#tradesman
-		if hue npcHold =  2347
-			wait 600
-			say "tradesman BOAT!"
-		endif
-		#Lizardman
-		if hue npcHold =  2363
-			wait 600
-			say "Lizardman BOAT!"
-		endif
-		#explorer
-		if hue npcHold =  2845
-			wait 600
-			say "explorer BOAT!"
-		endif
-		#fisherman
-		if hue npcHold =  2076
-			wait 600
-			say "fisherman BOAT!"
-		endif
-		#daemon
-		if hue npcHold =  2740
-			wait 600
-			say "daemon BOAT!"
-		endif
-		#submerged
-		if hue npcHold =  2826
-			wait 600
-			say "submerged BOAT!"
-		endif
+        #druid
+        if hue npcHold =  2845
+            wait 600
+            say "druid BOAT!"
+        endif
+        #Vile
+        if hue npcHold =  2841
+            wait 600
+            say "vile BOAT!"
+        endif
+        #ossuary 
+        if hue npcHold =  2840
+            wait 600
+            say "ossuary BOAT!"
+        endif
+        #pirate
+        if hue npcHold =  2269
+            wait 600
+            say "pirate BOAT!"
+        endif
+        #merchant
+        if hue npcHold =  2766
+            wait 600
+            say "merchant BOAT!"
+        endif
+        #ghost
+        if hue npcHold =  2955
+            wait 600
+            say "ghost BOAT!"
+        endif
+        #orc reaver
+        if hue npcHold =  2141
+            wait 600
+            say "reaver BOAT!"
+        endif
+        #raider
+        if hue npcHold =  2927
+            wait 600
+            say "raider BOAT!"
+        endif
+        #tradesman
+        if hue npcHold =  2347
+            wait 600
+            say "tradesman BOAT!"
+        endif
+        #Lizardman
+        if hue npcHold =  2363
+            wait 600
+            say "Lizardman BOAT!"
+        endif
+        #explorer
+        if hue npcHold =  2845
+            wait 600
+            say "explorer BOAT!"
+        endif
+        #fisherman
+        if hue npcHold =  2076
+            wait 600
+            say "fisherman BOAT!"
+        endif
+        #daemon
+        if hue npcHold =  2740
+            wait 600
+            say "daemon BOAT!"
+        endif
+        #submerged
+        if hue npcHold =  2826
+            wait 600
+            say "submerged BOAT!"
+        endif
                 
         #start actual walking
         while stopWalking = 0
@@ -1210,17 +1207,17 @@ while not dead
             hotkey 'Cancel Current Target'
             dclick tillerDude
             wait 200
-            if insysmsg "were not found"	                
-				#try to find tillerman    
-				foreach tillerMenVar in tillerMenList
-					if findtype tillerMenVar ground as found
-						overhead "Tillerman Set"
-						setvar 'tillerDude' 'found'
-						dclick 'tillerDude'
-						wait 500
-					endif
-				endfor
-				wait 400
+            if insysmsg "were not found"                    
+                #try to find tillerman    
+                foreach tillerMenVar in tillerMenList
+                    if findtype tillerMenVar ground as found
+                        overhead "Tillerman Set"
+                        setvar 'tillerDude' 'found'
+                        dclick 'tillerDude'
+                        wait 500
+                    endif
+                endfor
+                wait 400
                 say "[embark"                   
             endif
             gumpresponse 21 4216593270

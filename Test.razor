@@ -32,7 +32,7 @@
 #Set this to 1 to attempt to keep the bot from repairing within the combat repair window (only repairs 60-120s after boarding an NPC ship)
 @setvar repairLockdown 0
 
-#Set this to 1 to slow down repairs by 30s on bosses so you aren't always repairing
+#Set this to 1 to slow down repairs by 30s on bosses so you arent always repairing
 @setvar slowRepairsBosses 1
 
 #Set this to 1 if you want to keep up buffs for Reactive Armour and Magic Reflect
@@ -62,7 +62,7 @@
 
 #Set this if you want to have bot recall on dock.  Must have a book in pack named Home and first rune be the house to recall to if not magery.  If magery make home the default rune
 #IF YOU TURN THIS ON YOU MUST GO TO THE SECTION NAMED "WALK THIS WAY" AND SET UP DIRECTIONS INTO YOUR HOUSE FROM RECALL LOCATION
-@setvar goHomeBotYouAreDrunk 1
+@setvar goHomeBotYouAreDrunk 0
 
 #Set this to 1 if you want the bot to try to loot holds using RESTOCK-2 restock agent.  Update the ship hue list below if you are using this. 
 @setvar stealTheBooty 1
@@ -71,6 +71,9 @@
 createlist shipHues
 clearlist shipHues
 pushlist shipHues 2933
+
+#Set this to 1 if you want to target your captain for stuff
+@setvar captainToggle 1
 
 
 ##################################################################################
@@ -209,6 +212,12 @@ else
     endfor
 endif
 
+if captainToggle = 1
+    wait 500 
+    overhead "Target Captain"
+    @setvar captainDude 
+endif
+
 #Hold IDs
 createlist holdIDs
 clearlist holdIDs
@@ -257,25 +266,22 @@ clearlist walking
 #list for dump stuff
 createlist lootTypes
 clearlist lootTypes
-@pushlist 'lootTypes' 'muffins'
-@pushlist 'lootTypes' 'gold coin'
-@pushlist 'lootTypes' 'cooked fish'
-@pushlist 'lootTypes' 'Crab SOUTH'
-@pushlist 'lootTypes' 'Lobster SOUTH'
-@pushlist 'lootTypes' 'raw fish steak%s%'
-@pushlist 'lootTypes' 'Blood Moss'
-@pushlist 'lootTypes' 'Black Pearl%s%'
-@pushlist 'lootTypes' 'Ginseng'
-@pushlist 'lootTypes' 'Garlic'
-@pushlist 'lootTypes' 'Sulfurous Ash'
-@pushlist 'lootTypes' "Spider's Silk" 
-@pushlist 'lootTypes' 'Nightshade'
-@pushlist 'lootTypes' 'Mandrake Root%s%' //MR
-@pushlist 'lootTypes' 'cut%s% of raw ribs'
-@pushlist 'lootTypes' 'cut up leather'
-@pushlist 'lootTypes' 'clean bandage%s%'
-@pushlist 'lootTypes' 'arrow'
-@pushlist 'lootTypes' 'crossbow bolt'
+@pushlist 'lootTypes' 2539
+@pushlist 'lootTypes' 3821
+@pushlist 'lootTypes' 3963
+@pushlist 'lootTypes' 3962
+@pushlist 'lootTypes' 3973
+@pushlist 'lootTypes' 3972
+@pushlist 'lootTypes' 3980
+@pushlist 'lootTypes' 3981
+@pushlist 'lootTypes' 3976
+@pushlist 'lootTypes' 3974
+@pushlist 'lootTypes' 4225
+@pushlist 'lootTypes' 3705
+@pushlist 'lootTypes' 3854
+@pushlist 'lootTypes' 3617
+@pushlist 'lootTypes' 3903
+@pushlist 'lootTypes' 7163
 # ' for formatting reasons
 
 createlist ItemTypes
@@ -498,7 +504,7 @@ if skill "Camping" > 50
         wait 350
         while insysmsg "You fail to ignite"
             wait 3000    
-            dclicktype "kindling" backpack
+            dclicktype 3553 backpack
             wait 350
         endwhile
     endif
@@ -954,44 +960,43 @@ while not dead
             settimer "bardLock" 8000
         endif
     endif
-    if skill "Discordance" > 50 and timer "bardLock" > 10000 and timer "buffDisco" > 300000
+    if skill "Discordance" >= 20 and timer "bardLock" > 10000 and findbuff "Song of Discordance" < 30
         overhead "Disco Buff"
         skill "Discordance" 
         wft 2500
         targettype 3701
-        settimer "buffDisco" 0
         settimer "bardLock" 0
     endif
-    if skill "Begging" > 50  and timer "bardLock" > 10000 and timer "buffBeg" > 60000
+    if skill "Begging" >= 20  and timer "bardLock" > 10000 and timer "buffBeg" > 120000
         overhead "Begging Buff"
         skill "Begging" 
         settimer "buffBeg" 0
         settimer "bardLock" 5000
     endif
-    if skill "Provocation" > 50 and timer "bardLock" > 11000 and timer "buffProvo" > 300000
+    if skill "Provocation" >= 20 and timer "bardLock" > 11000 and findbuff "Song of Provocation" < 30
         overhead "Provo Buff"
         skill "Provocation" 
         wft 2500
         targettype 3701
-        settimer "buffProvo" 0
         settimer "bardLock" 0
     endif
-    if skill "Peacemaking" >= 20 and timer "bardLock" > 10000 and timer "buffPeace" > 300000
+    if skill "Peacemaking" >= 20 and timer "bardLock" > 10000  and findbuff "Song of Peacemaking" < 30
         overhead "Peace Buff"
         skill "Peacemaking" 
         wft 2500
         targettype 3701
-        settimer "buffPeace" 0
         settimer "bardLock" 0
     endif
+    
     #Arch Protection
-    if boardState = 0 and mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Protection"
+    if boardState = 0 and mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and findbuff "Protection" < 20
         cast 'Arch Protection'
         waitfortarget 2500
         target 'self'
     endif
+    
     #Bless
-    if boardState = 0 and mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Strength" 
+    if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and findbuff "Strength" < 20
         overhead "Mage Buff"
         cast 'Bless'
         waitfortarget 2500
@@ -1001,20 +1006,15 @@ while not dead
         waitfortarget 2500
         target 'self'
         wait 750
-        cast 'Bless'
-        waitfortarget 2500
-        target 'self'
-        wait 750
+        if captainToggle = 1    
+            cast 'Bless'
+            waitfortarget 2500
+            target 'self'
+            wait 750
+        endif       
     endif
-    #I do not know why you would want to do this
-    if findtype 3976 ground
-        if triggerOverboard != 2
-            @setvar defuseBombs 0
-            say "[reload"
-            wait 15000          
-        endif
-    endif    
-    if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and not findbuff "Reactive Armor" and buffRA = 1
+    
+    if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and findbuff "Reactive Armor" < 20 and buffRA = 1
         cast 'Reactive Armor'
         wait 750
     endif
@@ -1023,12 +1023,11 @@ while not dead
         wait 750
     endif
 
-    if skill "Taste Identification" > 50 and timer "bardLock" > 10000 and timer "buffTaste" > 60000
+    if skill "Taste Identification" > 50 and timer "bardLock" > 10000 and findbuff "Herbal Poultice"  < 20
         overhead "tasteidentification Buff"
         skill "tasteid"
         wft 2500
         targettype 3701 backpack
-        settimer "buffTaste" 0
         settimer "bardLock" 5000
     endif
     
