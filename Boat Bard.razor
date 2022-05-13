@@ -177,16 +177,16 @@ clearlist regTypes
 @pushlist 'regTypes' 3974
 
 #create list of food types since tray does not work any more
-createlist foodTypes 
-clearlist foodTypes
-@pushlist 'foodTypes' 28879
-@pushlist 'foodTypes' 28888
-@pushlist 'foodTypes' 28885
-@pushlist 'foodTypes' 29774
-@pushlist 'foodTypes' 28883
-@pushlist 'foodTypes' 28880
-@pushlist 'foodTypes' 29773
-@pushlist 'foodTypes' 28881
+#createlist foodTypes 
+#clearlist foodTypes
+#@pushlist 'foodTypes' 28879
+#@pushlist 'foodTypes' 28888
+#@pushlist 'foodTypes' 28885
+#@pushlist 'foodTypes' 29774
+#@pushlist 'foodTypes' 28883
+#@pushlist 'foodTypes' 28880
+#@pushlist 'foodTypes' 29773
+#@pushlist 'foodTypes' 28881
 
 #create list of tillermen
 createlist tillerMenList
@@ -796,15 +796,10 @@ while not dead
     
     #food buff routine
     if timer 'foodCheck' > 60000 and not findbuff 'food satisfaction'
-        @setvar foundFood 0
-        foreach foodStuff in foodTypes
-            if findtype foodStuff as found
-                wait 600
-                dclick found
-                @setvar foundFood 1
-            endif
-        endfor
-        if foundFood = 0
+        if findtype 'tray' self as found
+            wait 600
+            dclick found
+        else
             wait 600
             say "I appear to be out of food!"
             wait 600
@@ -997,11 +992,11 @@ while not dead
     
     #Bless
     if mana > 50 and skill "Magery" > 50 and timer "bardLock" > 10000 and findbuff "Strength" < 20
-		wait 500
+        wait 500
         overhead "Mage Buff"
         cast 'Bless'
         waitfortarget 2500
-        target 'self'
+        target 'self' 
         wait 750
         cast 'Bless'
         waitfortarget 2500

@@ -1,8 +1,40 @@
-while findtype 3705 backpack 0 as found
-    cast 'Magic Trap'
-    waitfortarget 2500
-    target found
-    ignore found
-    wait 500
-endwhile   
-
+if diffmana > 45 and findtype mushroom backpack as shroom
+    dclick shroom
+endif
+if skill necro > 88.9
+  if hits < 20
+    potion heal
+  endif
+  say [wither
+endif
+if findtype 'storage shelf' ground any any 2 as myShelf
+    menu myShelf 1
+endif
+wait 200
+while mana < 10
+    if findtype 'mushroom' backpack as shroom
+        dclick shroom
+        wait 600
+    endif
+    while mana < maxmana
+        skill meditation
+        wait 1000
+    endwhile
+endwhile
+hotkey 'cancel current target'
+while not targetexists 
+    cast 'magic trap'
+    wait 200
+endwhile
+wft 200
+hotkey 'target self'
+wait 200
+while not targetexists
+  if findtype 'storage shelf' ground any any 2 as myShelf
+    menu myShelf 0
+  endif
+  wait 200
+endwhile
+wft 200
+hotkey 'target self'
+loop
