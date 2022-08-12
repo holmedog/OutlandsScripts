@@ -1,28 +1,4 @@
-#create list of tillermen
-createlist tillerMenList
-clearlist tillerMenList
-@pushlist 'tillerMenList' 15952
-@pushlist 'tillerMenList' 15955
-@pushlist 'tillerMenList' 15950
-@pushlist 'tillerMenList' 15947
-@pushlist 'tillerMenList' 14421
-
-#try to find tillerman    
-foreach tillerMenVar in tillerMenList
-    if findtype tillerMenVar ground as found
-        wait 500
-        dclick 'found'
-        ignore  found
-    endif
-endfor
-
-wait 200
-if ingump "Medium" 3750376313
-    overhead "Medium Ship"
-elseif ingump "Galleon" 3750376313
-    overhead "Galleon Ship"
-elseif ingump "Carrack" 3750376313
-    overhead "Carrack Ship"
-endif
-
-clearignore 
+say '[sacredjourney'
+waitforgump 
+gumpresponse 2 1482653814
+wait 31000

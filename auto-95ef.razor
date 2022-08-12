@@ -1,0 +1,16 @@
+overhead "Select carpet bag"
+setvar! carpetBag
+clearignore 
+
+while findtype "carpet" carpetBag as found
+    while findtype 43172 carpetBag as foundCarpet
+        ignore foundCarpet
+    endwhile
+    dclick found
+    wait 100
+    while findtype 43172 carpetBag as foundCarpet
+        ignore foundCarpet
+    endwhile
+endwhile
+
+overhead "Done"
