@@ -1,13 +1,13 @@
 gumpclose 2890020940
-wait 250
 gumpclose 2890020940
-wait 250
 dclicktype 5365
 waitfortarget 1200
 target 'self'
-wait 350 
+waitforgump 2890020940
 gumpresponse 4 2890020940
-wait 350 
+waitforgump 2890020940
+overhead "spyglass"
+sysmsg "spyglass"
 @setvar blueFound 0
 if ingump "a small ship" 2890020940 or  ingump "a small dragon ship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragon ship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragon ship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
         overhead "Player BOAT" 43
@@ -30,5 +30,4 @@ while ingump "Next" 2890020940 and blueFound = 0
     endif
 endwhile    
 
-wait 6500
 script "stayalive2"

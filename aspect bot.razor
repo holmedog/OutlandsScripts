@@ -1179,14 +1179,10 @@ while not dead
                     target 'lastserial'
                     wft 500 
                     #Cycle nearby targets
-                    hotkey 'Next Grey Humanoid Target'
-                    wait 255
-                    if insysmsg 'No one matching that'
-                        hotkey 'Next Grey Monster Target' 
-                        @setvar 'testProvo' lasttarget
-                        if 'testProvo' = 'lastserial'                           
-                            hotkey 'Next Friendly Monster Target'
-                        endif
+                    hotkey 'Next Non-Friendly Monster Target'
+                    @setvar 'testProvo' lasttarget
+                    if 'testProvo' = 'lastserial'                           
+                        hotkey 'Next Friendly Monster Target'
                     endif
                     hotkey 'Last Target'
                     wait 200

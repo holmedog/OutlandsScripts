@@ -59,11 +59,11 @@ if findtype 0x2006 'ground' 'any' 1 2
 endif
 
 #SS if we are not necro
-wait 700
-if skill 'Spirit Speak' > 25 
-    hotkey 'Spirit Speak'
-    wait 1050
-endif
+#wait 700
+#if skill 'Spirit Speak' > 25 and skill 'Necromancy' <=50
+#    hotkey 'Spirit Speak'
+#    wait 1050
+#endif
 
 #check buffs
 #Food check
@@ -86,6 +86,14 @@ if skill 'Magery' > 50 and not findbuff 'Strength'
     target self
     wait 500
 endif
+#Bless
+if skill 'Magery' > 50 and not findbuff 'Reactive Armor' 
+    overhead 'React!'
+    cast 'Reactive Armor'
+    wft 2500
+    target self
+    wait 500
+endif
 #Protection
 if skill 'Magery' > 50 and not findbuff 'Protection' 
     overhead 'Protection time'
@@ -94,7 +102,7 @@ if skill 'Magery' > 50 and not findbuff 'Protection'
     target self
     wait 500
 endif
-if 'lockDisco' = 0 and skill "discordance" > 50 and timer "bardLock" > 10000 
+if 'lockDisco' = 0 and skill "discordance" > 10 and timer "bardLock" > 10000 
     overhead "Disco Buff"
     skill "discordance" 
     wft 2500
@@ -102,7 +110,7 @@ if 'lockDisco' = 0 and skill "discordance" > 50 and timer "bardLock" > 10000
     settimer "bardLock" 0
     setvar 'lockDisco' 1
 endif
-if  'lockProv' = 0 and skill "provocation" > 50 and timer "bardLock" > 10000
+if  'lockProv' = 0 and skill "provocation" > 10 and timer "bardLock" > 10000
     overhead "Provo Buff"
     skill "provocation" 
     wft 2500
@@ -110,7 +118,7 @@ if  'lockProv' = 0 and skill "provocation" > 50 and timer "bardLock" > 10000
     settimer "bardLock" 0
     setvar 'lockProv' 1
 endif
-if 'lockPeace' = 0  and skill "Peacemaking" > 50 and timer "bardLock" > 10000
+if 'lockPeace' = 0  and skill "Peacemaking" > 10 and timer "bardLock" > 10000
     overhead "Peace Buff"
     skill "peacemaking" 
     wft 2500

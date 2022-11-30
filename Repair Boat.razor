@@ -9,13 +9,17 @@ while not dead
             wait 1000
             if insysmsg 'guns do not need'
                 stop
+            else 
+                overhead "Repair Script Engaged"
             endif
         else
+            overhead "Repair Script Engaged"
             wait 1000
         endif
     else
-        wait 2000
+        overhead "Repair Script Engaged"
+        wait 1000
     endif
     
-    wait 8000
+    wait 9000
 endwhile

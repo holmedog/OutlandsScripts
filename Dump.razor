@@ -70,17 +70,19 @@ if findtype 44997 ground any any 2 as found
     menu found 1                
     gumpclose 3232825965 
     if skill "Magery" > 50
-        while counttype 29012 backpack < 35
-            cast "create food"
-            wait 1000
-            if mana < 70 and insysmsg "use another magic"
-                dclicktype 29012
-            endif
-            menu found 1
-            if insysmsg "cheese"
-                break
-            endif
-        endwhile
+        if skill "Meditation"  >= 50 or skill "Evaluating Intelligence" >= 50
+            while counttype 29012 backpack < 35
+                cast "create food"
+                wait 1000
+                if mana < 70 and insysmsg "use another magic"
+                    dclicktype 29012
+                endif
+                menu found 1
+                if insysmsg "cheese"
+                    break
+                endif
+            endwhile
+        endif
     endif
 endif        
 overhead "Done with shelf"     
@@ -174,4 +176,8 @@ endwhile
 
 gumpclose 3232825965   
 
-script 'Bag Dumper'
+//script 'Bag Dumper'
+wait 500
+menu 0x465CE02E 1
+wait 500
+menu 0x407F8ACB 1
