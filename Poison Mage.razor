@@ -1,7 +1,9 @@
 
 ##################
-## Always room for improvment, thanks for watching!
+## If you are using this then you probably know how to contact Brozan on Discord if you have issues
 ############
+
+#Search for "WALK THIS WAY" and edit it for how to walk into your house
 
 # Set this to one, if you want to cast poison once no matter what
 # If you have 100 poisoning and want Lethal, set this to 0
@@ -16,10 +18,6 @@
 
 # This will make sure you have bless on
 @setvar! blessYourself 1
-
-# Update this variable to 1 for ALL KILL
-# Update this variable to 0 for target nearest
-@setvar! setThisAsOneIfYouWantToTargetYourOwnKillOrItWillTargetClosestMonster 0
 
 #Set this to 1 if you want to go to the next spot
 @setvar! recallEnabled 1
@@ -79,7 +77,11 @@ endif
 ##################################################################
 
 #Prime this variable
-@setvar! notSeen 0
+if not varexist notSeen
+    @setvar! notSeen 0
+endif
+
+@setvar! thisIsTrash 0
 
 if recallEnabled = 1 and not varexist runeBookFarm
     overhead "Select your runebook (relog to reset)"
@@ -136,6 +138,16 @@ endif
 if not timerexists magicShieldTimer
     createtimer magicShieldTimer
     settimer magicShieldTimer cdMagicShield
+endif
+
+if not timerexists overheadSpam
+    createtimer overheadSpam
+    settimer overheadSpam 5000
+endif
+
+if not timerexists discoTimer
+    createtimer discoTimer
+    settimer discoTimer 60000
 endif
 
 if not timerexists magicMushroomTimer
@@ -223,7 +235,10 @@ if diffhits < 30
                 if diffhits >= 30
                     replay
                 endif
-                overhead "waiting for mana" 88
+				if timer 'overheadSpam' > 2000
+					overhead "waiting for mana" 88
+					settimer 'overheadSpam' 0
+				endif
                 if not findbuff "Actively Meditating"
                     useskill "meditation"
                 endif
@@ -277,7 +292,10 @@ if diffhits < 30
                 if diffhits >= 30
                     replay
                 endif
-                overhead "waiting for mana" 88
+				if timer 'overheadSpam' > 2000
+					overhead "waiting for mana" 88
+					settimer 'overheadSpam' 0
+				endif
                 if not findbuff "Actively Meditating"
                     useskill "meditation"
                 endif
@@ -312,7 +330,10 @@ endif
 
 if followers = 4 and diffhits < 30
     while mana < 14
-        overhead "waiting for mana" 88
+		if timer 'overheadSpam' > 2000
+			overhead "waiting for mana" 88
+			settimer 'overheadSpam' 0
+		endif
         if diffhits >= 30
             replay
         endif
@@ -364,7 +385,21 @@ if diffhits >= 30
     endif
 endif
 
-if setThisAsOneIfYouWantToTargetYourOwnKillOrItWillTargetClosestMonster = 1
+while mana < 55
+    if diffhits >= 30
+        replay
+    endif
+	if timer 'overheadSpam' > 2000
+		overhead "waiting for mana" 88
+		settimer 'overheadSpam' 0
+	endif
+    if not findbuff "Actively Meditating"
+        useskill "meditation"
+    endif
+    wait 200
+endwhile
+
+if thisIsTrash = 1
     say "all kill"
     wait 200
     while targetexists 
@@ -374,13 +409,24 @@ if setThisAsOneIfYouWantToTargetYourOwnKillOrItWillTargetClosestMonster = 1
 else
     hotkey 'Target Closest Non-Friendly Monster'
     wait 200
-    if insysmsg "No one matching that was found" or notSeen = 1   
+    setvar! goOnAndGet 0
+    if insysmsg "No one matching that was found"        
+        setvar! goOnAndGet 1
+    endif
+    if notSeen = 1      
+        setvar! goOnAndGet 1
         @setvar! notSeen 0
+    endif   
+    if goOnAndGet = 1
         foreach rune in runes
-            overhead "found no one" 34
+            overhead "Brozan is the best! (Also I am recalling)" 34
             if recallEnabled = 1
                 #pause for object and say delay
                 wait 1000
+                if followers < 5
+                    overhead "Need summons before leaving"
+                    replay
+                endif
                 #Skin corpses if we have been here 4s               
                 if findtype 'corpse' ground any any 2 as found
                     #Check for a blade
@@ -408,18 +454,126 @@ else
                 @setvar recallOnce 1
                 while insysmsg "Your concentration is disturbed" or insysmsg "book needs time" or recallOnce = 1                
                     @setvar recallOnce 0
-                    while mana < 55
-                        if timer "recallSpam" > 2000
-                            overhead "Waiting on mana to be safe levels"                    
-                            settimer "recallSpam" 0
-                        endif
-                    endwhile
+                    say "All guard me"
                     while not gumpexists 1551740969
                         dclick runeBookFarm
                         wait 200
                     endwhile
                     clearsysmsg 
-                    gumpresponse rune 1551740969
+                    if diffweight <= 60 
+                        overhead "Too fat.  Dump Routine"
+                        #Cast recall til you are home
+                        #Walk this way
+                        #Change the 3 numbers at the end of this to where land at recall location
+                        
+                        if diffweight < 5
+                            hotkey "Drink Strength"
+                        endif
+                        while not position 4007 909 0
+                            cast "Recall"
+                            while not targetexists and not insysmsg "Your concentration is disturbed" and not position 4007 909 0
+                                wait 100
+                            endwhile
+                            target runeBookFarm
+                            wait 1000
+                        endwhile    
+                        #Loot Routine
+                        #WALK THIS WAY
+                        #Change the 3 numbers at the end of this to where you want to stop and ressupply.  Change the walk direction to the direction you need to go
+                        while not position 4007 904 5
+                            walk 'North'
+                            wait 150
+                        endwhile
+                        if findtype 'storage shelf' ground any any 2 as found
+                            menu found 0 
+                            wft 2500
+                            target self
+                            menu found 1                
+                            gumpclose 3232825965        
+                            if skill "Magery" > 50
+                                while counttype 29012 backpack < 35 and not insysmsg "cheese"
+                                    cast "create food"
+                                    wait 1000
+                                    if mana < 70 and insysmsg "use another magic"
+                                        dclicktype 29012
+                                    endif
+                                    menu found 1
+                                endwhile
+                            endif
+                            menu found 1
+                        endif           
+
+                        #If you need to open chests do so here
+                        dclick 0x5B7C7BBD
+                        wait 600
+
+                        #"Starting Organizers"
+                        organizer 1
+                        while queued
+                            wait 1000
+                        endwhile
+                        organizer 2
+                        while queued
+                            wait 1000
+                        endwhile
+                        organizer 3
+                        while queued
+                            wait 1000
+                        endwhile
+                        organizer 4
+                        while queued
+                            wait 1000
+                        endwhile
+                        organizer 5
+                        while queued
+                            wait 1000
+                        endwhile
+                        organizer 6
+                        while queued
+                            wait 1000
+                        endwhile
+                        organizer 7
+                        while queued
+                            wait 1000
+                        endwhile
+                        organizer 8
+                        while queued
+                            wait 1000
+                        endwhile
+                        organizer 9
+                        while queued
+                            wait 1000
+                        endwhile
+                        wait 1000
+
+                        //dump all resources
+                        if findtype 23035 ground as myStockpile
+                            menu myStockpile 0
+                            waitfortarget 1000
+                            target 'self'
+                        endif    
+
+                        #drop gold on vault
+                        if findtype 41518 ground as myVault
+                            while findtype 3821 self as 'myGold'
+                                lift myGold 60000
+                                drop '0x40820133' -1 -1 0 
+                                wait 600
+                            endwhile
+                        endif
+                        
+                        #recycler for magic items
+                        if findtype 11762 ground any any 4 as found                         
+                            wait 500
+                            menu found 1
+                            wait 500
+                            menu found 1
+                        endif
+                    #End weight check recall home routine              
+                    else
+                        #Go to next spot
+                        gumpresponse rune 1551740969
+                    endif
                     for 3 
                         wait 900       
                         if followers > 1
@@ -543,6 +697,12 @@ if find myKillTarget -1 -1 12 as killy
                 wait 500
             endif
         endif
+        
+        if insysmsg "Target cannot be seen." 
+            overhead "CANNOT BE SEEN MOVE TO NEXT TARGET" 34
+            @setvar! notSeen 1
+            replay
+        endif 
 
         if inlist myManaDrainTargets myKillTarget
             overhead "We already cursed this guy" 88
@@ -565,7 +725,14 @@ if find myKillTarget -1 -1 12 as killy
                 settimer killTargetTimer 0
                 wait 500
             endif
-        endif
+        endif   
+        
+        if insysmsg "Target cannot be seen." 
+            overhead "CANNOT BE SEEN MOVE TO NEXT TARGET" 34
+            @setvar! notSeen 1
+            replay
+        endif 
+
         @setvar myPreviousKillTarget myKillTarget
     endif
 else
@@ -618,6 +785,24 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
         settimer corpseSkinTimer 0
         cooldown CorpseSkin cdCorpseSkin
         wait 500
+    endif
+        
+    #disco routine      
+    if  skill "Discordance" > 50 and timer "discoTimer" > 5050 and timer meditiationTimer >= cdMeditationMini
+        overhead "Disco Target!" 33
+        while not targetexists
+            if dead myKillTarget or diffhits >= 30
+                hotkey '> Interrupt'
+                break
+            else
+                skill "Discordance" 
+                wait 50
+            endif 
+        endwhile
+        if targetexists
+            target myKillTarget
+            settimer discoTimer 0
+        endif
     endif
     
     if skill "poisoning" >= 100 or castPoisonAnyway = 1 and timer meditiationTimer >= cdMeditationMini
@@ -926,11 +1111,3 @@ endif
 if autoBotEnabled = 1
     replay
 endif
-
-
-// curse
-// mana drain
-// magic arrrow
-// harm
-// fireball
-// lighteninggumpresponse 2
