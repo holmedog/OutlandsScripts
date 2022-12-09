@@ -28,7 +28,7 @@ clearlist goldTypes
 
 
 foreach x in goldTypes
-  while findtype x ground any any 2 as found
+  while findtype x ground any any 1 as found
     lift found 60000
     drop vaultVar -1 -1 0 
     @ignore myVariable
@@ -36,7 +36,7 @@ foreach x in goldTypes
   endwhile
 endfor
 foreach x in regTypes
-  while findtype x ground any any 2 as found
+  while findtype x ground any any 1 as found
       lift found 60000
     drop dumpBox -1 -1 0 
     @ignore myVariable

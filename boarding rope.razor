@@ -1,6 +1,38 @@
-gumpresponse 16 622436516
+if not varexist tillerguy 
+    overhead "Click your tillerman"
+    setvar! tillerguy 
+    wait 300
+endif
+
+#close previous rope menus
+gumpclose  2881168634
 say [sendboarding
 waitforgump 2881168634
-gumpresponse 5
+gumpresponse 5 2881168634
+wait 300
+say [EvilOmen
+#wait 600
+#say [CorpseSkin
+wait 600
+say [BloodOath
+
+
+while targetexists 
+    wait 100
+endwhile
+
+overhead "Roped"
+
+while findtype 15947|15952|15947|15955|15950|14421 ground as enemyTiller
+    if enemyTiller = tillerguy 
+        #overhead "Found my guy!"
+    else
+        dclick enemyTiller
+        wait 500
+    endif
+    @ignore enemyTiller 
+endwhile
+
+@clearignore
 
 script "sayalive2"

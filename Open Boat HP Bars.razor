@@ -1,0 +1,19 @@
+
+#create list of tillermen
+createlist tillerMenList
+clearlist tillerMenList
+@pushlist 'tillerMenList' 15952
+@pushlist 'tillerMenList' 15955
+@pushlist 'tillerMenList' 15950
+@pushlist 'tillerMenList' 15947
+
+foreach tillerMenVar in tillerMenList
+    if findtype tillerMenVar ground as found
+        overhead "Tillerman Set"
+        setvar 'tillerDude' 'found'
+        dclick 'tillerDude'
+        wait 500
+    endif
+endfor
+
+gumpclose 4216593270

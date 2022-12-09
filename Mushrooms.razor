@@ -1,5 +1,6 @@
 clearsysmsg 
-while counttype 29012 backpack < 110
+#while counttype 29012 backpack < 110
+while not dead
      cast "create food"
      wait 1000
      if mana < 70 and insysmsg "use another magic"

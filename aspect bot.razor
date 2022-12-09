@@ -21,8 +21,8 @@
 #Summon Type Selector.  Having Necromancy skill will still summon necro version.  We will always use Summon Creature as 5th slot.  Still requires 80 SS or Necro to trigger
 #MAKE SURE you only select two here.  Selecting more will break stuff.  
 #Valid Values are 0, 1, or 2 and it will summon that many of that type: Example setting fireElem to 2 will summon 2 fire elems.  Setting earthEleme to 1 and waterElem to 1 will summon 1 earth elemental and 1 waterElem
-@setvar fireElem 1
-@setvar earthElem 1
+@setvar fireElem 0
+@setvar earthElem 2
 @setvar airElem 0
 @setvar waterElem 0
 @setvar daemonSum 0
@@ -37,7 +37,7 @@ if skill "Peacemaking" > 80 or skill "Provocation" > 80
 endif
 
 #Set this to 1 if you want to keep up buffs for Reactive Armour and Magic Reflect
-@setvar defensiveBuffs 0
+@setvar defensiveBuffs 1
 
 #Set t his to 1 if you want to leave after 65s
 @setvar getGone 0
@@ -163,6 +163,7 @@ pushlist 'stuffToKill' '35'
 pushlist 'stuffToKill' '34'
 pushlist 'stuffToKill' '32'
 pushlist 'stuffToKill' '9' 
+pushlist 'stuffToKill' '16' 
 pushlist 'stuffToKill' 'an angelic stonework'
 pushlist 'stuffToKill' 'a sunken sorcerer'
 pushlist 'stuffToKill' 'an earth sorcerer'
@@ -1029,7 +1030,7 @@ while not dead
             endif
             
             ###############                                         ###############
-            ###############    Start target search / embark routine ###############
+            ###############    Start target search routine          ###############
             ###############                                         ###############   
             if timer "newTargetCheck" > 2500 and goToNextRune = 0
                 #reset timer
@@ -1119,23 +1120,40 @@ while not dead
                     settimer "bardLock" 7000                                        
                 endif
                 
-                #poison routine 
-                @setvar castPoison 0
-                if skill "Poisoning" > 50 and mana >= 90  and followers >= 4 and diffhits <= 18 and timer "poisonTimer" > 1000
-                    #cast poison often if over 90 mana
-                    @setvar castPoison 1
-                elseif  skill "Poisoning" > 50 and mana >= 80  and followers >= 4 and diffhits <= 18 and timer "poisonTimer" > 5000
-                    @setvar castPoison 1
-                elseif  skill "Poisoning" > 50 and mana >= 50  and followers >= 4 and diffhits <= 18 and timer "poisonTimer" > 10000                
-                    @setvar castPoison 1
-                elseif  skill "Poisoning" > 50 and mana >= 20  and followers >= 4 and diffhits <= 18 and timer "poisonTimer" > 30000        
-                    #poison if we have not done so in 30s
-                    @setvar castPoison 1
+                #poison routine  - going to try to deprecate this 
+               # @setvar castPoison 0
+               # if skill "Poisoning" > 50 and mana >= 90  and followers >= 4 and diffhits <= 18 and timer "poisonTimer" > 1000
+               #     #cast poison often if over 90 mana
+               #     @setvar castPoison 1
+               # elseif  skill "Poisoning" > 50 and mana >= 80  and followers >= 4 and diffhits <= 18 and timer "poisonTimer" > 5000
+               #     @setvar castPoison 1
+               # elseif  skill "Poisoning" > 50 and mana >= 50  and followers >= 4 and diffhits <= 18 and timer "poisonTimer" > 10000                
+               #     @setvar castPoison 1
+               # elseif  skill "Poisoning" > 50 and mana >= 20  and followers >= 4 and diffhits <= 18 and timer "poisonTimer" > 30000        
+               #     #poison if we have not done so in 30s
+               #     @setvar castPoison 1
+               # endif
+                
+                #Poison Routine that checks label for poison 
+                getlabel 'lastserial' desc
+                overhead desc 66
+                @setvar castPoison 0                
+                if noto 'lastserial' = hostile or noto 'lastserial' = criminal
+                    // Poison Check
+                    while "-" in desc
+                        getlabel 'lastserial' desc
+                    endwhile
+                    if "Ticks" in desc
+                        if "Greater" in desc
+                            @setvar castPoison 1
+                        endif
+                    else 
+                        @setvar castPoison 1
+                    endif
                 endif
                 
                 
                 if castPoison = 1  
-                    if noto 'lastserial' = hostile or noto 'lastserial' = criminal
                         overhead "Poison Target!" 33
                         cast "Poison"
                         wft 4500

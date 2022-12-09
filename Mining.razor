@@ -27,8 +27,7 @@
 
 clearsysmsg 
 @createlist packAnimals
-
-if not timerexists "miner"
+if not varexist startMining
     #Assign pack animals to variables
     #On first launch of UO 
     if list packAnimals <= 0
@@ -71,6 +70,7 @@ if not timerexists "miner"
     sysmsg 'Make Sure Tracking is on!'
 endif
 
+setvar! startMining 0
 
 overhead 'Starting'
 
