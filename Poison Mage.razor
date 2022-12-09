@@ -3,6 +3,8 @@
 ## If you are using this then you probably know how to contact Brozan on Discord if you have issues
 ############
 
+#MAKE SURE your wizards satchel is in your backpack not on your char
+
 #Search for "WALK THIS WAY" and edit it for how to walk into your house
 
 # Set this to one, if you want to cast poison once no matter what
@@ -21,6 +23,9 @@
 
 #Set this to 1 if you want to go to the next spot
 @setvar! recallEnabled 1
+
+#Set this to 1 if you are ok with Deadly poison
+@setvar! deadlyOK 1
 
 ###############
 ###  Choose your spells
@@ -80,13 +85,32 @@ endif
 if not varexist notSeen
     @setvar! notSeen 0
 endif
+#Prime this variable
+if not varexist discordOn
+    @setvar! discordOn 0
+endif
 
 @setvar! thisIsTrash 0
 
-if recallEnabled = 1 and not varexist runeBookFarm
+if not listexists 'firstRunSetup'
+    createlist 'firstRunSetup'
     overhead "Select your runebook (relog to reset)"
     setvar! runeBookFarm
 endif
+
+#Create list of reagents
+if not listexists 'regTypes'    
+    createlist regTypes
+    @pushlist 'regTypes' 'Blood Moss'
+    @pushlist 'regTypes' 'Black Pearl%s%'
+    @pushlist 'regTypes' 'Ginseng'
+    @pushlist 'regTypes' 'Garlic'
+    @pushlist 'regTypes' 'Sulfurous Ash'
+    @pushlist 'regTypes' "Spider's Silk" 
+    @pushlist 'regTypes' 'Nightshade' 
+    @pushlist 'regTypes' 'Mandrake Root%s%' 
+endif
+# ' for formatting reasons
 
 #Populate our runes
 if not listexists 'runes'
@@ -235,10 +259,10 @@ if diffhits < 30
                 if diffhits >= 30
                     replay
                 endif
-				if timer 'overheadSpam' > 2000
-					overhead "waiting for mana" 88
-					settimer 'overheadSpam' 0
-				endif
+                if timer 'overheadSpam' > 2000
+                    overhead "waiting for mana" 88
+                    settimer 'overheadSpam' 0
+                endif
                 if not findbuff "Actively Meditating"
                     useskill "meditation"
                 endif
@@ -292,10 +316,10 @@ if diffhits < 30
                 if diffhits >= 30
                     replay
                 endif
-				if timer 'overheadSpam' > 2000
-					overhead "waiting for mana" 88
-					settimer 'overheadSpam' 0
-				endif
+                if timer 'overheadSpam' > 2000
+                    overhead "waiting for mana" 88
+                    settimer 'overheadSpam' 0
+                endif
                 if not findbuff "Actively Meditating"
                     useskill "meditation"
                 endif
@@ -330,10 +354,10 @@ endif
 
 if followers = 4 and diffhits < 30
     while mana < 14
-		if timer 'overheadSpam' > 2000
-			overhead "waiting for mana" 88
-			settimer 'overheadSpam' 0
-		endif
+        if timer 'overheadSpam' > 2000
+            overhead "waiting for mana" 88
+            settimer 'overheadSpam' 0
+        endif
         if diffhits >= 30
             replay
         endif
@@ -389,10 +413,10 @@ while mana < 55
     if diffhits >= 30
         replay
     endif
-	if timer 'overheadSpam' > 2000
-		overhead "waiting for mana" 88
-		settimer 'overheadSpam' 0
-	endif
+    if timer 'overheadSpam' > 2000
+        overhead "waiting for mana" 88
+        settimer 'overheadSpam' 0
+    endif
     if not findbuff "Actively Meditating"
         useskill "meditation"
     endif
@@ -417,12 +441,22 @@ else
         setvar! goOnAndGet 1
         @setvar! notSeen 0
     endif   
+    foreach reg in 'regTypes'
+        if counttype reg < 7
+            overhead "Hey! I am Low on regs!" 23
+            @setvar goOnAndGet 1
+        endif
+    endfor 
+    if not findtype 3852 backpack
+        overhead 'Out of heal potions!' 34
+        @setvar goOnAndGet 1
+    endif
     if goOnAndGet = 1
         foreach rune in runes
             overhead "Brozan is the best! (Also I am recalling)" 34
             if recallEnabled = 1
-                #pause for object and say delay
-                wait 1000
+                #reset variables
+                @setvar! discordOn 0
                 if followers < 5
                     overhead "Need summons before leaving"
                     replay
@@ -443,10 +477,10 @@ else
                             @ignore 'found'
                         endwhile
                     endif               
-                    @ignore 'found'
+                    @ignore 'found'                 
+                    #pause for looting
+                    wait 4000
                 endif    
-                #pause for looting
-                wait 4000
                 if poplist runes front
                     #Recall to next rune
                     overhead "Heading to Rune: [{{rune}}]"
@@ -589,8 +623,8 @@ else
         endfor
         stop
     elseif not find lasttarget ground -1 -1 8
-        overhead "● ▼▼ HERE ▼▼ ●" 88 lasttarget
-        overhead "Move closer, more then 8 tiles aay" 34
+        overhead "More than 8 tiles, gtfo" 34
+        @setvar! notSeen 1
         if autoBotEnabled = 1
             wait 500
             replay
@@ -675,35 +709,6 @@ if find myKillTarget -1 -1 12 as killy
             target killy
         endif
 
-        if inlist myCursedTargets myKillTarget
-            overhead "We already cursed this guy" 88
-            // do nothing
-        elseif castCurse = 0
-            // do nothing
-        else
-            while not targetexists and not dead myKillTarget
-                if diffhits < 30
-                    cast 'Curse'
-                    wait 50
-                elseif diffhits >= 30 
-                    hotkey '> Interrupt'
-                    break
-                endif
-            endwhile
-            if targetexists
-                target myKillTarget
-                pushlist myCursedTargets myKillTarget
-                settimer killTargetTimer 0
-                wait 500
-            endif
-        endif
-        
-        if insysmsg "Target cannot be seen." 
-            overhead "CANNOT BE SEEN MOVE TO NEXT TARGET" 34
-            @setvar! notSeen 1
-            replay
-        endif 
-
         if inlist myManaDrainTargets myKillTarget
             overhead "We already cursed this guy" 88
             // do nothing
@@ -726,6 +731,35 @@ if find myKillTarget -1 -1 12 as killy
                 wait 500
             endif
         endif   
+        
+        if insysmsg "Target cannot be seen." 
+            overhead "CANNOT BE SEEN MOVE TO NEXT TARGET" 34
+            @setvar! notSeen 1
+            replay
+        endif 
+
+        if inlist myCursedTargets myKillTarget
+            overhead "We already cursed this guy" 88
+            // do nothing
+        elseif castCurse = 0
+            // do nothing
+        else
+            while not targetexists and not dead myKillTarget
+                if diffhits < 30
+                    cast 'Curse'
+                    wait 50
+                elseif diffhits >= 30 
+                    hotkey '> Interrupt'
+                    break
+                endif
+            endwhile
+            if targetexists
+                target myKillTarget
+                pushlist myCursedTargets myKillTarget
+                settimer killTargetTimer 0
+                wait 500
+            endif
+        endif
         
         if insysmsg "Target cannot be seen." 
             overhead "CANNOT BE SEEN MOVE TO NEXT TARGET" 34
@@ -786,18 +820,28 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
         cooldown CorpseSkin cdCorpseSkin
         wait 500
     endif
-        
+	
+	#provocation buff	
+    if not findbuff "Song Of Provocation"
+		overhead "Provocation Buff"
+		while not targetexists 
+			skill "Provocation"
+			wait 200
+		endwhile
+		target backpack
+        settimer discoTimer 0
+	endif    
     #disco routine      
-    if  skill "Discordance" > 50 and timer "discoTimer" > 5050 and timer meditiationTimer >= cdMeditationMini
+    if  discordOn = 0 and skill "Discordance" > 50 and timer "discoTimer" > 5050 and timer meditiationTimer >= cdMeditationMini
         if not findbuff "Song Of Discordance"
-			overhead "Disco Buff"
-			while not targetexists 
-				skill "Discordance"
-				wait 200
-			endwhile
-			target backpack
-		endif
-		overhead "Disco Target!" 33
+            overhead "Disco Buff"
+            while not targetexists 
+                skill "Discordance"
+                wait 200
+            endwhile
+            target backpack
+        endif
+        overhead "Disco Target!" 33
         while not targetexists
             if dead myKillTarget or diffhits >= 30
                 hotkey '> Interrupt'
@@ -810,6 +854,11 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
         if targetexists
             target myKillTarget
             settimer discoTimer 0
+        endif
+        wait 250
+        if insysmsg "You play successfully" 
+            #this is reset after a new target is acquired 
+            @setvar! discordOn 1
         endif
     endif
     
@@ -833,6 +882,9 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
             overhead desc2 66
             // poison lethal
             if "Lethal" in desc2
+                @setvar! isLethalPoison 1
+                break
+            elseif deadlyOK = 1 and "Deadly" in desc2
                 @setvar! isLethalPoison 1
                 break
             elseif castPoisonAnyway = 1 and "Ticks" in desc2
@@ -981,17 +1033,18 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
     endif
     
     if diffhits >= 30
-            
-        if findtype "Yellow Potion" backpack as pot 
-            getlabel pot desc
-            if "next usable" in desc
-                // do nothing
-            else
-                dclick pot
-                wait 200
+        if diffhits >= 65    
+            if findtype "Yellow Potion" backpack as pot 
+                getlabel pot desc
+                if "next usable" in desc
+                    // do nothing
+                else
+                    dclick pot
+                    wait 200
+                endif
             endif
         endif
-
+        
         if diffhits >= 30 and mana >= 12
             while not targetexists
                 if diffhits >= 60
