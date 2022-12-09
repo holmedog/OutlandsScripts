@@ -789,7 +789,15 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
         
     #disco routine      
     if  skill "Discordance" > 50 and timer "discoTimer" > 5050 and timer meditiationTimer >= cdMeditationMini
-        overhead "Disco Target!" 33
+        if not findbuff "Song Of Discordance"
+			overhead "Disco Buff"
+			while not targetexists 
+				skill "Discordance"
+				wait 200
+			endwhile
+			target backpack
+		endif
+		overhead "Disco Target!" 33
         while not targetexists
             if dead myKillTarget or diffhits >= 30
                 hotkey '> Interrupt'
