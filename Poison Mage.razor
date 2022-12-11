@@ -96,6 +96,17 @@ if not listexists 'firstRunSetup'
     createlist 'firstRunSetup'
     overhead "Select your runebook (relog to reset)"
     setvar! runeBookFarm
+
+    getlabel runeBookFarm desc
+
+    if runebook in desc
+        overhead "Runebok in desc using those runes"
+        @setvar! usingRuneBook 1 
+    else
+        overhead "Using a Rune Tome"
+        @setvar! usingRuneBook 0
+    endif
+            
 endif
 
 #Create list of reagents
@@ -117,22 +128,51 @@ if not listexists 'runes'
     createlist 'runes'
 endif
 if list runes <= 0
-    #gumps here for recall spell use
-    pushlist 'runes' 11
-    pushlist 'runes' 17
-    pushlist 'runes' 23
-    pushlist 'runes' 29
-    pushlist 'runes' 35
-    pushlist 'runes' 41
-    pushlist 'runes' 47
-    pushlist 'runes' 53
-    pushlist 'runes' 59
-    pushlist 'runes' 65
-    pushlist 'runes' 71
-    pushlist 'runes' 77
-    pushlist 'runes' 83
-    pushlist 'runes' 89
-    pushlist 'runes' 95
+    if usingRuneBook = 1
+        #gumps here for recall spell use
+        pushlist 'runes' 11
+        pushlist 'runes' 17
+        pushlist 'runes' 23
+        pushlist 'runes' 29
+        pushlist 'runes' 35
+        pushlist 'runes' 41
+        pushlist 'runes' 47
+        pushlist 'runes' 53
+        pushlist 'runes' 59
+        pushlist 'runes' 65
+        pushlist 'runes' 71
+        pushlist 'runes' 77
+        pushlist 'runes' 83
+        pushlist 'runes' 89
+        pushlist 'runes' 95
+    else
+        pushlist 'runes' 201
+        pushlist 'runes' 202
+        pushlist 'runes' 203
+        pushlist 'runes' 204
+        pushlist 'runes' 205
+        pushlist 'runes' 206
+        pushlist 'runes' 207
+        pushlist 'runes' 208
+        pushlist 'runes' 209
+        pushlist 'runes' 210
+        pushlist 'runes' 211
+        pushlist 'runes' 212
+        pushlist 'runes' 213
+        pushlist 'runes' 214
+        pushlist 'runes' 215
+        pushlist 'runes' 216
+        pushlist 'runes' 217
+        pushlist 'runes' 218
+        pushlist 'runes' 219
+        pushlist 'runes' 220
+        pushlist 'runes' 221
+        pushlist 'runes' 222
+        pushlist 'runes' 223
+        pushlist 'runes' 224
+        pushlist 'runes' 225
+        @setvar tomeSideSwitch 0
+    endif
 endif   
 
 if not gumpexists 622436516 and skill "Necromancy" >= 50
@@ -255,7 +295,7 @@ if diffhits < 30
     endif
     if dead myEarthPet or not find myEarthPet ground -1 -1 12
         if followers < 4
-            while mana < 50
+            while mana < 65
                 if diffhits >= 30
                     replay
                 endif
@@ -312,7 +352,7 @@ if diffhits < 30
     endif
     if dead myWaterPet or not find myWaterPet ground -1 -1 12
         if followers < 4
-            while mana < 50
+            while mana < 65
                 if diffhits >= 30
                     replay
                 endif
@@ -353,7 +393,7 @@ if diffhits < 30
 endif
 
 if followers = 4 and diffhits < 30
-    while mana < 14
+    while mana < 55
         if timer 'overheadSpam' > 2000
             overhead "waiting for mana" 88
             settimer 'overheadSpam' 0
@@ -489,10 +529,8 @@ else
                 while insysmsg "Your concentration is disturbed" or insysmsg "book needs time" or recallOnce = 1                
                     @setvar recallOnce 0
                     say "All guard me"
-                    while not gumpexists 1551740969
-                        dclick runeBookFarm
-                        wait 200
-                    endwhile
+                    dclick runeBookFarm
+                    wait 200
                     clearsysmsg 
                     if diffweight <= 60 
                         overhead "Too fat.  Dump Routine"
@@ -606,7 +644,24 @@ else
                     #End weight check recall home routine              
                     else
                         #Go to next spot
-                        gumpresponse rune 1551740969
+                        overhead "Recall Now!"
+                        if usingRuneBook = 1
+                            gumpresponse rune 1551740969
+                        elseif usingRuneBook = 0
+                            overhead "Using a Tome not a Book"                          
+                            #rune tome recall
+                            gumpresponse rune 167090027
+                            wait 300
+                            if tomeSideSwitch = 0
+                                overhead "At the even side"
+                                gumpresponse 20 167090027
+                                @setvar! tomeSideSwitch 1
+                            else 
+                                overhead "At the odd side"
+                                gumpresponse 10 167090027
+                                @setvar! tomeSideSwitch 0
+                            endif                               
+                        endif
                     endif
                     for 3 
                         wait 900       
@@ -820,17 +875,17 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
         cooldown CorpseSkin cdCorpseSkin
         wait 500
     endif
-	
-	#provocation buff	
-    if not findbuff "Song Of Provocation"
-		overhead "Provocation Buff"
-		while not targetexists 
-			skill "Provocation"
-			wait 200
-		endwhile
-		target backpack
+    
+    #provocation buff   
+    if  skill "Provocation" > 50 and not findbuff "Song Of Provocation"
+        overhead "Provocation Buff"
+        while not targetexists 
+            skill "Provocation"
+            wait 200
+        endwhile
+        target backpack
         settimer discoTimer 0
-	endif    
+    endif    
     #disco routine      
     if  discordOn = 0 and skill "Discordance" > 50 and timer "discoTimer" > 5050 and timer meditiationTimer >= cdMeditationMini
         if not findbuff "Song Of Discordance"
@@ -1082,7 +1137,7 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
             wait 500
         endif
     elseif mana > 42
-        while not targetexists and mana > 40
+        while not targetexists and mana > 65
             if dead myKillTarget or diffhits >= 30
                 hotkey '> Interrupt'
                 break
@@ -1120,7 +1175,7 @@ if canYouMakeAMushroom = 1 and counttype "mushroom" backpack < 5
         endif
     endwhile
 endif
-while mana < 50
+while mana < 65
     if diffhits >= 30
         if findtype "Yellow Potion" backpack as pot 
             getlabel pot desc
