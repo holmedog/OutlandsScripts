@@ -199,6 +199,16 @@ if not timerexists recallSpam
     settimer recallSpam 60000
 endif
 
+if not timerexists atThisSpot
+    createtimer atThisSpot
+    settimer atThisSpot 7000
+endif
+
+if not timerexists poisonStrikeTimer
+    createtimer poisonStrikeTimer
+    settimer poisonStrikeTimer 7000
+endif
+
 if not timerexists magicShieldTimer
     createtimer magicShieldTimer
     settimer magicShieldTimer cdMagicShield
@@ -644,7 +654,7 @@ else
                     #End weight check recall home routine              
                     else
                         #Go to next spot
-                        overhead "Recall Now!"
+                        overhead "Recall Now!"                        
                         if usingRuneBook = 1
                             gumpresponse rune 1551740969
                         elseif usingRuneBook = 0
@@ -687,6 +697,7 @@ else
         stop
     else
         overhead "● ▼▼ HERE ▼▼ ●" 88 lasttarget
+        settimer 'atThisSpot' 0
     endif    
 endif
 
@@ -972,6 +983,21 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
         endwhile
     endif
     
+    
+    #overhead "at this spot: {atThisSpot} poisonStrikeTimer: {poisonStrikeTimer}"
+    if timer "poisonStrikeTimer" > 35000 and skill "Poisoning" > 50 timer "atThisSpot" > 8000   and timer meditiationTimer >= cdMeditationMini
+            #try to poison strike
+            say "[poisonStrike"
+            wft 500
+            target myKillTarget
+            wait 100
+            if insysmsg "You do not have enough unholy symbols for that"
+                settimer "poisonStrikeTimer" 30000
+            else
+                settimer "poisonStrikeTimer" 0
+            endif
+    endif
+    
     if timer evilOmenTimer >= cdEvilOmen and skill "Necromancy" >= 60 and timer meditiationTimer >= cdMeditationMini
         say "[EvilOmen"
         settimer evilOmenTimer 0
@@ -1068,6 +1094,7 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
             wait 500
         endif
     endif
+    
 
     if castFireball = 1 anddiffhits < 30 and mana >= 12 and timer fireballTimer >= cdFireball and timer meditiationTimer >= cdMeditationMini
         while not targetexists
@@ -1149,7 +1176,7 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
         if targetexists
             target myKillTarget
             wait 500
-        endif
+        endif       
     elseif not findbuff "actively meditating" and timer magicMushroomTimer >= cdMushroom and findtype "mushroom" backpack as mushy
         overhead "Eatting shrooms" 66
         dclick mushy
