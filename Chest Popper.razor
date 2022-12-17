@@ -1,69 +1,105 @@
 clearsysmsg
 clearignore 
 
-while findtype 29833 backpack as found
-    dclick found
-    #remove traps
-    while not insysmsg "successfully"
-        if insysmsg "devoid" 
-            break
-        endif
-        wait 250
-        gumpresponse 7
-        wait 3500
-    endwhile
+createtimer chivgate_bot
+settimer chivgate_bot 31000
+
+createtimer 'antiSpam'
+settimer 'antiSpam' 10000
+
+while not dead
+    if timer 'antiSpam' >= 10000
+    say "Drop Trapped Chests at my feet and I will open them.  Light the lantern for Chiv Dungeon Gates" 23
+        settimer 'antiSpam' 0
+    endif
     
-    while not insysmsg "successfully"
-        if insysmsg "devoid" 
-            break
+    if findtype 2594 ground any any 2 as found
+        if timer chivgate_bot >= 31000
+            say "Dungeons..." 88
+            wait 300
+            say '[SacredJourney'
+            waitforgump 1482653814
+            gumpresponse 2
+            wait 500
+            dclick found
+            settimer chivgate_bot 0
+            say "Kill some for me!"
+            wait 3000
+        else 
+            say "Recharging..." 
+            dclicktype '2578' ground any any 2
         endif
-        wait 250
-        gumpresponse 4
-        wait 3500
-    endwhile
-    ignore found
-endwhile
-while findtype 3650 backpack as found
-    dclick found
-    #remove traps
-    while not insysmsg "successfully"
-        if insysmsg "devoid" 
-            break
-        endif
-        wait 250
-        gumpresponse 7
-        wait 3500
-    endwhile
+    endif
+    wait 200
     
-    while not insysmsg "successfully"
-        if insysmsg "devoid" 
-            break
-        endif
-        wait 250
-        gumpresponse 4
-        wait 3500
-    endwhile
-    ignore found
-endwhile
-while findtype 3712 backpack as found
-    dclick found
-    #remove traps
-    while not insysmsg "successfully"
-        if insysmsg "devoid" 
-            break
-        endif
-        wait 250
-        gumpresponse 7
-        wait 3500
-    endwhile
+    if counttype 29001 < 1
+        say "I am out of trap tools drop some by me"
+        wait 5000
+    endif
+    if counttype 5373 < 1
+        say "I am out of lock picks drop some by me"
+        wait 5000
+    endif
     
-    while not insysmsg "successfully"
-        if insysmsg "devoid" 
-            break
+    while findtype 5373|29001|29832|3648|3708|3712 ground any any 2 as found
+        lift found 60000
+        drop backpack -1 -1 0 
+        wait 600
+        say "Opening this soon"
+    endwhile        
+
+    while findtype 29832|3648|3708|3712 backpack as found
+        overhead "Poppin it {{found}}" 
+        dclick found
+        wait 500
+        setvar damnThing found
+        if not gumpexists 736038070
+            overhead "This is not locked"
+            lift damnThing 60000
+            drop ground
+            wait 600
+            while counttype 3821 backpack > 1
+                say "Failed to drop - probably due to gate.  Trying again in 5s" 21
+                wait 5000
+                lift damnThing 60000
+                drop ground
+                wait 600
+            endwhile
+            ignore found
+            continue
         endif
-        wait 250
-        gumpresponse 4
-        wait 3500
+        #remove traps
+        while not insysmsg "successfully"
+            if insysmsg "devoid" 
+                break
+            endif
+            wait 250
+            gumpresponse 7 736038070
+            say "Trap Removal"
+            wait 3500
+        endwhile
+        
+        while not insysmsg "successfully"
+            if insysmsg "devoid" 
+                break
+            endif
+            wait 250
+            gumpresponse 4 736038070
+            say "Lock Picking"
+            wait 3500
+        endwhile
+        say "Dropping soon"
+        gumpclose 736038070
+        lift damnThing 60000
+        drop ground
+        wait 600
+        while counttype 3821 backpack > 1
+            say "Failed to drop - probably due to gate.  Trying again in 5s" 21
+            wait 5000
+            lift damnThing 60000
+            drop ground
+            wait 600
+        endwhile
+        ignore found
     endwhile
-    ignore found
-endwhile
+endwhile     

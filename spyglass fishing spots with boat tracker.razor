@@ -22,13 +22,13 @@ while not dead
             gumpresponse 4
             waitforgump 2890020940
             if ingump "a fishing" 2890020940 
-                say "stop"
+                #say "stop"
                 dclicktype 3763
                 wait 500
-                say "stop"
+                #say "stop"
                 wait 500
                 dclicktype 3763
-                stop
+                #stop
             endif
             settimer "glass" 0
             @setvar glassSwap 1
@@ -66,13 +66,13 @@ while not dead
                     wait 250
                     overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
                     @setvar blueFound 1
-                    say "Stop"
+                    #say "Stop"
                 endif
             endwhile   
-            while blueFound = 1 
-                overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
-                wait 1000
-            endwhile
+            #while blueFound = 1 
+            #    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+            #    wait 1000
+            #endwhile
             settimer "glass" 0
             @setvar glassSwap 0
         endif
@@ -98,7 +98,7 @@ while not dead
                     wait 250
                     overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
                     @setvar blueFound 1
-                    say "Stop"
+                    #say "Stop"
             endif
             while ingump "Next" 2890020940 and blueFound = 0
                 gumpresponse 3 2890020940
@@ -110,13 +110,13 @@ while not dead
                     wait 250
                     overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
                     @setvar blueFound 1
-                    say "Stop"
+                    #say "Stop"
                 endif
             endwhile   
-            while blueFound = 1 
-                overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
-                wait 1000
-            endwhile
+            #while blueFound = 1 
+            #    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+            #    wait 1000
+            #endwhile
             settimer "glass" 0
         endif
     endif   

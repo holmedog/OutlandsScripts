@@ -4,6 +4,15 @@ clearignore
 dclick 0x5B7C7BBD
 wait 600
 
+//dump into all tomes 
+while findtype 29104 0x5B7C7BBD as found
+    overhead "Book"
+    menu found 0
+    wait 50
+    ignore found
+endwhile
+clearignore
+
 //repair
 dclick 0x61F237E9
 wait 600
@@ -181,3 +190,7 @@ wait 500
 menu 0x465CE02E 1
 wait 500
 menu 0x407F8ACB 1
+
+clearignore
+
+script "stayalive2"
