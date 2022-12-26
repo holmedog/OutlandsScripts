@@ -80,7 +80,7 @@ endif
 #   Hopefully you do not have to edit after this :)
 #
 ##################################################################
-
+clearsysmsg
 #Prime this variable
 if not varexist notSeen
     @setvar! notSeen 0
@@ -317,7 +317,7 @@ if diffhits < 30
                     useskill "meditation"
                 endif
                 wait 200
-            endwhile
+            endwhile 
             say "[VengefulSpirit"
             while followers = followCount
                 cast "earth elemental"
@@ -473,6 +473,7 @@ while mana < 55
     wait 200
 endwhile
 
+setvar! goOnAndGet 0
 if thisIsTrash = 1
     say "all kill"
     wait 200
@@ -483,7 +484,6 @@ if thisIsTrash = 1
 else
     hotkey 'Target Closest Non-Friendly Monster'
     wait 200
-    setvar! goOnAndGet 0
     if insysmsg "No one matching that was found"        
         setvar! goOnAndGet 1
     endif
@@ -497,7 +497,7 @@ else
             @setvar goOnAndGet 1
         endif
     endfor 
-    if not findtype 3852 backpack
+    if not findtype 3852 self
         overhead 'Out of heal potions!' 34
         @setvar goOnAndGet 1
     endif
@@ -656,18 +656,23 @@ else
                         #Go to next spot
                         overhead "Recall Now!"                        
                         if usingRuneBook = 1
+							if not gumpexists 1551740969
+								dclick runeBookFarm
+								wait 200
+							endif
                             gumpresponse rune 1551740969
-                        elseif usingRuneBook = 0
-                            overhead "Using a Tome not a Book"                          
-                            #rune tome recall
+                        else          
+                            #rune tome recall  
+							if not gumpexists 167090027
+								dclick runeBookFarm
+								wait 200
+							endif    
                             gumpresponse rune 167090027
                             wait 500
                             if tomeSideSwitch = 0
-                                overhead "At the even side"
                                 gumpresponse 20 167090027
                                 @setvar! tomeSideSwitch 1
                             else 
-                                overhead "At the odd side"
                                 gumpresponse 10 167090027
                                 @setvar! tomeSideSwitch 0
                             endif                               
@@ -680,13 +685,9 @@ else
                         endif   
                     endfor
                 endwhile
-            endif
-            if autoBotEnabled = 1
-                wait 500
-                replay
-            endif
-        endfor
-        stop
+            endif            
+            replay            
+        endfor        
     elseif not find lasttarget ground -1 -1 8
         overhead "More than 8 tiles, gtfo" 34
         @setvar! notSeen 1
@@ -1204,13 +1205,15 @@ if canYouMakeAMushroom = 1 and counttype "mushroom" backpack < 5
 endif
 while mana < 65
     if diffhits >= 30
-        if findtype "Yellow Potion" backpack as pot 
-            getlabel pot desc
-            if "next usable" in desc
-                // do nothing
-            else
-                dclick pot
-                wait 200
+        if diffhits >= 65    
+            if findtype "Yellow Potion" backpack as pot 
+                getlabel pot desc
+                if "next usable" in desc
+                    // do nothing
+                else
+                    dclick pot
+                    wait 200
+                endif
             endif
         endif
 

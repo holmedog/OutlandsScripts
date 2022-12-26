@@ -32,7 +32,7 @@ while not dead
         createtimer 'spyGlassPeek'
         settimer 'spyGlassPeek' 0
     endif
-    if not queued and not targetexists and onABoat = 1 and timer "spyGlassPeek" > 6500 and findtype 'spyglass' self 
+    if not findbuff "Actively Meditating" and not queued and not targetexists and onABoat = 1 and timer "spyGlassPeek" > 6500 and findtype 'spyglass' self 
         gumpclose 2890020940
         wait 100
         gumpclose 2890020940
@@ -41,7 +41,6 @@ while not dead
             wait 20
         endwhile
         if targetexists 'Neutral'
-            overhead "No cares"
             target 'self'
             waitforgump 2890020940
             gumpresponse 4 2890020940
@@ -71,6 +70,10 @@ while not dead
             endwhile   
             settimer "spyGlassPeek" 0
         endif
+    endif
+    
+    if insysmsg "You must be onboard"
+        @setvar onABoat 0
     endif
     
     if insysmsg 'you cannot move!'

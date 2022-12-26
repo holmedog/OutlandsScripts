@@ -28,6 +28,7 @@ while not dead
         else 
             say "Recharging..." 
             dclicktype '2578' ground any any 2
+            wait 3000
         endif
     endif
     wait 200
@@ -41,14 +42,14 @@ while not dead
         wait 5000
     endif
     
-    while findtype 5373|29001|29832|3648|3708|3712 ground any any 2 as found
+    while findtype 2473|3644|3645|3646|3647|3710|3702|29832|29833|2472|2475|3648|3649|3708|29078|41449|41450|3712|2474|3709|3650|3651|29077|5373|29001|29832|3648|3708|3712 ground any any 2 as found
         lift found 60000
         drop backpack -1 -1 0 
         wait 600
         say "Opening this soon"
     endwhile        
 
-    while findtype 29832|3648|3708|3712 backpack as found
+    while findtype 2473|3644|3645|3646|3647|3710|3702|29832|29833|2472|2475|3648|3649|3708|29078|41449|41450|3712|2474|3709|3650|3651|29077|29832|3648|3708|3712 backpack as found
         overhead "Poppin it {{found}}" 
         dclick found
         wait 500

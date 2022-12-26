@@ -1,0 +1,16 @@
+if diffhits > 25 
+    cast 'Greater Heal'
+    waitfortarget 5000
+    target 'self'
+elseif diffmana > 10 and not findbuff "Actively Meditating"
+    skill "Meditation"
+    wait 555
+elseif findbuff "Actively Meditating" and diffmana > 2
+    wait 200
+else
+    cast 'Flamestrike'
+    waitfortarget
+    target 'self'
+endif    
+wait 500
+replay

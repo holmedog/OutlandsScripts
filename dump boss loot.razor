@@ -1,27 +1,52 @@
-@removelist 'treasureitems'
-@createlist 'treasureitems'
-pushlist 'treasureitems' 0xa8c6 
-pushlist 'treasureitems' 0x42bf 
-pushlist 'treasureitems' 0x227a
-pushlist 'treasureitems' 0xefc 
-pushlist 'treasureitems' 0xf91 
-pushlist 'treasureitems' 0x5740
-pushlist 'treasureitems' 0xef3 
-pushlist 'treasureitems' 0xeed 
-pushlist 'treasureitems' 0x72a4
-pushlist 'treasureitems' 0x14ec
+@clearignore
+@setvar! containerToSplit
+if not listexists nonStackItems
+  createlist nonStackItems
+  pushlist nonStackItems 3985
+  pushlist nonStackItems 3836
+  pushlist nonStackItems 8826
+  pushlist nonStackItems 5356 
+  pushlist nonStackItems 24434 
+  pushlist nonStackItems 22336 
+  pushlist nonStackItems 17087
+  pushlist nonStackItems 43206
+endif
 
-#find dump chest
-overhead 'Select Chest' 32
-setvar 'dumpChest'
+if not listexists stackItems
+  createlist stackItems
+  pushlist stackItems 29030 
+  pushlist stackItems 3827 
+  pushlist stackItems 3821 
+  pushlist stackItems 2539 
+  pushlist stackItems 45315 
+endif
 
-foreach x in treasureitems
-  while findtype x self as found
-      lift found 60000
-    drop dumpChest -1 -1 0 
-    wait 600
+
+overhead 'Dropping Non-Stackable Items' 100
+
+foreach x in nonStackItems
+  while counttype x containerToSplit > 1 as this
+    while findtype x containerToSplit as this
+        sysmsg 'Lifting...' 44
+        lift this 1
+        drop containerToSplit 17 104 0
+        wait 650
+        @ignore this
+    endwhile
   endwhile
 endfor
 
-overhead 'Done dropping the loot' 45
-overhead 'Done dropping the loot' 45
+overhead 'Dropping Stackable Items' 100
+
+foreach x in stackItems
+  while counttype x containerToSplit > 1 as this
+    while findtype x containerToSplit as this
+        sysmsg 'Lifting...' 44
+        lift this 60000
+        drop containerToSplit -1 -1
+        wait 650
+        @ignore this
+    endwhile
+  endwhile
+endfor
+@clearignore

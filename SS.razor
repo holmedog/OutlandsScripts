@@ -59,11 +59,11 @@ if findtype 0x2006 'ground' 'any' 1 2
 endif
 
 #SS if we are not necro
-#wait 700
-#if skill 'Spirit Speak' > 25 and skill 'Necromancy' <=50
-#    hotkey 'Spirit Speak'
-#    wait 1050
-#endif
+wait 700
+if skill 'Spirit Speak' > 25 and skill 'Necromancy' <=50
+    hotkey 'Spirit Speak'
+    wait 1050
+endif
 
 #check buffs
 #Food check
