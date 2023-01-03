@@ -1,1 +1,3 @@
 @setvar boatKillTarget lasttarget
+
+script "stayalive2"
