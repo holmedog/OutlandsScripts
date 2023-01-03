@@ -1,7 +1,16 @@
 //Get ready to sail
-say '[EmbarkFollowers'
+overhead "Target Tillerman or Status Bar"
+setvar! tillerguy 
+
+//get on boat
+dclick tillerguy
+wait 250
+gumpresponse 21 4216593270
 wait 255
-say '[Embark'
+//load pets
+gumpresponse 22 4216593270
+wait 255
+gumpclose 4216593270
 wait 255
 say '[recallBoarding'
 wait 250
@@ -10,8 +19,6 @@ wait 250
 say '[ReadyCrew'
 wait 250
 say '[ShipHotbars'
-overhead "Target Tillerman"
-setvar! tillerguy 
 unsetvar noidBag
 
 script "stayalive2"
