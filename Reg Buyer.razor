@@ -1,0 +1,176 @@
+#Script by Brozan
+
+if not listexists 'firstRunSetup'
+    createlist 'firstRunSetup'
+    overhead "Select your Rune Tome"
+    setvar! runeBookFarm
+    getlabel runeBookFarm desc
+    overhead "Using {{desc}}"
+    
+    overhead "Target Storage Shelf for Restock"
+    setvar! storageShelf
+    
+    overhead "Target Resource Stockpile for Dump"
+    setvar! resourceStockpile
+    
+    overhead "Target Pack Animal"
+    setvar! packAnimal
+            
+endif
+
+#Create list of reagents
+if not listexists 'regTypes'    
+    createlist regTypes
+    @pushlist 'regTypes' 'Blood Moss'
+    @pushlist 'regTypes' 'Black Pearl%s%'
+    @pushlist 'regTypes' 'Ginseng'
+    @pushlist 'regTypes' 'Garlic'
+    @pushlist 'regTypes' 'Sulfurous Ash'
+    @pushlist 'regTypes' "Spider's Silk" 
+    @pushlist 'regTypes' 'Nightshade' 
+    @pushlist 'regTypes' 'Mandrake Root%s%' 
+endif
+# ' for formatting reasons
+
+#Populate our runes
+if not listexists 'runes'
+    createlist 'runes'
+endif
+if list runes <= 0
+        pushlist 'runes' 201
+        pushlist 'runes' 202
+        pushlist 'runes' 203
+        pushlist 'runes' 204
+        pushlist 'runes' 205
+        pushlist 'runes' 206
+        pushlist 'runes' 207
+        pushlist 'runes' 208
+        pushlist 'runes' 209
+        pushlist 'runes' 210
+        pushlist 'runes' 211
+        pushlist 'runes' 212
+        pushlist 'runes' 213
+        pushlist 'runes' 214
+        pushlist 'runes' 215
+        pushlist 'runes' 216
+        pushlist 'runes' 217
+        pushlist 'runes' 218
+        pushlist 'runes' 219
+        pushlist 'runes' 220
+        pushlist 'runes' 221
+        pushlist 'runes' 222
+        pushlist 'runes' 223
+        pushlist 'runes' 224
+        pushlist 'runes' 225
+        @setvar tomeSideSwitch 0
+    endif
+endif   
+
+foreach rune in runes
+    #Go to next spot
+    while mana < 15 
+        overhead "Waiting on mana"
+    endwhile
+    overhead "Recall Now!"         
+    #rune tome recall  
+    if not gumpexists 167090027
+        dclick runeBookFarm
+        wait 200
+    endif    
+    gumpresponse rune 167090027
+    wait 500
+    if tomeSideSwitch = 0
+        gumpresponse 20 167090027
+        @setvar! tomeSideSwitch 1
+    else 
+        gumpresponse 10 167090027
+        @setvar! tomeSideSwitch 0
+    endif
+    
+    #recall cast, now wait
+    for 3 
+        wait 900       
+        if followers > 1
+            say "All follow me"
+        endif   
+    endfor
+    
+    #Do buying shit here
+    #Check the ground for regs someone (us) dropped
+    foreach x in regTypes
+      while findtype x ground -1 -1 2 as found
+        lift found 9999
+        drop packAnimal -1 -1 0 
+        @ignore myVariable
+        wait 600
+      endwhile
+      while findtype x backpack any any 1 as found
+        lift found 9999
+        drop packAnimal -1 -1 0 
+        @ignore myVariable
+        wait 600
+      endwhile
+      while findtype x ground -1 -1 2 as found
+        lift found 9999
+        drop packAnimal -1 -1 0 
+        @ignore myVariable
+        wait 600
+      endwhile
+    endfor
+    
+    #Look for vendors, buy 
+    clearignore 
+    while findtype 401|400 ground -1 -1 6 as regGuy
+        getlabel regGuy regGuyDesc
+        overhead "Buying from Vendor {{regGuyDesc}}" 33
+        menu regGuy 1
+        ignore regGuy
+        wait 500
+        foreach x in regTypes
+          while findtype x ground -1 -1 2 as found
+            lift found 9999
+            drop packAnimal -1 -1 0 
+            @ignore myVariable
+            wait 600
+          endwhile
+          while findtype x backpack any any 1 as found
+            lift found 9999
+            drop packAnimal -1 -1 0 
+            @ignore myVariable
+            wait 600
+          endwhile
+        endfor
+        wait 1000
+        if insysmsg "Buy Agent bought"
+            clearignore 
+        endif
+    endwhile
+    
+    #Done with spot go home
+    cast 'Recall'
+    wft 5000
+    target runeBookFarm
+
+    for 4 
+        wait 900       
+        if followers > 1
+            say "All follow me"
+        endif   
+    endfor
+    
+    overhead "Dump regs"
+    menu resourceStockpile 0
+    wft 1500
+    target 'packAnimal'
+    
+    overhead "Restock self"
+    wait 500
+    menu storageShelf 1
+    wft 1500
+            
+    while followers < 1
+        overhead "Lost packie"
+        wait 2000
+    endwhile
+endfor
+    

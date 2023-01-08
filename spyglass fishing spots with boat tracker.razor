@@ -1,19 +1,41 @@
 #Set to 1 for fishing and boats and bosses.  Set to anything else for just boats/bosses
-@setvar huntingType 0
+@setvar huntingType 1
+if not timerexists 'throwNet'
+    createtimer 'throwNet'
+    settimer 'throwNet' 9999
+endif
+
 
 if not timerexists "glass"
     createtimer "glass"
     settimer "glass" 99999
 endif
 
+if not timerexists "timeToFish"
+    createtimer "timeToFish"
+    settimer "timeToFish" 9999
+endif
+
 @setvar glassSwap 0
 
 while not dead
     if huntingType = 1
+    if timer 'throwNet' > 3500 and findtype rock|foliage|rowboat|mushroom|basket|18824|28933|swordfish|rocks|bedroll ground as fishingSpot
+            overhead "Throwing Net" 15
+            dclicktype 3530 self
+            while not targetexists  
+                wait 20
+            endwhile
+            if targetexists 'Neutral'
+                target fishingSpot
+                settimer 'throwNet' 0
+            endif
+        endif
+
         if timer "glass" > 4000 and glassSwap = 0  
             overhead "Fishing Spot"
             gumpclose 2890020940
-            dclicktype 5365
+            dclicktype 'spyglass'
             waitfortarget 1200
             target 'self'
             waitforgump 2890020940
@@ -22,13 +44,12 @@ while not dead
             gumpresponse 4
             waitforgump 2890020940
             if ingump "a fishing" 2890020940 
-                #say "stop"
-                dclicktype 3763
-                wait 500
-                #say "stop"
-                wait 500
-                dclicktype 3763
-                #stop
+                    overhead "FISHING SPOT" 43
+                    wait 250
+                    overhead "FISHING SPOT" 43
+                    wait 250
+                    overhead "FISHING SPOT" 43
+                    say "[kiss"
             endif
             settimer "glass" 0
             @setvar glassSwap 1
@@ -40,7 +61,7 @@ while not dead
             wait 250
             gumpclose 2890020940
             wait 250
-            dclicktype 5365
+            dclicktype 'spyglass'
             waitfortarget 1200
             target 'self'
             wait 350 
@@ -54,6 +75,7 @@ while not dead
                     overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
                     wait 250
                     overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                    say "[laugh"
                     @setvar blueFound 1
             endif
             while ingump "Next" 2890020940 and blueFound = 0
@@ -65,16 +87,35 @@ while not dead
                     overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
                     wait 250
                     overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
+                    say "[laugh"
                     @setvar blueFound 1
-                    #say "Stop"
                 endif
-            endwhile   
-            #while blueFound = 1 
-            #    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
-            #    wait 1000
-            #endwhile
+            endwhile
             settimer "glass" 0
-            @setvar glassSwap 0
+            @setvar glassSwap 0            
+        endif
+        
+        
+        if timer "timeToFish" > 9000
+            #Equip pole if not equipped
+            if findtype 3520 lefthand
+            else
+                if findlayer self righthand or findlayer self lefthand
+                    sysmsg 'Casting to disarm...' 9
+                    cast unlock
+                    wait 200
+                endif
+                sysmsg 'Dressing Pole...' 44
+                dress POLE
+            endif
+            #Wait 'til it's equipped
+            while queued
+            endwhile
+            #dclick pole
+            if findlayer self lefthand as pole
+                dclick pole
+            endif
+            settimer "timeToFish" 0
         endif
     else
         if timer "glass" > 6500 
@@ -83,7 +124,7 @@ while not dead
             wait 250
             gumpclose 2890020940
             wait 250
-            dclicktype 5365
+            dclicktype 'spyglass'
             waitfortarget 1200
             target 'self'
             wait 350 
@@ -97,8 +138,7 @@ while not dead
                     overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
                     wait 250
                     overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
-                    @setvar blueFound 1
-                    #say "Stop"
+                    say "[laugh"
             endif
             while ingump "Next" 2890020940 and blueFound = 0
                 gumpresponse 3 2890020940
@@ -109,15 +149,10 @@ while not dead
                     overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
                     wait 250
                     overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
-                    @setvar blueFound 1
-                    #say "Stop"
+                    say "[laugh"
                 endif
             endwhile   
-            #while blueFound = 1 
-            #    overhead "LOOK AT TRACKING!!!  BOAT OR BOSS" 43
-            #    wait 1000
-            #endwhile
             settimer "glass" 0
         endif
     endif   
-endwhile 
+endwhile

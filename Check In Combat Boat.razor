@@ -1,0 +1,21 @@
+if gumpexists 4216593270
+    gumpclose 4216593270
+endif
+yell '[ShipMenu'
+while not gumpexists 4216593270
+endwhile
+gumpresponse 4
+while not ingump 'Party' 4216593270
+endwhile
+gumpresponse 13
+while not targetexists 
+endwhile
+if targetexists 
+    target 'self'
+endif
+waitforgump 4216593270 100
+gumpclose 4216593270
+
+if insysmsg 'No players were eligible'
+    overhead 'No Combat Timer' 66
+endif
