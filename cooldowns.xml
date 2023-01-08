@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<cooldowns>
+	<cooldownentry name="Skill Lockout" defaultcooldown="0" cooldownbartype="Regular" hue="88" pauseduringworldsaves="True">
+		<trigger triggertype="SysMessage" duration="2" triggertext="Whom shall I examine?" />
+		<trigger triggertype="SysMessage" duration="2" triggertext="What creature would you like to examine?" />
+		<trigger triggertype="SysMessage" duration="10" triggertext="Tame which animal?" />
+		<trigger triggertype="SysMessage" duration="2" triggertext="What item do you wish to get information about?" />
+		<trigger triggertype="SysMessage" duration="2" triggertext="Whom do you wish to beg from, recruit, or motivate?" />
+		<trigger triggertype="SysMessage" duration="10" triggertext="Where will you search?" />
+		<trigger triggertype="SysMessage" duration="10" triggertext="You are not certain what lies hidden nearby." />
+		<trigger triggertype="SysMessage" duration="2" triggertext="What would you like to evaluate?" />
+		<trigger triggertype="OverheadMessage" duration="2" triggertext="mental strength" />
+		<trigger triggertype="OverheadMessage" duration="2" triggertext="cannot quite judge" />
+		<trigger triggertype="OverheadMessage" duration="10" triggertext="You fail to hide" />
+		<trigger triggertype="OverheadMessage" duration="10" triggertext="You have hidden yourself well" />
+		<trigger triggertype="SysMessage" duration="2" triggertext="You focus your follower's aggression towards the target" />
+		<trigger triggertype="SysMessage" duration="2" triggertext="You fail to focus your follower's agression" />
+		<trigger triggertype="SysMessage" duration="1" triggertext="What do you wish to appraise and identify?" />
+		<trigger triggertype="SysMessage" duration="1" triggertext="You are not certain" />
+		<trigger triggertype="SysMessage" duration="5" triggertext="You are at peace" />
+		<trigger triggertype="SysMessage" duration="10" triggertext="You enter a meditative trance." />
+		<trigger triggertype="SysMessage" duration="2" triggertext="You establish contact with the netherworld." />
+		<trigger triggertype="SysMessage" duration="2" triggertext="You fail your attempt at contacting the netherworld." />
+		<trigger triggertype="SysMessage" duration="1" triggertext="What food, potion, or player would you like to inspect. Target the ground to scavenge for herbs." />
+		<trigger triggertype="SysMessage" duration="1" triggertext="It appears to be devoid of any form of poison" />
+		<trigger triggertype="SysMessage" duration="1" triggertext="You are uncertain as to the safety of this food item." />
+		<trigger triggertype="OverheadMessage" duration="10" triggertext="You gather a handful of plants and fashion an herbal poultice" />
+		<trigger triggertype="SysMessage" duration="10" triggertext="You are unable to find any useful plants nearby." />
+		<trigger triggertype="SysMessage" duration="5" triggertext="What do you wish to track?" />
+		<trigger triggertype="SysMessage" duration="10" triggertext="You can't steal from that" />
+		<trigger triggertype="SysMessage" duration="10" triggertext="You steal" />
+		<trigger triggertype="SysMessage" duration="10" triggertext="You have already stolen from this creature." />
+		<trigger triggertype="SysMessage" duration="10" triggertext="You fail to steal from the creature and it retaliates against you!" />
+		<trigger triggertype="OverheadMessage" duration="10" triggertext="You have hidden yourself well" />
+		<trigger triggertype="SysMessage" duration="10" triggertext="You begin to move quietly" />
+		<trigger triggertype="SysMessage" duration="10" triggertext="You successfully steal the item." />
+		<trigger triggertype="SysMessage" duration="10" triggertext="You fail in your stealing attempt" />
+		<trigger triggertype="SysMessage" duration="5" triggertext="You play successfully, disrupting" />
+		<trigger triggertype="SysMessage" duration="5" triggertext="You fail to incite" />
+		<trigger triggertype="SysMessage" duration="5" triggertext="You fail to pacify" />
+		<trigger triggertype="SysMessage" duration="5" triggertext="You fail to discord" />
+		<trigger triggertype="SysMessage" duration="5" triggertext="You play successfully, provoking" />
+		<trigger triggertype="SysMessage" duration="5" triggertext="You play successfully, pacifying" />
+		<trigger triggertype="SysMessage" duration="5" triggertext="You play successfully, briefly pacifying" />
+	</cooldownentry>
+	<cooldownentry name="Reloading" defaultcooldown="30" cooldownbartype="Regular" hue="138" pauseduringworldsaves="True">
+		<trigger triggertype="SysMessage" duration="29" triggertext="Reloading cannons!" />
+		<trigger triggertype="SysMessage" duration="29" triggertext="Reloading cannons!" />
+	</cooldownentry>
+	<cooldownentry name="Cannons" defaultcooldown="10" cooldownbartype="Regular" hue="28" pauseduringworldsaves="True">
+		<trigger triggertype="SysMessage" duration="9" triggertext="Hull Remaining:" />
+	</cooldownentry>
+	<cooldownentry name="Spyglass" defaultcooldown="6" cooldownbartype="Regular" hue="78" pauseduringworldsaves="False">
+		<trigger triggertype="SysMessage" duration="6" triggertext="spyglass" />
+	</cooldownentry>
+	<cooldownentry name="Repair" defaultcooldown="10" cooldownbartype="Regular" hue="483" pauseduringworldsaves="False">
+		<trigger triggertype="SysMessage" duration="10" triggertext="Repair Script Engaged" />
+	</cooldownentry>
+	<cooldownentry name="Combat Likely" defaultcooldown="60" cooldownbartype="Regular" hue="453" pauseduringworldsaves="False">
+		<trigger triggertype="SysMessage" duration="" triggertext="Hull Remaining:" />
+		<trigger triggertype="OverheadMessage" duration="62" triggertext="Roped" />
+		<trigger triggertype="OverheadMessage" duration="0" triggertext="clear of the fray" />
+		<trigger triggertype="OverheadMessage" duration="1" triggertext="combat and you must wait another 1 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="2" triggertext="combat and you must wait another 2 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="3" triggertext="combat and you must wait another 3 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="4" triggertext="combat and you must wait another 4 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="5" triggertext="combat and you must wait another 5 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="6" triggertext="combat and you must wait another 6 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="7" triggertext="combat and you must wait another 7 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="8" triggertext="combat and you must wait another 8 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="9" triggertext="combat and you must wait another 9 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="10" triggertext="combat and you must wait another 10 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="11" triggertext="combat and you must wait another 11 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="12" triggertext="combat and you must wait another 12 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="13" triggertext="combat and you must wait another 13 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="14" triggertext="combat and you must wait another 14 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="15" triggertext="combat and you must wait another 15 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="16" triggertext="combat and you must wait another 16 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="17" triggertext="combat and you must wait another 17 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="18" triggertext="combat and you must wait another 18 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="19" triggertext="combat and you must wait another 19 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="20" triggertext="combat and you must wait another 20 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="21" triggertext="combat and you must wait another 21 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="22" triggertext="combat and you must wait another 22 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="23" triggertext="combat and you must wait another 23 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="24" triggertext="combat and you must wait another 24 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="25" triggertext="combat and you must wait another 25 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="26" triggertext="combat and you must wait another 26 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="27" triggertext="combat and you must wait another 27 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="28" triggertext="combat and you must wait another 28 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="29" triggertext="combat and you must wait another 29 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="30" triggertext="combat and you must wait another 30 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="31" triggertext="combat and you must wait another 31 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="32" triggertext="combat and you must wait another 32 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="33" triggertext="combat and you must wait another 33 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="34" triggertext="combat and you must wait another 34 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="35" triggertext="combat and you must wait another 35 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="36" triggertext="combat and you must wait another 36 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="37" triggertext="combat and you must wait another 37 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="38" triggertext="combat and you must wait another 38 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="39" triggertext="combat and you must wait another 39 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="40" triggertext="combat and you must wait another 40 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="41" triggertext="combat and you must wait another 41 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="42" triggertext="combat and you must wait another 42 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="43" triggertext="combat and you must wait another 43 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="44" triggertext="combat and you must wait another 44 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="45" triggertext="combat and you must wait another 45 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="46" triggertext="combat and you must wait another 46 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="47" triggertext="combat and you must wait another 47 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="48" triggertext="combat and you must wait another 48 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="49" triggertext="combat and you must wait another 49 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="50" triggertext="combat and you must wait another 50 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="51" triggertext="combat and you must wait another 51 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="52" triggertext="combat and you must wait another 52 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="53" triggertext="combat and you must wait another 53 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="54" triggertext="combat and you must wait another 54 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="55" triggertext="combat and you must wait another 55 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="56" triggertext="combat and you must wait another 56 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="57" triggertext="combat and you must wait another 57 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="58" triggertext="combat and you must wait another 58 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="59" triggertext="combat and you must wait another 59 seconds before you may add co-owners to the ship" />
+		<trigger triggertype="OverheadMessage" duration="60" triggertext="combat and you must wait another 60 seconds before you may add co-owners to the ship" />
+	</cooldownentry>
+	<cooldownentry name="Mushroom" defaultcooldown="60" cooldownbartype="Regular" hue="248" pauseduringworldsaves="True">
+		<trigger triggertype="SysMessage" duration="60" triggertext="You consume a magic" />
+	</cooldownentry>
+</cooldowns>
