@@ -19,7 +19,7 @@ if not listexists 'firstRunSetup'
 endif
 
 #Create list of reagents
-if not listexists 'regTypes'    
+if not listexists 'regTypes'
     createlist regTypes
     @pushlist 'regTypes' 'Blood Moss'
     @pushlist 'regTypes' 'Black Pearl%s%'
@@ -28,6 +28,7 @@ if not listexists 'regTypes'
     @pushlist 'regTypes' 'Sulfurous Ash'
     @pushlist 'regTypes' "Spider's Silk" 
     @pushlist 'regTypes' 'Nightshade' 
+    @pushlist 'regTypes' 3854 
     @pushlist 'regTypes' 'Mandrake Root%s%' 
 endif
 # ' for formatting reasons
@@ -147,6 +148,12 @@ foreach rune in runes
     endwhile
     
     #Done with spot go home
+	while mana < 50
+		ovheread "Mana Break"
+        skill 'meditation'
+		wait 3000
+	endwhile
+	
     cast 'Recall'
     wft 5000
     target runeBookFarm
@@ -173,4 +180,5 @@ foreach rune in runes
         wait 2000
     endwhile
 endfor
-    
+
+replay     
