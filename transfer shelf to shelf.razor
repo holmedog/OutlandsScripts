@@ -1,0 +1,11 @@
+overhead "Target source"
+@setvar! sourceContainer
+overhead "Target destination"
+@setvar! destContainer
+while not dead
+    menu sourceContainer 1
+    wait 100
+    menu destContainer 0
+    waitfortarget
+    target 'self'
+endwhile

@@ -1,64 +1,8 @@
-
-overhead "Target Pack Animal"
-setvar! packAnimal
-
-#Create list of reagents
-if not listexists 'regTypes'    
-    createlist regTypes
-    @pushlist 'regTypes' 'Blood Moss'
-    @pushlist 'regTypes' 'Black Pearl%s%'
-    @pushlist 'regTypes' 'Ginseng'
-    @pushlist 'regTypes' 'Garlic'
-    @pushlist 'regTypes' 'Sulfurous Ash'
-    @pushlist 'regTypes' "Spider's Silk" 
-    @pushlist 'regTypes' 'Nightshade' 
-    @pushlist 'regTypes' 'Mandrake Root%s%' 
-endif
-# ' for formatting reasons
-foreach x in regTypes
-  while findtype x ground -1 -1 2 as found
-    lift found 9999
-    drop packAnimal -1 -1 0 
-    @ignore myVariable
-    wait 600
-  endwhile
-  while findtype x backpack any any 1 as found
-    lift found 9999
-    drop packAnimal -1 -1 0 
-    @ignore myVariable
-    wait 600
-  endwhile
-  while findtype x ground -1 -1 2 as found
-    lift found 9999
-    drop packAnimal -1 -1 0 
-    @ignore myVariable
-    wait 600
-  endwhile
-endfor
-
-clearignore 
-while findtype 401|400 ground -1 -1 6 as regGuy
-    getlabel regGuy regGuyDesc
-    overhead "Buying from Vendor {{regGuyDesc}}" 33
-    menu regGuy 1
-    ignore regGuy
-    wait 500
-    foreach x in regTypes
-      while findtype x ground -1 -1 2 as found
-        lift found 9999
-        drop packAnimal -1 -1 0 
-        @ignore myVariable
-        wait 600
-      endwhile
-      while findtype x backpack any any 1 as found
-        lift found 9999
-        drop packAnimal -1 -1 0 
-        @ignore myVariable
-        wait 600
-      endwhile
-    endfor
-    wait 1000
-    if insysmsg "Buy Agent bought"
-        clearignore 
-    endif
-endwhile
+menu 0x42E9FC5E 1
+wait 100
+menu 0x407F8ACB 0
+waitfortarget
+target 'self'
+waitforgump 3232825965
+gumpclose 3232825965
+replay
