@@ -1,0 +1,68 @@
+overhead "Starting Poison Routine!" 45
+hotkey 'Next Non-Friendly Monster Target'
+unsetvar myKillTarget
+@setvar! loopDone 0
+@setvar! deadlyOK 1
+while loopDone = 0
+    if hits < 80
+        overhead "GTFO!!!"
+        script "stayalive2"
+    endif
+    hotkey 'Next Non-Friendly Monster Target'
+    setvar! myKillTarget lasttarget 
+    getlabel myKillTarget desc2
+    if noto myKillTarget != hostile
+        overhead "Something wrong!"
+        script "stayalive2"
+    endif
+    
+    //check if we've cycled back to first
+    if "Ticks" in desc2
+        @setvar! loopDone 1
+    elseif "Poison" in desc2
+        @setvar! loopDone 1
+    elseif mana >= 9
+        while not targetexists
+            //not on first apply poison
+            cast 'poison'
+            wait 50
+        endwhile
+        target myKillTarget
+        wait 200
+    endif
+    
+    @setvar! isLethalPoison 0        
+    while isLethalPoison = 0
+        getlabel myKillTarget desc2
+        overhead desc2 66
+        // poison lethal
+        if "Lethal" in desc2
+            @setvar! isLethalPoison 1
+            break
+        elseif deadlyOK = 1 and "Deadly" in desc2
+            @setvar! isLethalPoison 1
+            break
+        elseif diffhits >= 40 
+            // need a heal
+            script "stayalive2"
+        elseif mana >= 9
+            while not targetexists
+                cast 'poison'
+                wait 50
+                if dead myKillTarget
+                    hotkey '> Interrupt'
+                    replay
+                endif
+            endwhile
+            target myKillTarget
+            wait 200
+        else
+            wait 200
+        endif
+    endwhile
+endwhile    
+
+sysmsg "Done poisoning" 23
+overhead "Done poisoning" 23
+
+script "stayalive2"

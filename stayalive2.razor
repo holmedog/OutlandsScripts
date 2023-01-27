@@ -23,9 +23,6 @@ while not dead
     if hidden
         continue
     endif
-    if findtype '5188' ground -1 -1 2
-        dclicktype '5188' ground -1 -1 2
-    endif
     
     #spyglass routine
     if diffhits < 25 and not timerexists "spyGlassPeek"
@@ -83,7 +80,7 @@ while not dead
     
     #Eat a magic mushroom if we have 
     #25  less mana than full
-    if diffhits < 25 and  mana < 70 and skill 'Magery' > 50 and timer "shroomy" >= 61000
+    if not targetexists and hits >= 76 and  mana < 70 and skill 'Magery' > 50 and timer "shroomy" >= 61000
         dclicktype '29012'
         overhead 'Mushroom Power!'
         settimer "shroomy" 0
@@ -103,18 +100,112 @@ while not dead
     endif
     
     //Heal drinker if below 45
-    if hp < 45
-        if findtype 3852 backpack
-            if timer "healpot" >= 9000
-                    overhead 'Drinking heal!'
-                    potion "heal"
-                    wait 200
-                    settimer "healpot" 0
+    #if hp < 45
+    #    if findtype 3852 backpack
+    #        if timer "healpot" >= 9000
+    #                overhead 'Drinking heal!'
+    #                potion "heal"
+    #                wait 200
+    #                settimer "healpot" 0
+    #        endif
+    #    endif
+    # endif
+     
+     
+     
+    # Magery Survival
+    if skill 'Magery' >= 60
+        # Initialize timers
+        if not timerexists 'low mana'
+            createtimer 'low mana'
+        endif
+        
+        if not timerexists 'castspell recovery'
+            createtimer 'castspell recovery'
+            settimer 'castspell recovery' 20000
+        endif
+        
+        if not timerexists 'healpot recovery'
+            createtimer 'healpot recovery'
+            settimer 'healpot recovery' 20000
+        endif
+        
+        if not timerexists 'potion recovery'
+            createtimer 'potion recovery'
+            settimer 'potion recovery' 20000
+        endif
+        
+        # Mana warnings
+        if mana < 22  and timer 'low mana' > 3000 and mana > 10
+            overhead '1 GHeal Left' 55
+            settimer 'low mana' 0
+        elseif mana < 11  and timer 'low mana' > 3000
+            overhead '0 GHeals Left' 33
+            settimer 'low mana' 0
+        endif
+        if targetexists 'beneficial' and hits < 75
+            target self
+            settimer 'castspell recovery' 0
+        endif
+
+        # If hurt, attempt to heal
+        if hits < 75 and timer 'castspell recovery' >= 350
+            if targetexists 'beneficial'
+                target self
+                settimer 'castspell recovery' 0
+            endif
+            if targetexists 'any'
+                # Do nothing until precast has been used.
+            else
+                # If under 35 HP and we cant heal pot, quick heal and reset heal timer
+                if hits < 35 and timer 'healpot recovery' < 10000 and timer 'potion recovery' < 1000 and mana > 3
+                    if poisoned 'self' and timer 'potion recovery' > 1000
+                        if findtype 3847 'backpack'
+                            overhead '[Used: Cure Pot]' 68
+                            hotkey 'Drink Cure'
+                            # Set timer for free cure
+                            if insysmsg 'receive a free cure potion'
+                                settimer 'next free cure' 0
+                            endif
+                            settimer 'potion recovery' 0
+                            wait 50
+                        else
+                            hotkey 'Cure'
+                            wait 800
+                            target self
+                            wait 350
+                        endif
+                    endif
+                    hotkey 'Heal'
+                    wait 550
+                    target self
+                    settimer 'castspell recovery' 0
+                elseif hits < maxhits and mana > 10
+                    if poisoned 'self' and timer 'potion recovery' > 1000
+                        if findtype 3847 'backpack'
+                            overhead '[Used: Cure Pot]' 68
+                            hotkey 'Drink Cure'
+                            # Set timer for free cure
+                            if insysmsg 'receive a free cure potion'
+                                settimer 'next free cure' 0
+                            endif
+                            settimer 'potion recovery' 0
+                            wait 50
+                        else
+                            hotkey 'Cure'
+                            wait 800
+                            target self
+                            wait 350
+                        endif
+                    endif
+                    hotkey 'Greater Heal'
+                    wait 1300
+                    target self
+                    settimer 'castspell recovery' 0
+                endif
             endif
         endif
-     endif
+    endif
     
-
-     
-     wait 100
+    #wait 100
 endwhile

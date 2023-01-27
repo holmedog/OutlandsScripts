@@ -1,8 +1,13 @@
-menu 0x42E9FC5E 1
-wait 100
-menu 0x407F8ACB 0
-waitfortarget
-target 'self'
-waitforgump 3232825965
-gumpclose 3232825965
-replay
+if not listexists 'regTypes'
+    createlist regTypes
+    @pushlist 'regTypes' 1
+    @pushlist 'regTypes' 2
+endif
+
+
+    #Check the ground for regs someone (us) dropped
+    foreach x in regTypes
+        for 5
+            overhead "Test"
+        endfor
+    endfor

@@ -1,9 +1,13 @@
 say [sendboarding
 waitforgump 2881168634
 gumpresponse 5
-wft 500
-target boatKillTarget 
-wait 300
-dclicktype 5188 self
+while not targetexists 
+    wait 10
+endwhile
+while targetexists 
+    wait 10
+endwhile
 wait 200
-script "Embark My Boat"
+dclicktype 5188 self
+
+script "stayalive2"

@@ -1,5 +1,8 @@
 @clearignore
+overhead "Target Source"
 @setvar! containerToSplit
+overhead "Target Destination"
+@setvar! containerToSplitTwo
 if not listexists nonStackItems
   createlist nonStackItems
   pushlist nonStackItems 3985
@@ -29,7 +32,7 @@ foreach x in nonStackItems
     while findtype x containerToSplit as this
         sysmsg 'Lifting...' 44
         lift this 1
-        drop containerToSplit 17 104 0
+        drop containerToSplitTwo 17 104 0
         wait 650
         @ignore this
     endwhile
@@ -43,7 +46,7 @@ foreach x in stackItems
     while findtype x containerToSplit as this
         sysmsg 'Lifting...' 44
         lift this 60000
-        drop containerToSplit -1 -1
+        drop containerToSplitTwo -1 -1
         wait 650
         @ignore this
     endwhile

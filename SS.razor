@@ -79,7 +79,7 @@ if not findbuff 'food satisfaction'
     endif
 endif
 #Bless
-if skill 'Magery' > 50 and not findbuff 'Strength' 
+if skill 'Inscription' >= 10 and skill 'Magery' > 50 and not findbuff 'Strength' 
     overhead 'Bless time'
     cast 'Bless'
     wft 2500
@@ -95,7 +95,7 @@ if skill 'Magery' > 50 and not findbuff 'Reactive Armor'
     wait 500
 endif
 #Protection
-if skill 'Magery' > 50 and not findbuff 'Protection' 
+if skill 'Inscription' >= 10 and skill 'Magery' > 50 and not findbuff 'Protection' 
     overhead 'Protection time'
     cast 'Arch Protection'
     wft 2500
@@ -131,20 +131,5 @@ if timer 'bardLock' > 12000
     @setvar 'lockProv' 0
     @setvar 'lockDisco' 0
     @setvar 'lockPeace' 0
-endif
-if skill "taste identification" > 50 and not findbuff "Herbal Poultice" 
-    overhead "tasteidentification Buff"
-    skill "tasteid"
-    wft 2500
-    targettype 3701 backpack
-    wait 700
-endif
-if skill "camping" > 50 and not findbuff "Campfire Visit"
-    overhead "Need camping buff!"
-    wait 500
-    overhead "Need camping buff!"
-    wait 500
-    overhead "Need camping buff!"
-    wait 500
 endif
 script "stayalive2"

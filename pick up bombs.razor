@@ -1,0 +1,9 @@
+while findtype '5188' ground -1 -1 4
+    if findtype '5188' ground -1 -1 2
+        dclicktype '5188' ground -1 -1 2
+    else 
+        overhead "Get closer to bomb"
+    endif
+endwhile    
+overhead "Bomb done"    
+script "stayalive2"
