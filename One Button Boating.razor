@@ -16,7 +16,7 @@ while loopDone = 0
         script "stayalive2"
     endif
     
-    //check if we've cycled back to first
+    //check if we have cycled back to first
     if "Ticks" in desc2
         @setvar! loopDone 1
     elseif "Poison" in desc2
@@ -37,6 +37,21 @@ while loopDone = 0
         overhead desc2 66
         // poison lethal
         if "Lethal" in desc2
+            @setvar! isLethalPoison 1
+            break
+        elseif "spy" in desc2
+            @setvar! isLethalPoison 1
+            break
+        elseif "pirate" in desc2
+            @setvar! isLethalPoison 1
+            break
+        elseif "tradesman" in desc2
+            @setvar! isLethalPoison 1
+            break
+        elseif "merchant" in desc2
+            @setvar! isLethalPoison 1
+            break
+        elseif "sailor" in desc2
             @setvar! isLethalPoison 1
             break
         elseif deadlyOK = 1 and "Deadly" in desc2
@@ -65,4 +80,4 @@ endwhile
 sysmsg "Done poisoning" 23
 overhead "Done poisoning" 23
 
-script "stayalive2"
+script "SpyglassSimple"

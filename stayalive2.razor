@@ -3,6 +3,10 @@ clearsysmsg
 
 @setvar onABoat 0
 
+if not timerexists "overheadSpam"
+    createtimer "overheadSpam"
+    settimer "overheadSpam" 8000
+endif
 if not timerexists "healpot"
     createtimer "healpot"
     settimer "healpot" 8000
@@ -23,6 +27,12 @@ while not dead
     if hidden
         continue
     endif
+    
+    #yell about boms
+      if timer "overheadSpam" >= 500 and findtype '5188' ground -1 -1 8
+          overhead "Bomb down!!!" 33
+          settimer "overheadSpam" 0
+      endif
     
     #spyglass routine
     if diffhits < 25 and not timerexists "spyGlassPeek"
@@ -80,11 +90,11 @@ while not dead
     
     #Eat a magic mushroom if we have 
     #25  less mana than full
-    if not targetexists and hits >= 76 and  mana < 70 and skill 'Magery' > 50 and timer "shroomy" >= 61000
-        dclicktype '29012'
-        overhead 'Mushroom Power!'
-        settimer "shroomy" 0
-    endif
+    #if not targetexists and hits >= 76 and  mana < 70 and skill 'Magery' > 50 and timer "shroomy" >= 61000
+    #    dclicktype '29012'
+    #    overhead 'Mushroom Power!'
+    #    settimer "shroomy" 0
+    #endif
 
     # Healing Survival
     if skill 'Healing' > 1 
@@ -100,16 +110,16 @@ while not dead
     endif
     
     //Heal drinker if below 45
-    #if hp < 45
-    #    if findtype 3852 backpack
-    #        if timer "healpot" >= 9000
-    #                overhead 'Drinking heal!'
-    #                potion "heal"
-    #                wait 200
-    #                settimer "healpot" 0
-    #        endif
-    #    endif
-    # endif
+    if hp < 45
+        if findtype 3852 backpack
+            if timer "healpot" >= 5000
+                    overhead 'Drinking heal!'
+                    potion "heal"
+                    wait 200
+                    settimer "healpot" 0
+            endif
+        endif
+     endif
      
      
      
