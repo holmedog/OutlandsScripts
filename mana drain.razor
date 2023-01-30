@@ -1,11 +1,17 @@
-cast "Mana Drain"
-say [MindRot
-while not targetexists 
-    wait 100
-endwhile
-while targetexists 
-    wait 100
-endwhile
+if skill 'Magery' > 80
+    cast "Mana Drain"
+    say [MindRot
+    while not targetexists 
+        wait 100
+    endwhile
+    while targetexists 
+        wait 100
+    endwhile
+    overhead "Mana Drain!"
+elseif skill 'Healing' > 50
+    dclicktype 3617
+else 
+    overhead "Why you push me?"
+endif
 
-overhead "Mana Drain!"
 script "stayalive2"

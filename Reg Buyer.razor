@@ -37,35 +37,34 @@ endif
 if not listexists 'runes'
     createlist 'runes'
 endif
-if list runes <= 0
-        pushlist 'runes' 201
-        pushlist 'runes' 202
-        pushlist 'runes' 203
-        pushlist 'runes' 204
-        pushlist 'runes' 205
-        pushlist 'runes' 206
-        pushlist 'runes' 207
-        pushlist 'runes' 208
-        pushlist 'runes' 209
-        pushlist 'runes' 210
-        pushlist 'runes' 211
-        pushlist 'runes' 212
-        pushlist 'runes' 213
-        pushlist 'runes' 214
-        pushlist 'runes' 215
-        pushlist 'runes' 216
-        pushlist 'runes' 217
-        pushlist 'runes' 218
-        pushlist 'runes' 219
-        pushlist 'runes' 220
-        pushlist 'runes' 221
-        pushlist 'runes' 222
-        pushlist 'runes' 223
-        pushlist 'runes' 224
-        pushlist 'runes' 225
-        @setvar tomeSideSwitch 0
-    endif
-endif   
+clearlist runes
+pushlist 'runes' 201
+pushlist 'runes' 202	
+pushlist 'runes' 203
+pushlist 'runes' 204
+pushlist 'runes' 205
+pushlist 'runes' 206
+pushlist 'runes' 207
+pushlist 'runes' 208
+pushlist 'runes' 209
+pushlist 'runes' 210
+pushlist 'runes' 211
+pushlist 'runes' 212
+pushlist 'runes' 213
+pushlist 'runes' 214
+pushlist 'runes' 215
+pushlist 'runes' 216
+pushlist 'runes' 217
+pushlist 'runes' 218
+pushlist 'runes' 219
+pushlist 'runes' 220
+pushlist 'runes' 221
+pushlist 'runes' 222
+pushlist 'runes' 223
+pushlist 'runes' 224
+pushlist 'runes' 225
+@setvar tomeSideSwitch 0
+
 
 foreach rune in runes
     #Go to next spot
@@ -78,6 +77,7 @@ foreach rune in runes
         dclick runeBookFarm
         wait 200
     endif    
+    sysmsg "Going to Rune: [{{rune}}]" 23
     gumpresponse rune 167090027
     wait 500
     if tomeSideSwitch = 0
