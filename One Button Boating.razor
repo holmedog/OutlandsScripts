@@ -1,38 +1,41 @@
 overhead "Starting Poison Routine!" 45
-hotkey 'Next Non-Friendly Monster Target'
 unsetvar myKillTarget
+hotkey 'Next Non-Friendly Monster Target'
+wait 100
+setvar! firstTarget lasttarget 
 @setvar! loopDone 0
 @setvar! deadlyOK 1
 while loopDone = 0
-    if hits < 80
+    if hits < 70
         overhead "GTFO!!!"
         script "stayalive2"
     endif
     hotkey 'Next Non-Friendly Monster Target'
+    wait 100
     setvar! myKillTarget lasttarget 
+    if myKillTarget = firstTarget
+        @setvar! loopDone 1
+    endif
     getlabel myKillTarget desc2
     if noto myKillTarget != hostile
         overhead "Something wrong!"
         script "stayalive2"
     endif
-    
-    //check if we have cycled back to first
+         
+    getlabel myKillTarget desc2
+    overhead desc2 66
     if "Ticks" in desc2
-        @setvar! loopDone 1
-    elseif "Poison" in desc2
-        @setvar! loopDone 1
-    elseif mana >= 9
+        overhead "Poisoned already skip" 23
+    else 
         while not targetexists
-            //not on first apply poison
             cast 'poison'
-            wait 50
+            wait 25
         endwhile
         target myKillTarget
-        wait 200
     endif
     
-    @setvar! isLethalPoison 0        
-    while isLethalPoison = 0
+    @setvar! isLethalPoison 0 
+    while isLethalPoison = 0 and loopDone = 0      
         getlabel myKillTarget desc2
         overhead desc2 66
         // poison lethal
@@ -43,6 +46,9 @@ while loopDone = 0
             @setvar! isLethalPoison 1
             break
         elseif "pirate" in desc2
+            @setvar! isLethalPoison 1
+            break
+        elseif "fisher" in desc2
             @setvar! isLethalPoison 1
             break
         elseif "tradesman" in desc2
@@ -64,15 +70,11 @@ while loopDone = 0
             while not targetexists
                 cast 'poison'
                 wait 50
-                if dead myKillTarget
-                    hotkey '> Interrupt'
-                    replay
-                endif
             endwhile
             target myKillTarget
-            wait 200
+            #            wait 200
         else
-            wait 200
+            #wait 200
         endif
     endwhile
 endwhile    

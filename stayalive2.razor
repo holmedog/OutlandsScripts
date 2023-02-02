@@ -164,9 +164,12 @@ while not dead
                 target self
                 settimer 'castspell recovery' 0
             endif
-            if targetexists 'any'
-                # Do nothing until precast has been used.
+            if targetexists 'neutral' or targetexists 'harmful'
+                #Cancel target queue
+                hotkey "Cancel Current Target"
+                hotkey '> Interrupt'
             else
+                hotkey '> Interrupt'
                 # If under 35 HP and we cant heal pot, quick heal and reset heal timer
                 if hits < 35 and timer 'healpot recovery' < 10000 and timer 'potion recovery' < 1000 and mana > 3
                     if poisoned 'self' and timer 'potion recovery' > 1000
@@ -182,13 +185,17 @@ while not dead
                         else
                             hotkey 'Cure'
                             wait 800
-                            target self
+                            if targetexists 'beneficial' 
+                                target self
+                            endif
                             wait 350
                         endif
                     endif
                     hotkey 'Heal'
                     wait 550
-                    target self
+                    if targetexists 'beneficial' 
+                        target self
+                    endif
                     settimer 'castspell recovery' 0
                 elseif hits < maxhits and mana > 10
                     if poisoned 'self' and timer 'potion recovery' > 1000
@@ -204,13 +211,17 @@ while not dead
                         else
                             hotkey 'Cure'
                             wait 800
-                            target self
+                            if targetexists 'beneficial' 
+                                target self
+                            endif
                             wait 350
                         endif
                     endif
                     hotkey 'Greater Heal'
                     wait 1300
-                    target self
+                    if targetexists 'beneficial' 
+                        target self
+                    endif
                     settimer 'castspell recovery' 0
                 endif
             endif

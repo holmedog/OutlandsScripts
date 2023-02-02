@@ -20,7 +20,7 @@ endif
 
 while not dead
     if huntingType = 1
-    if timer 'throwNet' > 3500 and findtype barrel|horn|25769|rock|foliage|rowboat|mushroom|basket|18824|28933|swordfish|rocks|bedroll ground as fishingSpot
+    if timer 'throwNet' > 3500 and findtype rowboat|barrel|horn|25769|rock|foliage|rowboat|mushroom|basket|18824|28933|swordfish|rocks|bedroll ground as fishingSpot
             overhead "Throwing Net" 15
             dclicktype 3530 self
             while not targetexists  

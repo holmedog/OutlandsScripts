@@ -1,13 +1,3 @@
-if not listexists 'regTypes'
-    createlist regTypes
-    @pushlist 'regTypes' 1
-    @pushlist 'regTypes' 2
+if lasttarget = self
+    overhead 'here'
 endif
-
-
-    #Check the ground for regs someone (us) dropped
-    foreach x in regTypes
-        for 5
-            overhead "Test"
-        endfor
-    endfor
