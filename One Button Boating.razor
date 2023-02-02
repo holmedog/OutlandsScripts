@@ -4,7 +4,6 @@ hotkey 'Next Non-Friendly Monster Target'
 wait 100
 setvar! firstTarget lasttarget 
 @setvar! loopDone 0
-@setvar! deadlyOK 1
 while loopDone = 0
     if hits < 70
         overhead "GTFO!!!"
@@ -33,6 +32,7 @@ while loopDone = 0
         endwhile
         target myKillTarget
     endif
+    wait 200
     
     @setvar! isLethalPoison 0 
     while isLethalPoison = 0 and loopDone = 0      
@@ -41,28 +41,28 @@ while loopDone = 0
         // poison lethal
         if "Lethal" in desc2
             @setvar! isLethalPoison 1
-            break
+        elseif "Deadly" in desc2
+            @setvar! isLethalPoison 1
         elseif "spy" in desc2
             @setvar! isLethalPoison 1
-            break
         elseif "pirate" in desc2
             @setvar! isLethalPoison 1
-            break
+            overhead "Skippy pirate!"
         elseif "fisher" in desc2
             @setvar! isLethalPoison 1
-            break
+            overhead "Skippy"
+        elseif "orc" in desc2
+            @setvar! isLethalPoison 1
+            overhead "Skippy"
         elseif "tradesman" in desc2
             @setvar! isLethalPoison 1
-            break
+            overhead "Skippy"
         elseif "merchant" in desc2
             @setvar! isLethalPoison 1
-            break
+            overhead "Skippy"
         elseif "sailor" in desc2
             @setvar! isLethalPoison 1
-            break
-        elseif deadlyOK = 1 and "Deadly" in desc2
-            @setvar! isLethalPoison 1
-            break
+            overhead "Skippy"
         elseif diffhits >= 40 
             // need a heal
             script "stayalive2"
@@ -72,9 +72,9 @@ while loopDone = 0
                 wait 50
             endwhile
             target myKillTarget
-            #            wait 200
+            wait 2000
         else
-            #wait 200
+            wait 200
         endif
     endwhile
 endwhile    
