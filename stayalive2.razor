@@ -1,3 +1,5 @@
+hotkey '>> Enable Razor HotKeys'
+
 # Clear sys messaages 
 clearsysmsg
 
@@ -105,7 +107,7 @@ while not dead
 
  
     if not findtype 3852 backpack
-        overhead 'Out of heal potions!' 34
+        overhead 'Out of heal potions!' 34 
         wait 200
     endif
     
@@ -169,7 +171,6 @@ while not dead
                 hotkey "Cancel Current Target"
                 hotkey '> Interrupt'
             else
-                hotkey '> Interrupt'
                 # If under 35 HP and we cant heal pot, quick heal and reset heal timer
                 if hits < 35 and timer 'healpot recovery' < 10000 and timer 'potion recovery' < 1000 and mana > 3
                     if poisoned 'self' and timer 'potion recovery' > 1000
@@ -184,15 +185,21 @@ while not dead
                             wait 50
                         else
                             hotkey 'Cure'
-                            wait 800
-                            if targetexists 'beneficial' 
+                            while not targetexists
+                                wait 50
+                            endwhile
+                            if targetexists 'beneficial'  
                                 target self
                             endif
                             wait 350
                         endif
-                    endif
+                    endif                 
+                    hotkey '>> Disable Razor HotKeys'                   
+                    hotkey '> Interrupt'
                     hotkey 'Heal'
-                    wait 550
+                    while not targetexists
+                        wait 50
+                    endwhile
                     if targetexists 'beneficial' 
                         target self
                     endif
@@ -210,21 +217,27 @@ while not dead
                             wait 50
                         else
                             hotkey 'Cure'
-                            wait 800
+                            while not targetexists
+                                wait 50
+                            endwhile
                             if targetexists 'beneficial' 
                                 target self
                             endif
                             wait 350
                         endif
                     endif
+                    hotkey '>> Disable Razor HotKeys'                   
                     hotkey 'Greater Heal'
-                    wait 1300
+                    while not targetexists
+                        wait 50
+                    endwhile
                     if targetexists 'beneficial' 
                         target self
                     endif
                     settimer 'castspell recovery' 0
                 endif
             endif
+        hotkey '>> Enable Razor HotKeys'
         endif
     endif
     

@@ -1,6 +1,9 @@
 if skill 'Magery' > 80
+
     cast "Mana Drain"
     say [MindRot
+    wait 250
+    
     while not targetexists 
         wait 100
     endwhile
@@ -13,5 +16,6 @@ elseif skill 'Healing' > 50
 else 
     overhead "Why you push me?"
 endif
+
 
 script "SpyglassBoat"

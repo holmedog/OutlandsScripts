@@ -1,0 +1,8 @@
+clearignore 
+while findtype 0x2006 'ground' 'any' 1 2 as found
+    getlabel found desc
+    if "Syal" in desc
+        dclick found
+    endif
+    ignore found
+endwhile    

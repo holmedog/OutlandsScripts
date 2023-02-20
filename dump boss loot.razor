@@ -3,26 +3,30 @@ overhead "Target Source"
 @setvar! containerToSplit
 overhead "Target Destination"
 @setvar! containerToSplitTwo
-if not listexists nonStackItems
-  createlist nonStackItems
-  pushlist nonStackItems 3985
-  pushlist nonStackItems 3836
-  pushlist nonStackItems 8826
-  pushlist nonStackItems 5356 
-  pushlist nonStackItems 24434 
-  pushlist nonStackItems 22336 
-  pushlist nonStackItems 17087
-  pushlist nonStackItems 43206
-endif
 
-if not listexists stackItems
-  createlist stackItems
-  pushlist stackItems 29030 
-  pushlist stackItems 3827 
-  pushlist stackItems 3821 
-  pushlist stackItems 2539 
-  pushlist stackItems 45315 
-endif
+dclick containerToSplit
+wait 650
+
+removelist nonStackItems
+createlist nonStackItems
+pushlist nonStackItems 3985
+pushlist nonStackItems 3836
+pushlist nonStackItems 8826
+pushlist nonStackItems 5356 
+pushlist nonStackItems 22336 
+pushlist nonStackItems 17087
+pushlist nonStackItems 43206
+
+
+removelist stackItems
+createlist stackItems
+pushlist stackItems 29030 
+pushlist stackItems 3827 
+pushlist stackItems 3821 
+pushlist stackItems 2539 
+pushlist stackItems 45315
+pushlist stackItems 24434
+
 
 
 overhead 'Dropping Non-Stackable Items' 100
@@ -52,4 +56,11 @@ foreach x in stackItems
     endwhile
   endwhile
 endfor
+
+overhead "Do not forget to do gold and research mats!" 17
+sysmsg "Do not forget to do gold and research mats!" 17
+overhead "Do not forget to do gold and research mats!" 17
+sysmsg "Do not forget to do gold and research mats!" 17
+overhead "Do not forget to do gold and research mats!" 17
+sysmsg "Do not forget to do gold and research mats!" 17
 @clearignore

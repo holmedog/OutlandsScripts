@@ -43,17 +43,19 @@ while loopDone = 0
             @setvar! isLethalPoison 1
         elseif "Deadly" in desc2
             @setvar! isLethalPoison 1
+        elseif "ghost" in desc2
+            @setvar! isLethalPoison 1
         elseif "spy" in desc2
+            @setvar! isLethalPoison 1
+        elseif "raider" in desc2
             @setvar! isLethalPoison 1
         elseif "pirate" in desc2
             @setvar! isLethalPoison 1
-            overhead "Skippy pirate!"
-        elseif "fisher" in desc2
+        elseif "fish" in desc2
             @setvar! isLethalPoison 1
             overhead "Skippy"
         elseif "orc" in desc2
             @setvar! isLethalPoison 1
-            overhead "Skippy"
         elseif "tradesman" in desc2
             @setvar! isLethalPoison 1
             overhead "Skippy"
