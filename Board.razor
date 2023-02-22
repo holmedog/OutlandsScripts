@@ -1,3 +1,13 @@
+//check for valuable shit
+if findtype 8454|8455|43206|5363 backpack
+    while not targetexists 
+        overhead "You have valuable shit on you! Open target cursor to continue anyway stupidly" 17
+        sysmsg  "You have valuable shit on you! Open target cursor to continue anyway stupidly" 17
+        wait 500
+    endwhile
+endif 
+
+
 //Get ready to sail
 overhead "Target Tillerman or Status Bar"
 setvar! tillerguy 
