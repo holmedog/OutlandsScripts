@@ -15,6 +15,9 @@
 # If you set this to 0 it will use flamestrike
 @setvar! spamMindBlastOverFlamestrike 0
 
+#set this to 1 to ebolt instead of flamestrike
+@setvar! eboltBetter 1
+
 # This will auto replay this script if you want it too
 @setvar! autoBotEnabled 1
 
@@ -688,7 +691,7 @@ else
             endif            
             replay            
         endfor        
-    elseif not find lasttarget ground -1 -1 8
+    elseif not find lasttarget ground -1 -1 12
         overhead "More than 8 tiles, gtfo" 34
         @setvar! notSeen 1
         if autoBotEnabled = 1
@@ -1163,8 +1166,22 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
         if targetexists
             target myKillTarget
             wait 500
-        endif
-    elseif mana > 42
+        endif		
+    elseif mana > 32 and eboltBetter = 1
+        while not targetexists and mana > 35
+            if dead myKillTarget or diffhits >= 30
+                hotkey '> Interrupt'
+                break
+            else
+                cast 'Energy Bolt'
+                wait 50
+            endif 
+        endwhile
+        if targetexists
+            target myKillTarget
+            wait 500
+        endif      
+    elseif mana > 42 and eboltBetter != 1
         while not targetexists and mana > 65
             if dead myKillTarget or diffhits >= 30
                 hotkey '> Interrupt'
