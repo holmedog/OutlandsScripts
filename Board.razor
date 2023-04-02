@@ -9,8 +9,8 @@ endif
 
 
 //Get ready to sail
-overhead "Target Tillerman or Status Bar"
-setvar! tillerguy 
+overhead "Target Tillerman"
+@setvar! tillerguy 
 
 //get on boat
 dclick tillerguy
@@ -33,4 +33,10 @@ wait 250
 say '[ShipHotbars'
 unsetvar noidBag
 
-script "stayalive2"
+//Get ready to sail
+overhead "Move to hold and target status bar" 43
+setvar! shipStatusBar
+
+@setvar onABoat 1
+
+hotkey "Play Script: Full dump boat"

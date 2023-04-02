@@ -1,0 +1,93 @@
+clearignore
+
+
+if not timerexists  'bardRecovery'
+    createtimer 'bardRecovery'
+    settimer  'bardRecovery' 11000
+endif
+if not timerexists  'spiritSpeakTime'
+    createtimer 'spiritSpeakTime'
+    settimer  'spiritSpeakTime' 11000
+endif
+
+
+ 
+@setvar myTarget backpack
+while not dead
+    
+    if not findbuff 'Song Of Discordance'
+        if timer 'bardRecovery' > 11000
+            skill 'Discord' 
+            wft 1500
+            target backpack
+        endif
+    settimer 'bardRecovery' 0
+    endif
+    
+    if  timer 'bardRecovery' > 11000 and not findbuff 'Song Of Provocation'
+        skill 'Provocation' 
+        wft 1500
+        target backpack
+        settimer 'bardRecovery' 0
+    endif
+    
+    if  timer 'bardRecovery' > 11000 and not findbuff 'Song Of Peacemaking' 
+        skill 'Peacemaking' 
+        wft 1500
+        target backpack
+        settimer 'bardRecovery' 0
+    endif
+    
+    while followers < 4 and skill 'Magery' >= 90
+        say "[vengefulspirit"
+        cast "earth elemental"
+        wait 500
+        say "all guard me"
+    endwhile
+    
+    if followers > 1 and skill 'Spirit Speak' > 20 and timer 'spiritSpeakTime' > 30000
+        hotkey 'Spirit Speak'
+        settimer 'spiritSpeakTime' 0
+    endif
+    
+    hotkey 'Target Closest Grey Monster'
+    setvar myTarget lasttarget 
+    #check notority if we should attack 
+    if noto myTarget = hostile or noto myTarget = criminal
+        if skill 'Archery' >= 80 
+            attack myTarget
+        endif
+        if skill 'Discordance' > 20
+            getlabel myTarget myLabel
+            if 'discord' in myLabel
+                if 'pacified' in myLabel
+                    overhead "Barded out the ass"
+                else 
+                    skill 'Peacemaking'
+                    wft 1500
+                    target myTarget
+                endif
+            else 
+                skill 'Discord'
+                wft 1000
+                target myTarget
+            endif
+        endif
+    endif
+    
+    if insysmsg "cannot see" or insysmsg "too far away"
+        overhead "No Target???"
+    else 
+        for 50
+            wait 100
+            if diffhits > 25
+                if skill 'Magery' > 50
+                    hotkey '> Greater Heal/Cure Self' 
+                elseif skill 'Healing' > 1 and not bandaging
+                    hotkey 'Bandage Self'
+                endif
+            endif            
+        endfor
+    endif
+    
+endwhile

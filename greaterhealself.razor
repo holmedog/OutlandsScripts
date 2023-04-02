@@ -1,0 +1,81 @@
+# Initialize timers
+if not timerexists 'low mana'
+    createtimer 'low mana'
+endif
+
+if not timerexists 'castspell recovery'
+    createtimer 'castspell recovery'
+    settimer 'castspell recovery' 20000
+endif
+
+# Mana warnings
+if mana < 22  and timer 'low mana' > 3000 and mana > 10
+    overhead '1 GHeal Left' 55
+    settimer 'low mana' 0
+elseif mana < 11  and timer 'low mana' > 3000
+    overhead '0 GHeals Left' 33
+    settimer 'low mana' 0
+endif
+
+# If hurt, attempt to heal
+if diffhits > 5
+    if targetexists 'beneficial' and timer 'ghealcast' <= 2500
+        target self
+        settimer 'castspell recovery' 0
+    endif
+    if targetexists 'any'
+        overhead "Cursor Exists and we need healed!!!" 17
+    else
+        # If under 35 HP and we cant heal pot, quick heal and reset heal timer
+        if hits < 35 and timer 'healpot recovery' < 10000 and timer 'potion recovery' < 1000 and mana > 3
+            if poisoned 'self' and timer 'potion recovery' > 1000
+                if findtype 3847 'backpack'
+                    overhead '[Used: Cure Pot]' 68
+                    hotkey 'Drink Cure'
+                    # Set timer for free cure
+                    if insysmsg 'receive a free cure potion'
+                        settimer 'next free cure' 0
+                    endif
+                    settimer 'potion recovery' 0
+                    wait 50
+                else
+                    hotkey 'Cure'
+                    wait 800
+                    target self
+                    wait 350
+                endif
+            endif
+            hotkey '> Interrupt'
+            hotkey 'Heal'
+            wait 550
+            target self
+            settimer 'castspell recovery' 0
+        elseif hits < maxhits and mana > 10
+            if poisoned 'self' and timer 'potion recovery' > 1000
+                if findtype 3847 'backpack'
+                    overhead '[Used: Cure Pot]' 68
+                    hotkey 'Drink Cure'
+                    # Set timer for free cure
+                    if insysmsg 'receive a free cure potion'
+                        settimer 'next free cure' 0
+                    endif
+                    settimer 'potion recovery' 0
+                    wait 50
+                else
+                    hotkey 'Cure'
+                    wait 800
+                    target self
+                    wait 350
+                endif
+            endif
+            hotkey '> Interrupt'
+            hotkey 'Greater Heal'
+            settimer 'ghealcast' 0
+            waitfortarget 2500
+            target self
+            settimer 'castspell recovery' 0
+        endif
+    endif
+endif
+overhead "Heal Routine Done" 78
+script "stayalive2"

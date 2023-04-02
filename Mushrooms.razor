@@ -3,9 +3,13 @@ clearsysmsg
 while not dead
      cast "create food"
      wait 1000
-     if mana < 70 and insysmsg "use another magic"
+     if mana < 70 and not cooldown Mushroom
          dclicktype 29012
      endif
      menu 0x407F8ACB 1
+     if mana < 15
+        skill 'Meditation'
+        wait 10000
+     endif
 endwhile
  

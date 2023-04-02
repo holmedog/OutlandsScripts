@@ -1,10 +1,43 @@
-hotkey '>> Enable Razor HotKeys'
-
 # Clear sys messaages 
-clearsysmsg
+overhead "Background Scripts Engaged" 44
+if not varexist  wildBool
+    @setvar! wildBool 0
+endif
 
-@setvar onABoat 0
+#set to 1 to auto pot
+@setvar! autoPot 1
 
+#set to 1 to auto glass
+@setvar! autoGlass 0
+
+#set to 1 to swap to Wild Swing on disarm
+@setvar! autoWildSwing 1
+
+#set to 1 to disable disarm on hits
+@setvar! autoDisarm 1
+
+if not timerexists  'wildman'
+    createtimer 'wildman'
+    settimer  'wildman' 20000
+endif
+
+if not timerexists  'potion recovery'
+    createtimer 'potion recovery'
+    settimer  'potion recovery' 20000
+endif
+
+if not timerexists 'castspell recovery'
+    createtimer 'castspell recovery'
+    settimer 'castspell recovery' 20000
+endif
+if not timerexists 'next free cure'
+    createtimer 'next free cure'
+    settimer 'next free cure' 60000
+endif
+if not timerexists "ghealcast"
+    createtimer "ghealcast"
+    settimer "ghealcast" 8000
+endif
 if not timerexists "overheadSpam"
     createtimer "overheadSpam"
     settimer "overheadSpam" 8000
@@ -23,6 +56,10 @@ if not timerexists "shroomy"
     settimer "shroomy" 61000
 endif
 
+if not varexist onABoat
+    @setvar onABoat 0
+endif
+
 while not dead
         
     # If hidden, skip
@@ -30,73 +67,49 @@ while not dead
         continue
     endif
     
-    #yell about boms
-      if timer "overheadSpam" >= 500 and findtype '5188' ground -1 -1 8
-          overhead "Bomb down!!!" 33
-          settimer "overheadSpam" 0
-      endif
-    
-    #spyglass routine
-    if diffhits < 25 and not timerexists "spyGlassPeek"
-        createtimer 'spyGlassPeek'
-        settimer 'spyGlassPeek' 0
+    if onABoat = 1 and hits < 25
+        say "[embark"
     endif
-    if diffhits < 25 and not findbuff "Actively Meditating" and not queued and not targetexists and onABoat = 1 and timer "spyGlassPeek" > 6500 and findtype 'spyglass' self 
-        gumpclose 2890020940
-        wait 100
-        gumpclose 2890020940
-        dclicktype 5365
-        while not targetexists  
-            wait 20
-        endwhile
-        if targetexists 'Neutral'
-            target 'self'
-            waitforgump 2890020940
-            gumpresponse 4 2890020940
-            waitforgump 2890020940
-            overhead "spyglass"
-            sysmsg "spyglass"
-            @setvar blueFound 0
-            if ingump "a small ship" 2890020940 or  ingump "a small dragon ship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragon ship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragon ship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
-                    overhead "Player BOAT" 43
-                    wait 250
-                    overhead "Player BOAT" 43
-                    wait 250
-                    overhead "Player BOAT" 43
-                    @setvar blueFound 1
-            endif
-            while ingump "Next" 2890020940 and blueFound = 0
-                gumpresponse 3 2890020940
-                wait 350
-                if ingump "a small ship" 2890020940 or  ingump "a small dragon ship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragon ship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragon" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
-                    overhead "Player BOAT" 43
-                    wait 250
-                    overhead "Player BOAT" 43
-                    wait 250
-                    overhead "Player BOAT" 43
-                    @setvar blueFound 1
-                endif
-            endwhile   
-            settimer "spyGlassPeek" 0
+    
+    #turn disarm off automagically
+    if autoDisarm = 1
+        if insysmsg 'fail to disarm' say "[disarm"
+            overhead "Disabling Disarm"
+            say '[disarm'
         endif
     endif
     
-    if insysmsg "You must be onboard"
-        @setvar onABoat 0
+    #swap stances to get most out of single target disarm
+    if autoWildSwing = 1
+        #go back to Sunder if we are in Wild
+        if timer 'wildman' > 10500 and wildBool = 1
+            overhead "SUNDER THE EARTH" 44
+            yell '[macingstance5'
+            settimer 'wildman' 0
+            @setvar! wildBool 0
+        endif       
+
+        if insysmsg 'disarms your target'
+            overhead "GOIN WILD" 44
+            yell '[macingstance4'
+            settimer 'wildman' 0
+            @setvar! wildBool 1
+            wait 250
+            say "[disarm"
+            overhead "Disabling Disarm"
+        endif
     endif
+    
+    #yell about bombs
+      if timer "overheadSpam" >= 500 and findtype '5188' ground -1 -1 8
+          overhead "Bomb down!!!" 33
+          settimer "overheadSpam" 0
+      endif    
     
     if insysmsg 'you cannot move!'
         overhead 'Paralyzed!' 34
         say [pouch
     endif
-    
-    #Eat a magic mushroom if we have 
-    #25  less mana than full
-    #if not targetexists and hits >= 76 and  mana < 70 and skill 'Magery' > 50 and timer "shroomy" >= 61000
-    #    dclicktype '29012'
-    #    overhead 'Mushroom Power!'
-    #    settimer "shroomy" 0
-    #endif
 
     # Healing Survival
     if skill 'Healing' > 1 
@@ -108,138 +121,88 @@ while not dead
  
     if not findtype 3852 backpack
         overhead 'Out of heal potions!' 34 
-        wait 200
+        wait 500
     endif
     
-    //Heal drinker if below 45
-    if hp < 45
-        if findtype 3852 backpack
-            if timer "healpot" >= 5000
-                    overhead 'Drinking heal!'
-                    potion "heal"
-                    wait 200
-                    settimer "healpot" 0
-            endif
-        endif
-     endif
-     
-     
-     
-    # Magery Survival
-    if skill 'Magery' >= 60
-        # Initialize timers
-        if not timerexists 'low mana'
-            createtimer 'low mana'
-        endif
-        
-        if not timerexists 'castspell recovery'
-            createtimer 'castspell recovery'
-            settimer 'castspell recovery' 20000
-        endif
-        
-        if not timerexists 'healpot recovery'
-            createtimer 'healpot recovery'
-            settimer 'healpot recovery' 20000
-        endif
-        
-        if not timerexists 'potion recovery'
-            createtimer 'potion recovery'
-            settimer 'potion recovery' 20000
-        endif
-        
-        # Mana warnings
-        if mana < 22  and timer 'low mana' > 3000 and mana > 10
-            overhead '1 GHeal Left' 55
-            settimer 'low mana' 0
-        elseif mana < 11  and timer 'low mana' > 3000
-            overhead '0 GHeals Left' 33
-            settimer 'low mana' 0
-        endif
-        if targetexists 'beneficial' and hits < 75
-            target self
-            settimer 'castspell recovery' 0
-        endif
 
-        # If hurt, attempt to heal
-        if hits < 75 and timer 'castspell recovery' >= 350
-            if targetexists 'beneficial'
-                target self
-                settimer 'castspell recovery' 0
-            endif
-            if targetexists 'neutral' or targetexists 'harmful'
-                #Cancel target queue
-                hotkey "Cancel Current Target"
-                hotkey '> Interrupt'
-            else
-                # If under 35 HP and we cant heal pot, quick heal and reset heal timer
-                if hits < 35 and timer 'healpot recovery' < 10000 and timer 'potion recovery' < 1000 and mana > 3
-                    if poisoned 'self' and timer 'potion recovery' > 1000
-                        if findtype 3847 'backpack'
-                            overhead '[Used: Cure Pot]' 68
-                            hotkey 'Drink Cure'
-                            # Set timer for free cure
-                            if insysmsg 'receive a free cure potion'
-                                settimer 'next free cure' 0
-                            endif
-                            settimer 'potion recovery' 0
-                            wait 50
-                        else
-                            hotkey 'Cure'
-                            while not targetexists
-                                wait 50
-                            endwhile
-                            if targetexists 'beneficial'  
-                                target self
-                            endif
-                            wait 350
-                        endif
-                    endif                 
-                    hotkey '>> Disable Razor HotKeys'                   
-                    hotkey '> Interrupt'
-                    hotkey 'Heal'
-                    while not targetexists
-                        wait 50
-                    endwhile
-                    if targetexists 'beneficial' 
-                        target self
-                    endif
-                    settimer 'castspell recovery' 0
-                elseif hits < maxhits and mana > 10
-                    if poisoned 'self' and timer 'potion recovery' > 1000
-                        if findtype 3847 'backpack'
-                            overhead '[Used: Cure Pot]' 68
-                            hotkey 'Drink Cure'
-                            # Set timer for free cure
-                            if insysmsg 'receive a free cure potion'
-                                settimer 'next free cure' 0
-                            endif
-                            settimer 'potion recovery' 0
-                            wait 50
-                        else
-                            hotkey 'Cure'
-                            while not targetexists
-                                wait 50
-                            endwhile
-                            if targetexists 'beneficial' 
-                                target self
-                            endif
-                            wait 350
-                        endif
-                    endif
-                    hotkey '>> Disable Razor HotKeys'                   
-                    hotkey 'Greater Heal'
-                    while not targetexists
-                        wait 50
-                    endwhile
-                    if targetexists 'beneficial' 
-                        target self
-                    endif
-                    settimer 'castspell recovery' 0
+    if skill 'Magery' > 50 and diffhits > 22 and timer 'overheadSpam' >= 750
+        overhead "HEALING TIME" 77
+        sysmsg   "HEALING TIME" 77
+        overhead "HEALING TIME" 33
+        sysmsg   "HEALING TIME" 33
+        overhead "HEALING TIME" 22
+        sysmsg   "HEALING TIME" 22
+        settimer 'overheadSpam' 0
+    endif
+    
+    
+    # Monitor for free cure pot
+    if insysmsg 'receive a free cure potion'
+        settimer 'next free cure' 0
+    endif
+
+    # Cure Survival
+    if skill 'Chivalry' < 70 and not targetexists any
+        if poisoned 'self' and timer 'next free cure' >= 30000 and timer 'potion recovery' > 1000
+            if findtype 3847 'backpack'
+                overhead '[Used: Cure Pot]' 68
+                hotkey 'Drink Cure'
+                # Set timer for free cure
+                if insysmsg 'receive a free cure potion'
+                    settimer 'next free cure' 0
                 endif
+                settimer 'potion recovery' 0
             endif
-        hotkey '>> Enable Razor HotKeys'
         endif
     endif
     
-    #wait 100
+         
+    # Heal Potion
+    if not timerexists 'healpot recovery'
+        createtimer 'healpot recovery'
+        settimer 'healpot recovery' 20000
+    endif
+    
+    #Auto Pot 
+    if autoPot = 1
+        if diffhits < 15 and timer 'healpot recovery' >= 1500 and skill "Alchemy" >= 20 and  findbuff 'Agility' < 10
+            wait 510
+            potion 'agility'
+            settimer 'healpot recovery' 0
+        endif
+        if  diffhits < 15 and timer 'healpot recovery' >= 1500 and skill "Alchemy" >= 20 and  findbuff 'magic resist potion'  < 10
+            wait 510
+            potion 'nightsight'
+            settimer 'healpot recovery' 0
+        endif    
+        if diffhits < 15 and timer 'healpot recovery' >= 1500 and skill "Alchemy" >= 20 and  findbuff 'Strength' < 10
+            wait 510
+            potion 'strength'
+            settimer 'healpot recovery' 0
+        endif
+    endif
+    
+    if hits < 40
+        if timer 'healpot recovery' >= 10500 and timer 'potion recovery' > 1000
+            if findtype 3852 'backpack'
+                overhead '[Used: GHeal Pot]' 68
+                hotkey 'Drink Heal'
+                settimer 'healpot recovery' 0
+                settimer 'potion recovery' 0
+            endif
+        elseif skill 'Magery' > 50
+            overhead "HEAL DAMMIT HEAL"
+            hotkey "Play Script: greaterhealself"
+        endif
+    endif
+    
+    #automatically spyglass 
+    if not timerexists "spyGlassPeek"
+        createtimer "spyGlassPeek"
+        settimer "spyGlassPeek" 7000
+    endif    
+    if timer "spyGlassPeek" > 6100 and not targetexists and autoGlass = 1       
+        hotkey "Play Script: Spyglass Boat"
+    endif
+    
 endwhile

@@ -1,0 +1,17 @@
+clearignore 
+setvar 'salvage'
+while not dead 
+    gumpresponse 6 3019157059
+    wait 200
+    if findtype 8455|8454 backpack as crewGuy
+        dclick crewGuy
+        wait 200
+        while ingump "8.00" 189348675 or ingump "10.00" 189348675
+            overhead "Got one!"
+            wait 500
+        endwhile    
+        lift crewGuy
+        wait 500
+        drop 'salvage'
+    endif
+endwhile

@@ -1,0 +1,34 @@
+clearsysmsg
+clearignore 
+while findtype 2473|3644|3645|3646|3647|3710|3702|29832|29833|2472|2475|3648|3649|3708|29078|41449|41450|3712|2474|3709|3650|3651|29077|5373|29001|29832|3648|3708|3712 as found
+    dclick found
+    getlabel found desc
+    overhead desc
+    #remove traps
+    wait 200
+    
+    if not gumpexists 736038070
+        overhead "This is not locked"
+        ignore found
+        wait 600
+        continue
+    endif
+    while not insysmsg "successfully"
+        if insysmsg "devoid" 
+            break
+        endif
+        wait 250
+        gumpresponse 7
+        wait 3500
+    endwhile
+    
+    while not insysmsg "successfully"
+        if insysmsg "devoid" 
+            break
+        endif
+        wait 250
+        gumpresponse 4
+        wait 3500
+    endwhile
+    ignore found
+endwhile

@@ -33,52 +33,6 @@ while loopDone = 0
         target myKillTarget
     endif
     wait 200
-    
-    @setvar! isLethalPoison 0 
-    while isLethalPoison = 0 and loopDone = 0      
-        getlabel myKillTarget desc2
-        overhead desc2 66
-        // poison lethal
-        if "Lethal" in desc2
-            @setvar! isLethalPoison 1
-        elseif "Deadly" in desc2
-            @setvar! isLethalPoison 1
-        elseif "ghost" in desc2
-            @setvar! isLethalPoison 1
-        elseif "spy" in desc2
-            @setvar! isLethalPoison 1
-        elseif "raider" in desc2
-            @setvar! isLethalPoison 1
-        elseif "pirate" in desc2
-            @setvar! isLethalPoison 1
-        elseif "fish" in desc2
-            @setvar! isLethalPoison 1
-            overhead "Skippy"
-        elseif "orc" in desc2
-            @setvar! isLethalPoison 1
-        elseif "tradesman" in desc2
-            @setvar! isLethalPoison 1
-            overhead "Skippy"
-        elseif "merchant" in desc2
-            @setvar! isLethalPoison 1
-            overhead "Skippy"
-        elseif "sailor" in desc2
-            @setvar! isLethalPoison 1
-            overhead "Skippy"
-        elseif diffhits >= 40 
-            // need a heal
-            script "stayalive2"
-        elseif mana >= 9
-            while not targetexists
-                cast 'poison'
-                wait 50
-            endwhile
-            target myKillTarget
-            wait 2000
-        else
-            wait 200
-        endif
-    endwhile
 endwhile    
 
 sysmsg "Done poisoning" 23

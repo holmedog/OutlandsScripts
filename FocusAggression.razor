@@ -1,0 +1,18 @@
+clearignore 
+
+unsetvar allkill_target
+overhead '[All Kill]' 44
+@setvar! 'allkill_target'
+if findtype 3713 self
+    say '[focusaggression'
+else    
+    say 'all kill'
+endif
+waitfortarget 3500
+target allkill_target
+wait 300
+say '[crewattack'
+waitfortarget 3500
+target allkill_target
+
+script "stayalive2"

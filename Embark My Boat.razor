@@ -1,8 +1,25 @@
-dclick tillerguy
+clearignore 
+
+gumpclose 4216593270
+
+if find 'tillerguy' ground -1 -1
+    dclick 'tillerguy'
+elseif find 'shipStatusBar' ground -1 -1
+    dclick 'shipStatusBar'
+else
+    overhead 'DID NOT FIND SHIP' 33
+    sysmsg 'DID NOT FIND SHIP' 33
+    overhead 'DID NOT FIND SHIP' 34
+    sysmsg 'DID NOT FIND SHIP' 34
+    overhead 'DID NOT FIND SHIP' 35
+    sysmsg 'DID NOT FIND SHIP' 35
+    say [embark
+endif
+
 waitforgump 4216593270
 gumpresponse 21 4216593270
 waitforgump 4216593270
 gumpclose 4216593270
 wait 100
 
-script "SpyglassBoat"
+script "stayalive2"

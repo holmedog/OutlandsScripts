@@ -10,12 +10,15 @@ say [sendboarding
 waitforgump 2881168634
 gumpresponse 5 2881168634
 wait 300
-say [EvilOmen
-wait 600
-say [CorpseSkin
-#wait 600
-#say [Strangle
-
+if skill 'Necromancy' >= 50
+    say [EvilOmen
+    wait 600
+    say [CorpseSkin
+    #wait 600
+    #say [Strangle
+elseif skill 'Chivalry' >= 50
+    say [consecrateweapon
+endif
 
 while targetexists 
     wait 100

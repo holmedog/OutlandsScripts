@@ -4,28 +4,7 @@ if not timerexists 'bardLock'
 endif
 
 #Check for a ship hold
-if findtype '16019' ground any any 2 true as found
-    dclick found
-    wait 250
-    restock 2
-    wait 250
-    target found
-endif
-if findtype '16046' ground any any 2 true as found
-    dclick found
-    wait 250
-    restock 2
-    wait 250
-    target found
-endif
-if findtype '15973' ground any any 2 true as found
-    dclick found
-    wait 250
-    restock 2
-    wait 250
-    target found
-endif
-if findtype '16057' ground any any 2 true as found
+if findtype 16019|16046|15973|16057 ground any any 2 true as found
     dclick found
     wait 250
     restock 2
