@@ -81,34 +81,4 @@ if skill 'Inscription' >= 10 and skill 'Magery' > 50 and not findbuff 'Protectio
     target self
     wait 500
 endif
-if 'lockDisco' = 0 and skill "discordance" > 10 and timer "bardLock" > 10000 
-    overhead "Disco Buff"
-    skill "discordance" 
-    wft 2500
-    targettype 3701
-    settimer "bardLock" 0
-    setvar 'lockDisco' 1
-endif
-if  'lockProv' = 0 and skill "provocation" > 10 and timer "bardLock" > 10000
-    overhead "Provo Buff"
-    skill "provocation" 
-    wft 2500
-    targettype 3701
-    settimer "bardLock" 0
-    setvar 'lockProv' 1
-endif
-if 'lockPeace' = 0  and skill "Peacemaking" > 10 and timer "bardLock" > 10000
-    overhead "Peace Buff"
-    skill "peacemaking" 
-    wft 2500
-    targettype 3701
-    settimer "bardLock" 0
-    setvar 'lockPeace' 1
-endif
-if timer 'bardLock' > 12000
-    #We did not update any timers so we have cycled all
-    @setvar 'lockProv' 0
-    @setvar 'lockDisco' 0
-    @setvar 'lockPeace' 0
-endif
 script "stayalive2"

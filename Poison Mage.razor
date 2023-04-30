@@ -16,7 +16,7 @@
 @setvar! spamMindBlastOverFlamestrike 0
 
 #set this to 1 to ebolt instead of flamestrike
-@setvar! eboltBetter 1
+@setvar! eboltBetter 0
 
 # This will auto replay this script if you want it too
 @setvar! autoBotEnabled 1
@@ -35,16 +35,16 @@
 ######
 @setvar! castCurse 1
 @setvar! castManadrain 1
-@setvar! castLightning 0
+@setvar! castLightning 1
 @setvar! castFireball 0
-@setvar! castHarm 0
-@setvar! castMagicArrow 0
+@setvar! castHarm 1
+@setvar! castMagicArrow 1
 
 ###############
 ### Edit these cooldowns to match your wizard grimoire
 ######
 @setvar! canYouMakeAMushroom 1
-@setvar! cdLightning 60000
+@setvar! cdLightning 20000
 @setvar! cdMagicArrow 20000
 @setvar! cdHarm 20000
 @setvar! cdFireball 40000
@@ -437,12 +437,6 @@ if not findbuff "food" and findtype "tray" backpack as jood
     wait 200
 endif
 
-# Use Taste ID if possible
-if skill "Taste Identification" >= 50 and not findbuff "herb"
-    useskill 'tasteidentification'
-    wft 500
-    target backpack
-endif
 
 if diffhits >= 30
     while not targetexists
@@ -494,12 +488,12 @@ else
         setvar! goOnAndGet 1
         @setvar! notSeen 0
     endif   
-    foreach reg in 'regTypes'
-        if counttype reg < 7
-            overhead "Hey! I am Low on regs!" 23
-            @setvar goOnAndGet 1
-        endif
-    endfor 
+    #foreach reg in 'regTypes'
+    #    if counttype reg < 7
+    #        overhead "Hey! I am Low on regs!" 23
+    #        @setvar goOnAndGet 1
+    #    endif
+    #endfor 
     if not findtype 3852 self
         overhead 'Out of heal potions!' 34
         @setvar goOnAndGet 1
@@ -659,17 +653,17 @@ else
                         #Go to next spot
                         overhead "Recall Now!"                        
                         if usingRuneBook = 1
-							if not gumpexists 1551740969
-								dclick runeBookFarm
-								wait 200
-							endif
+                            if not gumpexists 1551740969
+                                dclick runeBookFarm
+                                wait 200
+                            endif
                             gumpresponse rune 1551740969
                         else          
                             #rune tome recall  
-							if not gumpexists 167090027
-								dclick runeBookFarm
-								wait 200
-							endif    
+                            if not gumpexists 167090027
+                                dclick runeBookFarm
+                                wait 200
+                            endif    
                             gumpresponse rune 167090027
                             wait 500
                             if tomeSideSwitch = 0
@@ -1166,7 +1160,7 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
         if targetexists
             target myKillTarget
             wait 500
-        endif		
+        endif       
     elseif mana > 32 and eboltBetter = 1
         while not targetexists and mana > 35
             if dead myKillTarget or diffhits >= 30

@@ -38,11 +38,6 @@ if diffhits > 5
                     endif
                     settimer 'potion recovery' 0
                     wait 50
-                else
-                    hotkey 'Cure'
-                    wait 800
-                    target self
-                    wait 350
                 endif
             endif
             hotkey '> Interrupt'
@@ -50,7 +45,8 @@ if diffhits > 5
             wait 550
             target self
             settimer 'castspell recovery' 0
-        elseif hits < maxhits and mana > 10
+        endif    
+        if hits < maxhits and mana > 10
             if poisoned 'self' and timer 'potion recovery' > 1000
                 if findtype 3847 'backpack'
                     overhead '[Used: Cure Pot]' 68

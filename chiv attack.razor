@@ -1,12 +1,16 @@
 overhead "Chiv Buffs" 43
-#say "[disarm"
-#wait 250
-#overhead "Enabling Disarm"
+
+hotkey 'Target Closest Non-Friendly Monster'
+wait 100
+@setvar! myKillTarget lasttarget 
+attack myKillTarget 
 say '[divinefury'
 wait 550
 say '[enemyofone'
-#wait 550
-#say '[consecrateweapon'
-#say "[disarm"
-script "stayalive2"
+
+if skill 'Discordance' >= 50
+    script 'discoLastTarget'
+else 
+    script "stayalive2"
+endif
  

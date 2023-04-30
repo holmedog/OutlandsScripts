@@ -7,6 +7,9 @@ endif
 #set to 1 to auto pot
 @setvar! autoPot 1
 
+#set to 1 to auto discord
+@setvar! autoDisco 1
+
 #set to 1 to auto glass
 @setvar! autoGlass 0
 
@@ -24,6 +27,12 @@ endif
 if not timerexists  'potion recovery'
     createtimer 'potion recovery'
     settimer  'potion recovery' 20000
+endif
+
+
+if not timerexists  'discoTimer'
+    createtimer 'discoTimer'
+    settimer  'discoTimer' 20000
 endif
 
 if not timerexists 'castspell recovery'
@@ -203,6 +212,31 @@ while not dead
     endif    
     if timer "spyGlassPeek" > 6100 and not targetexists and autoGlass = 1       
         hotkey "Play Script: Spyglass Boat"
+    endif
+    
+    if skill 'Discordance' >= 50 
+        #check for disco buff
+        if not findbuff "Song Of Discordance"
+            overhead "Disco Buff"
+            while not targetexists 
+                skill "Discordance"
+                wait 200
+            endwhile
+            target backpack
+        endif
+    endif
+            
+    if autoDisco = 1 and timer 'discoTimer' >= 2600 and skill 'Discordance' > 50
+        if not dead 'myKillTarget' and not cooldown 'Discordance'
+            getlabel myKillTarget desc2
+            if "discord" in desc2
+                #do nothing
+            else 
+                overhead "Disco Time" 23
+                script 'discoLastTarget'
+            endif
+        endif
+        settimer 'discoTimer' 0
     endif
     
 endwhile
