@@ -40,12 +40,14 @@ endif
 
 while not dead     
     if diffhits > 2
+        clearsysmsg 
         #open DM gump
         menu dockMaster 1
         #Click Dock
         waitforgump 3287496917
         gumpresponse 7 3287496917
         wait 300
+        guild "FISHER ALERT: I had to dock! PvP Here if you want it!"
         while insysmsg "The ship has not been"
             waitforgump 3287496917
             gumpresponse 7 3287496917
@@ -93,6 +95,7 @@ while not dead
                         waitforgump 3287496917
                         gumpresponse 7 3287496917
                         wait 300
+                        guild "FISHER ALERT: I had to dock! PvP Here if you want it!"
                         while insysmsg "The ship has not been"
                             waitforgump 3287496917
                             gumpresponse 7 3287496917
@@ -103,7 +106,7 @@ while not dead
                         overhead 'Success - continue on!' 88
                         wait 500
                         replay
-                    endif
+                    endif 
                 endfor
                 
                 #Catpcha existed too long, exit
