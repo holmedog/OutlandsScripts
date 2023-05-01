@@ -81,6 +81,10 @@ while not dead
                         overhead "Move your damn boat"
                         replay
                     endif
+                    if insysmsg "World save complete"
+                        overhead "World Saved"
+                        replay
+                    endif
                     #check for getting shot
                     if diffhits > 2
                         #open DM gump
