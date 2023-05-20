@@ -1,4 +1,5 @@
-@clearignore
+clearignore
+clearignore 
 overhead "Target Source"
 @setvar! containerToSplit
 overhead "Target Destination"
@@ -9,6 +10,7 @@ wait 650
 
 removelist nonStackItems
 createlist nonStackItems
+pushlist nonStackItems 24434
 pushlist nonStackItems 3985
 pushlist nonStackItems 3836
 pushlist nonStackItems 8826
@@ -16,6 +18,9 @@ pushlist nonStackItems 5356
 pushlist nonStackItems 22336 
 pushlist nonStackItems 17087
 pushlist nonStackItems 43206
+pushlist nonStackItems 5981
+pushlist nonStackItems 29036
+pushlist nonStackItems "folded cloth"
 
 
 removelist stackItems
@@ -25,14 +30,30 @@ pushlist stackItems 3827
 pushlist stackItems 3821 
 pushlist stackItems 2539 
 pushlist stackItems 45315
-pushlist stackItems 24434
+pushlist stackItems 22326
+pushlist stackItems 5981
+
+
+@pushlist 'stackItems' 3963
+@pushlist 'stackItems' 3962
+@pushlist 'stackItems' 3973
+@pushlist 'stackItems' 3972
+@pushlist 'stackItems' 3980
+@pushlist 'stackItems' 3981
+@pushlist 'stackItems' 3976
+@pushlist 'stackItems' 3974
+@pushlist 'stackItems' 4225
+@pushlist 'stackItems' 3854
+@pushlist 'stackItems' 3617
+@pushlist 'stackItems' 3903
+@pushlist 'stackItems' 7163
+@pushlist 'stackItems' 2545
 
 
 
 overhead 'Dropping Non-Stackable Items' 100
 
 foreach x in nonStackItems
-  while counttype x containerToSplit > 1 as this
     while findtype x containerToSplit as this
         sysmsg 'Lifting...' 44
         lift this 1
@@ -40,13 +61,11 @@ foreach x in nonStackItems
         wait 650
         @ignore this
     endwhile
-  endwhile
 endfor
 
 overhead 'Dropping Stackable Items' 100
 
 foreach x in stackItems
-  while counttype x containerToSplit > 1 as this
     while findtype x containerToSplit as this
         sysmsg 'Lifting...' 44
         lift this 60000
@@ -54,8 +73,13 @@ foreach x in stackItems
         wait 650
         @ignore this
     endwhile
-  endwhile
 endfor
+
+while findtype 3705 containerToSplitTwo as myPouch
+    lift myPouch 60000
+    drop backpack -1 -1
+    wait 650
+endwhile    
 
 overhead "Do not forget to do gold and research mats!" 17
 sysmsg "Do not forget to do gold and research mats!" 17
