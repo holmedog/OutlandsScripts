@@ -1,5 +1,5 @@
 #change this to your output file
-$outfile = "C:\Program Files (x86)\Ultima Online Outlands\ClassicUO\Data\Plugins\Assistant\Scripts\MIBLOCS.txt"
+$outfile = "C:\Users\oreos\Desktop\UO\Mapper\Definitions\MIBS.txt"
 
 $dir = "C:\Program Files (x86)\Ultima Online Outlands\ClassicUO\Data\Client\JournalLogs"
 $latest = Get-ChildItem -Path $dir | Sort-Object LastAccessTime -Descending | Select-Object -First 1

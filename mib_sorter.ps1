@@ -8,10 +8,15 @@ $file = $latest.name
 $cord_array =  @()
 Set-Content $outfile ''
 $output_string = ""
+
+
+#[05/04/2023 16:05]  System: a waterstained SOS message (located at 1946, 2444) [20 attempts left]
 foreach($line in Get-Content $dir\$file) {
-	if ($line -like "*The SOS appears to be located at*" )
+	if ($line -like "*a waterstained SOS message*" )
 	{
 		$dump_item_string = $line -replace '.*\(' -replace '\).*'
+		$dump_item_string = $dump_item_string -replace "located at "
+		echo $dump_item_string
 		$coords = $dump_item_string.split(",")
 		$x_cord = [Math]::Floor([decimal]($coords[0].trim() / 755))
 		$y_cord = [Math]::Floor([decimal]($coords[1].trim() / 810))+ 1
