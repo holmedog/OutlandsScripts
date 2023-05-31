@@ -1,0 +1,172 @@
+# An - Alpha Script - !
+# The lists vertical and horizontal
+# are made for Container scale 125
+# and Scale items inside containers off
+# (Paperdoll -> Options -> Interface)
+
+clearignore
+unsetvar Distro
+unsetvar Unstack
+unsetvar Sort
+removelist 'SaveWorld'
+removelist 'DistroElements'
+removelist 'ItemList'
+removelist 'vertical'
+removelist 'horizontal'
+if listexists 'done'
+    overhead '-DONE-' 93
+    removelist 'done'
+    stop
+endif
+clearsysmsg 
+overhead '-->> TARGET DISTRO <<--' 91
+setvar Distro
+if not varexist Distro 
+    overhead '[SCRIPT STOPPED]' 38
+    stop
+endif
+# DELETE FROM HERE TO REMOVE ORGANIZER
+while not insysmsg 'Organize Agent did not find any items to move'
+    organizer 20
+    while queued
+        wait 50
+    endwhile
+    wait 75
+    if insysmsg 'cannot hold more weight'
+        overhead '< < CONTAINER FULL!! > >' 38
+        break
+    endif
+endwhile
+# DELETE TO HERE TO REMOVE ORGANIZER
+
+
+# DELETE FROM HERE TO REMOVE TMAP MOVER
+while findtype 'map' backpack 0 as tmap
+    lift tmap
+    drop Distro
+    while queued
+        wait 50
+    endwhile
+    wait 75
+endwhile    
+# DELETE TO HERE TO REMOVE TMAP MOVER
+
+
+overhead '-->> UNSTACK ITEMS? <<--' 91
+overhead '[TARGET = YES]' 68
+overhead '[ESCAPE = NO ]' 68
+setvar Unstack
+dclick Distro
+
+if not listexists 'DistroElements'
+    createlist 'ItemList'
+    createlist 'DistroElements'
+    pushlist 'DistroElements' 'chain link'
+    pushlist 'DistroElements' 'map'
+    pushlist 'DistroElements' 'research materials'
+    pushlist 'DistroElements' 'Book of Truth'
+    pushlist 'DistroElements' 'void orb'
+    pushlist 'DistroElements' 'aspect core'
+    pushlist 'DistroElements' 'bottle'
+    pushlist 'DistroElements' 'scroll of calling'
+endif
+if not varexist Unstack
+    setvar Sort Distro
+else
+    overhead '-->> SORT ITEMS? <<--' 91
+    overhead '[TARGET = YES]' 68
+    overhead '[ESCAPE = NO ]' 68
+    setvar Sort
+endif
+overhead '[PROCESSING DISTRO]' 93
+foreach item in DistroElements
+    while findtype item Distro any 2 as pick
+        if varexist Unstack
+            lift pick 
+            drop Distro 0 0 0
+        else
+            ignore pick
+        endif
+    endwhile
+endfor
+if varexist Unstack
+    overhead '[DISTRO UNSTACKED]' 68
+    if not varexist Sort
+        createlist 'done'
+        loop
+    endif
+endif
+foreach item in DistroElements
+    while findtype item Distro as pick
+        if findtypelist 'ItemList' item Distro
+            ignore pick
+        endif
+    endwhile
+endfor
+clearignore
+if not listexists 'vertical'
+    createlist 'vertical'
+    pushlist 'vertical' '104'
+    pushlist 'vertical' '112'
+    pushlist 'vertical' '120'
+    pushlist 'vertical' '126'
+    pushlist 'vertical' '132'
+    pushlist 'vertical' '136'
+    pushlist 'vertical' '140'
+    pushlist 'vertical' '144'
+    pushlist 'vertical' '147'
+    createlist 'horizontal'
+    pushlist 'horizontal' '17'
+    pushlist 'horizontal' '26'
+    pushlist 'horizontal' '34'
+    pushlist 'horizontal' '42'
+    pushlist 'horizontal' '51'
+    pushlist 'horizontal' '59'
+    pushlist 'horizontal' '67'
+    pushlist 'horizontal' '76'
+    pushlist 'horizontal' '84'
+    pushlist 'horizontal' '92'
+    pushlist 'horizontal' '101'
+    pushlist 'horizontal' '109'
+    pushlist 'horizontal' '117'
+    pushlist 'horizontal' '126'
+endif
+pause 100
+overhead '[TYPE SORTING]' 93
+foreach y in vertical
+    foreach x in horizontal
+        if list 'ItemList' > 0
+            if insysmsg 'The world will save in 15 seconds' or listexists 'SaveWorld'
+                if not listexists 'SaveWorld'
+                    createlist 'SaveWorld'
+                    createtimer 'WorldSave'
+                    settimer 'WorldSave' 0
+                endif
+                if timer 'WorldSave' > 12000 or insysmsg 'The world is saving'
+                    overhead '[PAUSE - World Save inc.]' 68
+                    while not insysmsg 'World save complete'
+                        wait 100
+                    endwhile
+                    removelist 'SaveWorld'
+                    removetimer 'WorldSave'
+                    overhead '[RESUMING]' 93
+                endif
+            endif            
+            if poplist ItemList front as pick
+                lift pick 
+                drop Distro x y 0
+                while queued
+                    wait 40
+                endwhile
+                wait 75
+            endif
+        else
+            overhead '[DISTRO SORTED]' 68
+            createlist 'done'
+            loop
+        endif
+    endfor
+endfor
+overhead '[UN-KNOWN ERROR!!]' 38
+createlist 'done'
+loop
