@@ -1,0 +1,27 @@
+clearignore
+unsetvar 'salvage'
+setvar! 'salvage'
+for 1000
+    gumpresponse 53 2957884180
+    waitforgump 2957884180
+    gumpresponse 53 2957884180
+    waitforgump 2957884180
+    gumpresponse 53 2957884180
+    waitforgump 2957884180
+    gumpresponse 53 2957884180
+    waitforgump 2957884180
+    gumpresponse 53 2957884180
+endfor    
+    while findtype 2463 self as foundBottle
+        dclick foundBottle
+        wait 550
+        ignore foundBottle
+    endwhile
+    while findtype 5357 self as foundMIB
+        getlabel foundMIB 'mibLabel'
+        sysmsg mibLabel
+        wait 200
+        sysmsg  "MIB variable: ({{foundMIB}})"
+        ignore foundMIB
+    endwhile
+

@@ -1,2 +1,6 @@
-setvar myHp hp
-overhead "{{myHp}}"
+gumpresponse 3
+waitforgump 724753076
+if ingump "Sadie" 724753076
+    stop
+endif
+replay    
