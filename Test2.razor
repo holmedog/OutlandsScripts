@@ -1,5 +1,14 @@
-dclick 0x6AF619F6
-wait 200
-if ingump "Medium" 3750376313
-    overhead "Medium Ship"
-endif
+
+
+while not dead 
+    overhead "Click stuff to grab"
+    setvar releaseItem
+    wait 50
+    say "I wish to release this"
+    wft 500
+    target releaseItem
+    wait 200
+    lift releaseItem 60000
+    drop self -1 -1 0 
+    wait 400
+endwhile

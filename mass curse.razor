@@ -1,6 +1,15 @@
 cast "Mass Curse"
-say [MindRot
-wait 250
 
+if skill 'Necromancy' >= 50
+    if skill 'Poisoning' >= 50
+        say [MindRot
+        wait 550
+    endif
+    if skill 'Spirit Speak' >= 50
+        say [BloodOath
+        wait 550
+    endif
+endif
+    
 overhead "Mass Curse!"
 script "SpyglassBoat"

@@ -1,12 +1,42 @@
-removelist 'vendorId'
-createlist 'vendorId'
-pushlist 'vendorId' 2668026
-
+@setvar! timeout 1000
+@setvar! vendorID 2939436
 while not dead
-    hotkey 'Next Monster Target'
-    setvar! myLittleStinkyVar lasttarget 
-    if inlist 'vendorId' myLittleStinkyVar
-        dclick lasttarget
-        break
+  if find vendorID ground -1 -1 20
+    overhead "● ▼▼ HERE ▼▼ ●" 88 vendorID
+    if findtype 3701 vendorID as pack
+      dclick pack
+      wait timeout
+      @setvar! foundItem 0
+      if find 1389112358 pack as item
+        @setvar! foundItem item
+      else
+        while findtype 2472|2473|2474|2475|2476|2480|2481|2482|2604|2605|2606|2607|2608|2609|2610|2611|2612|2613|2614|2615|2616|2617|2618|2619|2620|2621|2622|2623|2624|2625|2626|2627|2628|2629|2630|2631|2632|2633|2634|2635|2636|2637|2638|2639|2640|2641|2642|2643|2711|2712|2713|2714|2715|2716|2717|2718|3644|3645|3646|3647|3648|3649|3650|3651|3701|3702|3703|3704|3705|3706|3708|3709|3710|3711|3712|7808|7809|9002|9003|11010|11011|12657|29833|29832 pack as subContainer
+          @ignore subContainer
+          dclick subContainer
+          wait timeout
+          if find 1389112358 pack as item
+            @setvar! foundItem item
+            break
+          endif
+        endwhile
+        clearignore
+      endif
+      if foundItem != 0
+        getlabel foundItem foundItemLabel
+        sysmsg "FOUND {{foundItemLabel}}"
+        if "Description: " in foundItemLabel
+        elseif "Price: 13990 " in foundItemLabel
+          sysmsg "opening buy menu"
+          menu foundItem 0
+        else
+          overhead "BEWARE PRICE CHANGE" 33
+          sysmsg "BEWARE PRICE CHANGE" 33
+        endif
+      else
+        sysmsg "Could not find item for sale"
+      endif
     endif
+    stop
+  endif
+  wait 500
 endwhile

@@ -1,0 +1,125 @@
+clearignore 
+gumpclose 2785326818
+//Find equipped chain
+@setvar! activeChain 0
+if findlayer self talisman as myChain
+    @setvar! activeChain myChain
+endif
+
+
+###################################################
+#########  Start Active Chain Empty Routine  ######
+###################################################
+//Strip equipped chain of links we do not want
+//get to far left
+dclick activeChain
+waitforgump 2785326818
+gumpresponse 4 2785326818
+waitforgump 2785326818
+gumpresponse 4 2785326818
+waitforgump 2785326818
+wait 55
+for 32
+    gumpresponse 5 2785326818
+    waitforgump 2785326818
+    wait 55
+endfor
+
+//now at link 1
+for 32
+    @setvar skipLink 0
+    if ingump "Damage on Ships (+4.5" 2785326818
+        @setvar skipLink 1
+    endif
+    if ingump "Damage on Ships (+3.7" 2785326818
+        @setvar skipLink 1
+    endif
+    if ingump "Damage on Ships (+3.0" 2785326818
+        @setvar skipLink 1
+    endif
+    if skipLink = 0
+        //This is not on exclusion list so pop it
+        gumpresponse 7 2785326818
+        waitforgump 2785326818
+        //wait 55
+    else 
+        //On exclusion list so move to next link
+        gumpresponse 6 2785326818
+        waitforgump 2785326818
+        //        wait 55
+    endif
+endfor
+
+###################################################
+#########  Start Hold Dump Chains Routine  ########
+###################################################
+//List for dump chains used later in findtypelist
+removelist dumpChains
+createlist dumpChains
+
+//Populate dumpChains list, ignore worn chain
+ignore activeChain
+//add your item types to this find list.  I do not have all of them
+if findtypelist dumpChains 3736|3737|3738 self 
+    overhead "Loaded chain list"
+endif
+clearignore 
+
+foreach dumpChain in dumpChains
+    dclick dumpChain
+    waitforgump 2785326818
+    gumpresponse 9 2785326818
+    waitforgump 2785326818
+    gumpresponse 9 2785326818
+    wait 700
+endfor    
+
+
+
+###################################################
+##########  Start Find Links Routine  #############
+###################################################
+
+foreach dumpChain in dumpChains
+    dclick dumpChain
+    waitforgump 2785326818
+    gumpresponse 4 2785326818
+    waitforgump 2785326818
+    gumpresponse 4 2785326818
+    waitforgump 2785326818
+    //wait 55
+    for 32
+        gumpresponse 5 2785326818
+        waitforgump 2785326818
+        //wait 55
+    endfor
+
+    //now at link 1
+    //Find links we want and pop them
+    for 32
+        if ingump "Damage to Bosses (+3.0" 2785326818
+            gumpresponse 7 2785326818
+        elseif ingump "Damage to Bosses (+3.7" 2785326818
+            gumpresponse 7 2785326818
+        elseif ingump "Damage to Bosses (+4.5" 2785326818
+            gumpresponse 7 2785326818
+        else 
+            gumpresponse 6 2785326818
+        endif
+        waitforgump 2785326818
+        //wait 55
+    endfor
+    wait 600
+endfor    
+
+
+
+###################################################
+######  Start Populate Active Chain Routine  ######
+###################################################
+
+dclick activeChain
+waitforgump 2785326818
+gumpresponse 9 2785326818
+waitforgump 2785326818
+gumpresponse 9 2785326818

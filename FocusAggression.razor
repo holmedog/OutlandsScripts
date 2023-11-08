@@ -10,9 +10,11 @@ else
 endif
 waitfortarget 3500
 target allkill_target
-wait 300
-say '[crewattack'
-waitfortarget 3500
-target allkill_target
+if onABoat = 1
+    wait 300
+    say '[crewattack'
+    waitfortarget 3500
+    target allkill_target
+endif
 
 script "stayalive2"

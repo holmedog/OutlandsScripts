@@ -20,12 +20,12 @@ if findtype 0x2006 'ground' 'any' 1 2
         wft 500
         target 'self'
         wait 255
-        if not insysmsg "You carve" and not insysmsg  "anything nearby" and not insysmsg "must wait"
-            while not insysmsg "successful"
-                overhead "I am broken in a Captcha loop.  Fix me"
-                wait 2500
-            endwhile                                
-        endif
+        # if not insysmsg "You carve" and not insysmsg  "anything nearby" and not insysmsg "must wait"
+        #    while not insysmsg "successful"
+        #        overhead "I am broken in a Captcha loop.  Fix me"
+        #        wait 2500
+        #    endwhile                                
+        #endif
     else
         #No blade, open corpses
         @clearignore

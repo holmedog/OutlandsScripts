@@ -1,0 +1,41 @@
+overhead "Target source chain"
+@setvar! chain1
+
+overhead "Target dest chain"
+@setvar! chain2
+
+dclick chain1
+waitforgump 2785326818
+gumpresponse 4 2785326818
+for 32
+    waitforgump 2785326818
+    gumpresponse 5
+    wait 50
+endfor
+
+while ingump "Damage on Ships (+4.5"
+    gumpresponse 7 2785326818
+    waitforgump 2785326818
+    wait 50
+endwhile
+    
+for 32    
+    gumpresponse 6
+    waitforgump 2785326818
+    
+    while ingump "Damage on Ships (+4.5"
+        gumpresponse 7 2785326818
+        waitforgump 2785326818
+        wait 50
+    endwhile
+endfor
+
+//load new chain
+wait 500
+dclick chain2
+waitforgump 2785326818
+gumpresponse 9 2785326818
+waitforgump 2785326818
+gumpresponse 9 2785326818
+waitforgump 2785326818
+gumpclose

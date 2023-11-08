@@ -5,6 +5,14 @@ dress 'bow'
 dclick 0x5B7C7BBD
 wait 600
 
+//dump gold
+
+while findtype 3821 self as 'myGold'
+    lift myGold 60000
+    drop '0x40820133' -1 -1 0 
+    wait 600
+endwhile
+
 //dump into all tomes 
 while findtype 29104 0x5B7C7BBD as found
     //overhead "Book"
@@ -146,6 +154,7 @@ while findtype 292 ground any any 2 as found
 
     ignore found
 endwhile   
+
 
 //dump pack horse
 while findtype 291 ground any any 2 as found

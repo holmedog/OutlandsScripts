@@ -14,10 +14,10 @@ endif
 @setvar! autoGlass 0
 
 #set to 1 to swap to Wild Swing on disarm
-@setvar! autoWildSwing 1
+@setvar! autoWildSwing 2
 
 #set to 1 to disable disarm on hits
-@setvar! autoDisarm 1
+@setvar! autoDisarm 2
 
 if not timerexists  'wildman'
     createtimer 'wildman'
@@ -70,6 +70,13 @@ if not varexist onABoat
 endif
 
 while not dead
+    #while queued
+    #    wait 20
+    #    if timer "overheadSpam" >= 500 
+    #        overhead "Looting" 77
+    #        settimer "overheadSpam" 0
+    #    endif
+    #endwhile
         
     # If hidden, skip
     if hidden
@@ -136,14 +143,11 @@ while not dead
 
     if skill 'Magery' > 50 and diffhits > 22 and timer 'overheadSpam' >= 750
         overhead "HEALING TIME" 77
-        sysmsg   "HEALING TIME" 77
         overhead "HEALING TIME" 33
-        sysmsg   "HEALING TIME" 33
+        sysmsg "HEALING TIME" 33
         overhead "HEALING TIME" 22
-        sysmsg   "HEALING TIME" 22
         settimer 'overheadSpam' 0
     endif
-    
     
     # Monitor for free cure pot
     if insysmsg 'receive a free cure potion'
@@ -174,9 +178,17 @@ while not dead
     
     #Auto Pot 
     if autoPot = 1
-        if diffhits < 15 and timer 'healpot recovery' >= 1500 and skill "Alchemy" >= 20 and  findbuff 'Agility' < 10
+        if diffhits < 15 and timer 'healpot recovery' >= 1500 and skill "Alchemy" >= 20 and  findbuff 'Agility' < 13
             wait 510
             potion 'agility'
+            if findbuff 'magic resist potion'  < 25
+                wait 450
+                potion 'nightsight'
+            endif
+            if findbuff 'Strength' < 25
+                wait 450
+                potion 'strength'
+            endif
             settimer 'healpot recovery' 0
         endif
         if  diffhits < 15 and timer 'healpot recovery' >= 1500 and skill "Alchemy" >= 20 and  findbuff 'magic resist potion'  < 10
@@ -191,7 +203,7 @@ while not dead
         endif
     endif
     
-    if hits < 40
+    if hits < 40 and not poisoned 'self'
         if timer 'healpot recovery' >= 10500 and timer 'potion recovery' > 1000
             if findtype 3852 'backpack'
                 overhead '[Used: GHeal Pot]' 68
