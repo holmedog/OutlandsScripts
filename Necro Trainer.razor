@@ -1,4 +1,4 @@
-while skill 'Spirit Speak' < 110
+while skill 'Magery' < 100
     cast 'Water Elemental'
     wait 6500
     while findtype 'a Water Elemental' as found
@@ -8,14 +8,14 @@ while skill 'Spirit Speak' < 110
         wait 500
     endwhile
     #create shrooms
-    #while counttype 29012 backpack < 5
-    #    cast "create food"
-    #    wait 1000
-    #endwhile
+    while counttype 29012 backpack < 5
+        cast "create food"
+        wait 1000
+    endwhile
 
-    #if mana < 70
-    #    dclicktype 29012
-    #endif
+    if mana < 70
+        dclicktype 29012
+    endif
 
     if findtype 'storage shelf' ground any any 2 as found
         menu found 1

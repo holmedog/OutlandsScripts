@@ -1,0 +1,53 @@
+overhead "Starting Poison Routine!" 45
+unsetvar myKillTarget
+hotkey 'Next Non-Friendly Monster Target'
+wait 100
+setvar! firstTarget lasttarget 
+@setvar! loopDone 0
+warmode on
+while loopDone = 0
+    if hits < 70
+        overhead "Heal Yourself!"
+    endif
+    hotkey 'Next Non-Friendly Monster Target'
+    wait 100
+    setvar! myKillTarget lasttarget 
+    if myKillTarget = firstTarget
+        @setvar! loopDone 1
+    endif
+    getlabel myKillTarget desc2
+    if noto myKillTarget != hostile
+        overhead "Something wrong!"
+        script "stayalive2"
+    endif
+         
+    getlabel myKillTarget desc2
+    overhead desc2 66
+    if "Ticks" in desc2
+        overhead "Poisoned already skip" 23
+    else 
+        setvar! breakloop 0
+        while breakloop = 0
+            if find myKillTarget
+                getlabel myKillTarget desc2
+                if "Lethal" in desc2
+                    overhead desc2 66
+                    #poison applied, go elsewhere
+                    setvar! breakloop 1
+                else
+                    attack myKillTarget
+                    overhead "● ▼▼ HERE ▼▼ ●" 88 lasttarget
+                endif
+            else 
+                setvar! breakloop 1
+            endif
+            wait 200
+        endwhile
+    endif
+    wait 200
+endwhile    
+
+sysmsg "Done poisoning" 23
+overhead "Done poisoning" 23
+
+script "SpyglassSimple"

@@ -8,9 +8,15 @@ elseif diffmana > 10 and not findbuff "Actively Meditating"
 elseif findbuff "Actively Meditating" and diffmana > 2
     wait 200
 else
-    cast 'Flamestrike'
+    if skill "Magery" < 70
+        cast 'Invisibility'
+    else
+        cast 'Flamestrike'
+    endif
     waitfortarget
     target 'self'
 endif    
 wait 500
-replay
+if skill "Magery" < 80
+    replay
+endif
