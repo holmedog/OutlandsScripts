@@ -2,7 +2,7 @@ overhead "Starting Poison Routine!" 45
 unsetvar myKillTarget
 hotkey 'Next Non-Friendly Monster Target'
 wait 100
-setvar! firstTarget lasttarget 
+@setvar! firstTarget lasttarget 
 @setvar! loopDone 0
 while loopDone = 0
     if hits < 70
@@ -11,7 +11,7 @@ while loopDone = 0
     endif
     hotkey 'Next Non-Friendly Monster Target'
     wait 100
-    setvar! myKillTarget lasttarget 
+    @setvar! myKillTarget lasttarget 
     if myKillTarget = firstTarget
         @setvar! loopDone 1
     endif
@@ -21,7 +21,6 @@ while loopDone = 0
         script "stayalive2"
     endif
          
-    getlabel myKillTarget desc2
     overhead desc2 66
     if "Ticks" in desc2
         overhead "Poisoned already skip" 23

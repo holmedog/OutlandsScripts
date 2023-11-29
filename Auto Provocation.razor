@@ -1,0 +1,110 @@
+hotkey 'Next Non-Friendly Monster Target'
+unsetvar myKillTarget
+hotkey 'target closest non-friendly monster'
+wait 100
+if insysmsg "no one matching"
+    overhead  "Nothing to attack" 34    
+    script "stayalive2"
+endif
+
+#prime our provocation targets
+@setvar! mobOne 0 
+@setvar! mobTwo 0
+@setvar! saveMob 0
+@setvar! discordTarget 0
+@setvar! firstTarget lasttarget 
+@setvar! myKillTarget lasttarget 
+
+@setvar! loopDone 0
+while cooldown "Provocation" and cooldown "Discordance"
+    overhead "Cooldowns!" 34
+    wait 200    
+    if hits < 70
+        overhead "GTFO!!!"
+        script "stayalive2"
+    endif
+endwhile
+
+#cycle all targets and see if one is not provoked, mark one for discord too
+while loopDone = 0
+    if hits < 70
+        overhead "GTFO!!!"
+        script "stayalive2"
+    endif
+
+    #range check
+    if not find myKillTarget ground -1 -1 10
+        overhead "Target is more than 10 tiles, skip" 34
+    else    
+        #Check if provoked
+        getlabel myKillTarget desc2         
+        overhead desc2 66
+        if "provoked" in desc2             
+            #already provoked but not does not work because it is stupid
+        else 
+            if "break" in desc2
+                #same shit
+            else
+                if mobOne = 0
+                    @setvar! mobOne myKillTarget
+                elseif mobTwo = 0
+                    @setvar! mobTwo myKillTarget
+                    @setvar! loopDone 1
+                endif
+            endif   
+        endif
+        #check if discorded
+        if "discord" in desc2
+            #see above for annoyance
+        else
+            if discordTarget = 0
+                @setvar! discordTarget myKillTarget
+            endif
+        endif
+    endif
+    
+    #Keep this in case firstTarget is only one not provoked 
+    @setvar! saveMob myKillTarget
+    
+    #go to the next target
+    hotkey 'Next Non-Friendly Monster Target'
+    wait 100
+    @setvar! myKillTarget lasttarget 
+    if myKillTarget = firstTarget
+        @setvar! loopDone 1
+    endif
+endwhile    
+
+@setvar! skipDisco 0
+if mobOne != 0 and mobOne != mobTwo
+    if not cooldown "Provocation" and not cooldown "Skill Lockout"
+        @setvar! skipDisco 1
+        overhead "Provoking!"
+        useskill 'Provocation'
+        wft 500 
+        if targetexists 
+            target mobOne
+            wft 500
+            if mobTwo != 0
+                target mobTwo   
+            else 
+                #This means we found one that is not provoked and others that are
+                if firstTarget = mobOne
+                    target saveMob
+                else
+                    target firstTarget
+                endif
+            endif
+        endif
+    endif
+endif
+#No provocation we are just discording 
+wait 100
+if skipDisco = 0 and not cooldown "Discordance" and not cooldown "Skill Lockout" and discordTarget != 0
+    overhead "Discordance!"
+    useskill 'Discordance'
+    wft 500
+    if targetexists 
+        target discordTarget
+    endif
+endif
