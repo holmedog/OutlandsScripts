@@ -46,7 +46,7 @@ endif
 
 #check buffs
 #Food check
-if not findbuff 'food satisfaction'
+if findbuff 'food satisfaction' <= 10
     if not findtype tray backpack
         overhead   "I am out of food!"
         wait 500
@@ -58,7 +58,7 @@ if not findbuff 'food satisfaction'
     endif
 endif
 #Bless
-if skill 'Inscription' >= 10 and skill 'Magery' > 50 and not findbuff 'Strength' 
+if skill 'Inscription' >= 10 and skill 'Magery' > 50 and findbuff 'Strength'  <= 25
     overhead 'Bless time'
     cast 'Bless'
     wft 2500
@@ -74,7 +74,7 @@ if skill 'Magery' > 50 and not findbuff 'Reactive Armor'
     wait 500
 endif
 #Protection
-if skill 'Inscription' >= 10 and skill 'Magery' > 50 and not findbuff 'Protection' 
+if skill 'Inscription' >= 10 and skill 'Magery' > 50 and findbuff 'Protection' <= 25
     overhead 'Protection time'
     cast 'Arch Protection'
     wft 2500

@@ -6,7 +6,12 @@ endif
 if timer "spyGlassPeek" > 6100 and not targetexists  
     gumpclose 2890020940
     gumpclose 2890020940
-    dclicktype 5365
+    if findtype 5365
+        dclicktype 5365
+    else 
+        overhead "no spyglasses" 33
+        script "stayalive2"
+    endif
     waitfortarget 1200
     if targetexists neutral
         target 'self'
@@ -38,4 +43,5 @@ if timer "spyGlassPeek" > 6100 and not targetexists
     endwhile    
     settimer 'spyGlassPeek' 0
 endif
+
 script "stayalive2"

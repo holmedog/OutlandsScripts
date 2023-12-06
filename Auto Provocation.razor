@@ -34,7 +34,7 @@ while loopDone = 0
 
     #range check
     if not find myKillTarget ground -1 -1 10
-        overhead "Target is more than 10 tiles, skip" 34
+        #overhead "Target is more than 10 tiles, skip" 34
     else    
         #Check if provoked
         getlabel myKillTarget desc2         
@@ -108,3 +108,5 @@ if skipDisco = 0 and not cooldown "Discordance" and not cooldown "Skill Lockout"
         target discordTarget
     endif
 endif
+
+script "stayalive2"
