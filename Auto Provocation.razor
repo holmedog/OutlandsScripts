@@ -1,7 +1,5 @@
-hotkey 'Next Non-Friendly Monster Target'
-unsetvar myKillTarget
 hotkey 'target closest non-friendly monster'
-wait 100
+unsetvar myKillTarget
 if insysmsg "no one matching"
     overhead  "Nothing to attack" 34    
     script "stayalive2"
@@ -19,7 +17,7 @@ endif
 while cooldown "Provocation" and cooldown "Discordance"
     overhead "Cooldowns!" 34
     wait 200    
-    if hits < 70
+    if hits < 30
         overhead "GTFO!!!"
         script "stayalive2"
     endif
@@ -27,18 +25,18 @@ endwhile
 
 #cycle all targets and see if one is not provoked, mark one for discord too
 while loopDone = 0
-    if hits < 70
+    if hits < 30
         overhead "GTFO!!!"
         script "stayalive2"
     endif
 
     #range check
-    if not find myKillTarget ground -1 -1 10
-        #overhead "Target is more than 10 tiles, skip" 34
+    if not find myKillTarget ground -1 -1 9
+        #overhead "Target is more than 12 tiles, skip" 34
     else    
         #Check if provoked
         getlabel myKillTarget desc2         
-        overhead desc2 66
+        overhead desc2 66 myKillTarget
         if "provoked" in desc2             
             #already provoked but not does not work because it is stupid
         else 
@@ -68,7 +66,6 @@ while loopDone = 0
     
     #go to the next target
     hotkey 'Next Non-Friendly Monster Target'
-    wait 100
     @setvar! myKillTarget lasttarget 
     if myKillTarget = firstTarget
         @setvar! loopDone 1

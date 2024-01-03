@@ -5,8 +5,6 @@
 
 #MAKE SURE your wizards satchel is in your backpack not on your char
 
-#Search for "WALK THIS WAY" and edit it for how to walk into your house
-
 # Set this to one, if you want to cast poison once no matter what
 # If you have 100 poisoning and want Lethal, set this to 0
 @setvar! castPoisonAnyway 0
@@ -542,27 +540,16 @@ else
                     if diffweight <= 60 
                         overhead "Too fat.  Dump Routine"
                         #Cast recall til you are home
-                        #Walk this way
-                        #Change the 3 numbers at the end of this to where land at recall location
+                        cast "Recall"
+                        while not targetexists and not insysmsg "Your concentration is disturbed" and not position 4007 909 0
+                            wait 100
+                        endwhile
+                        target runeBookFarm
+                        wait 1000
                         
                         if diffweight < 5
                             hotkey "Drink Strength"
                         endif
-                        while not position 4007 909 0
-                            cast "Recall"
-                            while not targetexists and not insysmsg "Your concentration is disturbed" and not position 4007 909 0
-                                wait 100
-                            endwhile
-                            target runeBookFarm
-                            wait 1000
-                        endwhile    
-                        #Loot Routine
-                        #WALK THIS WAY
-                        #Change the 3 numbers at the end of this to where you want to stop and ressupply.  Change the walk direction to the direction you need to go
-                        while not position 4007 904 5
-                            walk 'North'
-                            wait 150
-                        endwhile
                         if findtype 'storage shelf' ground any any 2 as found
                             menu found 0 
                             wft 2500

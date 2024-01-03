@@ -1,0 +1,56 @@
+clearignore  
+clearsysmsg 
+gumpclose 4216593270
+while findtype 'status bar' ground 150 as enemyTiller
+    if enemyTiller = tillerguy 
+        #nothing this is ours
+    elseif enemyTiller = shipStatusBar
+        #nothing
+    else
+        dclick enemyTiller
+        wait 200
+        gumpresponse 21 4216593270
+        wait 200
+        if insysmsg "You are too far"
+            #Ignore this one
+        elseif ingump "Disembark" 4216593270
+            clearignore 
+            script "stayalive2"
+        endif
+        wait 250
+    endif
+    gumpclose 4216593270
+    @ignore enemyTiller 
+endwhile
+
+overhead "Trying Tillermen!" 
+
+while findtype 'tiller man' ground as enemyTiller
+    #overhead "Trying!"
+    if enemyTiller = tillerguy 
+        #nothing this is ours
+    elseif enemyTiller = shipStatusBar
+        #nothing
+    else
+        dclick enemyTiller
+        wait 200
+        gumpresponse 21 4216593270
+        wait 200
+        if insysmsg "You are too far"
+            #Ignore this one
+        elseif ingump "Disembark" 4216593270
+            clearignore 
+            script "stayalive2"
+        endif
+        wait 250
+    endif
+    gumpresponse 21 4216593270
+    @ignore enemyTiller 
+endwhile
+
+wait 100
+gumpresponse 21 4216593270
+
+
+clearignore 
+script "stayalive2"

@@ -117,10 +117,11 @@ while not dead
     endif
     
     #yell about bombs
-      if timer "overheadSpam" >= 500 and findtype '5188' ground -1 -1 8
-          overhead "Bomb down!!!" 33
-          settimer "overheadSpam" 0
-      endif    
+    if timer "overheadSpam" >= 500 and findtype '5188' ground -1 -1 8 as myBomb
+        #overhead "Bomb down!!!" 147 myBomb
+        overhead "Bomb down!!!" 147
+        settimer "overheadSpam" 0
+    endif    
     
     if insysmsg 'you cannot move!'
         overhead 'Paralyzed!' 34

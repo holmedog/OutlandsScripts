@@ -23,6 +23,15 @@ wait 255
 gumpclose 4216593270
 wait 255
 
+//Check spyglasses
+if findtype 5365
+    #do nothing
+else 
+    overhead "no spyglasses!" 33
+    overhead "no spyglasses!" 33
+    overhead "no spyglasses!" 33
+endif
+
 //ready crew load guns etc
 say '[recallBoarding'
 wait 250
@@ -36,6 +45,9 @@ unsetvar noidBag
 //Get ready to sail
 overhead "Move to hold and target status bar" 43
 setvar! shipStatusBar
+dclick shipStatusBar
+wait 255
+gumpclose 4216593270
 
 @setvar onABoat 1
 
