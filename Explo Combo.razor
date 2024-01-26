@@ -1,28 +1,12 @@
-if varexist 'target_lock'
-    hotkey 'Telekinesis'
-    wait 1100
-    target 'target_lock'
-    dclicktype 3853 'backpack' 
-    wait 150
-    target 'target_lock'
-    if not timerexists 'explo pot'
-        createtimer 'explo pot'
-    endif
-    if timerexists 'explo pot'
-        settimer 'explo pot' 0
-    endif
-else
-    hotkey 'Telekinesis'
-    wait 1100
-    target lasttarget
-    dclicktype 3853 'backpack' 
-    wait 150
-    target lasttarget
-    if not timerexists 'explo pot'
-        createtimer 'explo pot'
-    endif
-    if timerexists 'explo pot'
-        settimer 'explo pot' 0
-    endif
-endif
-script main
+hotkey 'Telekinesis'
+while not targetexists 
+    wait 50
+endwhile
+while targetexists 
+    wait 20
+endwhile
+dclicktype 3853 'backpack' 
+wait 150
+target lasttarget 
+
+script "stayalive2"

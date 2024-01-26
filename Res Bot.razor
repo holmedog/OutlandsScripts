@@ -1,0 +1,42 @@
+
+hotkey 'Target Self'
+while not dead
+    hotkey 'Next Target'
+    @setvar! myRes lasttarget
+    if myRes != self and dead myRes 
+        overhead "Ressing This Guy" 33  
+        wait 3000 
+        overhead "That is dead, res maybe"
+        while not targetexists 
+            cast 'Resurrection'
+            wait 500
+        endwhile
+        target myRes 
+        wait 750
+        while not targetexists 
+            cast 'Greater Heal'
+            wait 5 00
+        endwhile
+        target myRes
+        wait 750
+        while not targetexists 
+            cast 'Bless'
+            wait 5 00
+        endwhile
+        target myRes
+        wait 750
+        while not targetexists 
+            cast 'Greater Heal'
+            wait 500
+        endwhile
+        target myRes
+        target myRes
+        wait 750
+        while not targetexists 
+            cast 'Arch Protection'
+            wait 500
+        endwhile
+        target myRes
+    endif
+    wait 500
+endwhile    

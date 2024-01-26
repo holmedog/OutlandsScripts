@@ -1,2 +1,6 @@
-    unsetvar tillerguy
-    unsetvar shipStatusBar
+if findtype 16404 ground as myShip
+    getlabel myShip mylbl
+    overhead "mylbl"
+    overhead "{myShip}"
+    dclick myShip
+endif

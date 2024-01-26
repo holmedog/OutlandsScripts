@@ -28,120 +28,6 @@ while not dead
     endif
 
     ####################################################
-    # Swing Timers
-    ####################################################
-    # Initialize timer
-    if not timerexists 'swing timer'
-        createtimer 'swing timer'
-        settimer 'swing timer' 20000
-    endif
-
-    # Look for Arms Lore gain as swing indicator.
-    if insysmsg 'ArmsLore skillgain:'
-        settimer 'swing timer' 0
-    endif
-    
-    if timerexists 'swing timer'
-        # Setup each weapon spam timer, to avoid spam text
-        if not timerexists 'bow spam'
-            createtimer 'bow spam'
-            settimer 'bow spam' 20000
-        endif
-
-        if not timerexists 'xbow spam'
-            createtimer 'xbow spam'
-            settimer 'xbow spam' 20000
-        endif
-
-        if not timerexists 'hally spam'
-            createtimer 'hally spam'
-            settimer 'hally spam' 20000
-        endif
-        
-        # Check global swing timer, handle each weapon at its elapsed time
-        if timer 'swing timer' >= 6500
-            # Do nothing
-        
-        # Handle Heavy Crossbox
-        elseif timer 'swing timer' >= 6000 and timer 'xbow spam' > 5000
-            overhead '[Xbow Ready]' 55
-            settimer 'xbow spam' 0
-        
-        # Handle Halberd
-        elseif timer 'swing timer' >= 4800 and timer 'hally spam' > 5000
-            overhead '[Hally Ready]' 55
-            settimer 'hally spam' 0
-        
-        # Handle Bow
-        elseif timer 'swing timer' >= 3520 and timer 'bow spam' > 5000
-            overhead '[Bow Ready]' 55
-            settimer 'bow spam' 0
-        endif    
-    endif
-
-    ####################################################
-    # Rearm yourself from disarm
-    ####################################################
-    # Disarm Reequip Timer
-    if insysmsg 'Their attack disarms you'
-        overhead '[Disarmed!]' 33
-        clearsysmsg 
-    endif
-    
-    # Rearm weapons
-    if insysmsg 'no longer disarmed'
-        overhead '[Reequip Weapon]' 44
-        if varexist 'reequip_weapon_left'
-            lift 'reequip_weapon_left' 'backpack'
-            drop self LeftHand
-            wait 150     
-        endif
-        if varexist 'reequip_weapon_right'
-            lift 'reequip_weapon_right'
-            drop self RightHand
-        endif
-        clearsysmsg
-    endif
-    
-    # Check if we are saving the correct left weapon
-    if varexist 'reequip_weapon_left'
-        if findlayer self lefthand as 'reequip_weapon_left_serial'
-            if 'reequip_weapon_left' = 'reequip_weapon_left_serial'
-                # Weapon we are wearing is one saved. Do nothing.
-            else
-                # Wearing a new weapon, save it correctly.
-                @setvar! 'reequip_weapon_left' 'reequip_weapon_left_serial'
-            endif
-        else
-            if find 'reequip_weapon_left' 'backpack'
-                # Weapon we have saved is in backpack. Do nothing.
-            else
-                # Unset weapon, not in backpack or wearing.
-                @unsetvar 'reequip_weapon_left'
-            endif
-        endif
-    endif
-    
-    # Check if we are saving the correct right weapon
-    if varexist 'reequip_weapon_right'
-        if findlayer self righthand as 'reequip_weapon_right_serial'
-            if 'reequip_weapon_right' = 'reequip_weapon_right_serial'
-                # Weapon we are wearing is one saved. Do nothing.
-            else
-                # Wearing a new weapon, setup.
-                @setvar! 'reequip_weapon_right' 'reequip_weapon_right_serial'
-            endif
-        else
-            if find 'reequip_weapon_right' 'backpack'
-                # Weapon we have saved is in backpack. Do nothing.
-            else
-                # Unset weapon, not in backpack or wearing.
-                @unsetvar 'reequip_weapon_right'
-            endif
-        endif
-    endif
-
-    ####################################################
     # Bandage Survival and non-revealing actions.
     ####################################################
     if skill 'Healing' >= 50
@@ -325,7 +211,7 @@ while not dead
         endif
 
         # If hurt, attempt to heal
-        if hits < 65 and timer 'castspell recovery' >= 350
+        if diffhits >= 3 and timer 'castspell recovery' >= 350
             if targetexists 'beneficial'
                 target self
                 settimer 'castspell recovery' 0

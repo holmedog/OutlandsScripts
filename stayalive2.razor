@@ -10,9 +10,6 @@ endif
 #set to 1 to auto discord
 @setvar! autoDisco 0
 
-#set to 1 to auto glass
-@setvar! autoGlass 0
-
 #set to 1 to swap to Wild Swing on disarm
 @setvar! autoWildSwing 2
 
@@ -218,12 +215,11 @@ while not dead
         endif
     endif
     
-    #automatically spyglass 
-    if not timerexists "spyGlassPeek"
-        createtimer "spyGlassPeek"
-        settimer "spyGlassPeek" 7000
-    endif    
-    if timer "spyGlassPeek" > 6100 and not targetexists and autoGlass = 1       
+    if insysmsg 'concentration is disturbed'
+        cooldown 'Casting' 0
+    endif
+ 
+    if not queued and not cooldown 'Spyglass' and not targetexists and autoglass = 1 and not cooldown 'Casting' and not cooldown 'PVP'
         hotkey "Play Script: Spyglass Boat"
     endif
     

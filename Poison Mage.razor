@@ -306,7 +306,7 @@ if diffhits < 30
     endif
     if dead myEarthPet or not find myEarthPet ground -1 -1 12
         if followers < 4
-            while mana < 65
+            while mana < 75
                 if diffhits >= 30
                     replay
                 endif
@@ -321,7 +321,7 @@ if diffhits < 30
             endwhile 
             say "[VengefulSpirit"
             while followers = followCount
-                cast "earth elemental"
+                cast "summon daemon"
                 wait 500
                 if diffhits >= 30
                     hotkey '> Interrupt'
@@ -330,7 +330,7 @@ if diffhits < 30
                 endif
             endwhile
             // 158 - an ancient mummy
-            if findtype 158 ground -1 -1 6 as myPet
+            if findtype 722 ground -1 -1 6 as myPet
                 if noto myPet = "friend" and list petNameList > 0
                     overhead "Renaming..."
                     foreach petName in petNameList
@@ -378,7 +378,7 @@ if diffhits < 30
             endwhile
             say "[VengefulSpirit"
             while followers = followCount
-                cast "fire elemental"
+                cast "summon daemon"
                 wait 500
                 if diffhits >= 30
                     hotkey '> Interrupt'
@@ -386,7 +386,7 @@ if diffhits < 30
                 endif
             endwhile
             // 24 - a lich
-            if findtype 24 ground -1 -1 6 as myPet
+            if findtype 722 ground -1 -1 6 as myPet
                 if noto myPet = "friend" and list petNameList > 0
                     overhead "Renaming..."
                     foreach petName in petNameList
@@ -433,6 +433,11 @@ endif
 if not findbuff "food" and findtype "tray" backpack as jood
     dclick jood
     wait 200
+endif
+
+#Use vet kits with vet skill
+if skill "Veterinary" > 50 and not bandaging 
+	say "[vetsupplies"
 endif
 
 
@@ -499,6 +504,20 @@ else
     if goOnAndGet = 1
         foreach rune in runes
             overhead "Brozan is the best! (Also I am recalling)" 34
+            
+            if timer vampiricEmbraceTimer >= cdVampiricEmbrace and skill "Necromancy" >= 75 and timer meditiationTimer >= cdMeditationMini and findtype 8198 ground -1 -1 6 as jorpse
+                say "[VampiricEmbrace"
+                wft 500
+                target jorpse
+                settimer vampiricEmbraceTimer 0
+                cooldown VampiricEmbrace cdVampiricEmbrace
+            endif
+            if mana < 75 and timer magicMushroomTimer >= cdMushroom and findtype "mushroom" backpack as mushy
+                overhead "Eatting shrooms" 66
+                dclick mushy
+                settimer magicMushroomTimer 0
+            endif
+           
             if recallEnabled = 1
                 #reset variables
                 @setvar! discordOn 0
@@ -755,7 +774,7 @@ if find myKillTarget -1 -1 12 as killy
         
         // Herding using crook
         if skill "Herding" > 0 and findtype 3713 backpack as jrook
-            dclick jrook
+            say "[focusaggression"
             wft 500
             target killy
         endif
@@ -990,7 +1009,7 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
         wait 200
     endif
 
-    if timer vampiricEmbraceTimer >= cdVampiricEmbrace and skill "Necromancy" >= 75 and timer meditiationTimer >= cdMeditationMini and findtype 8198 ground -1 -1 4 as jorpse
+    if timer vampiricEmbraceTimer >= cdVampiricEmbrace and skill "Necromancy" >= 75 and timer meditiationTimer >= cdMeditationMini and findtype 8198 ground -1 -1 6 as jorpse
         say "[VampiricEmbrace"
         wft 500
         target jorpse
@@ -1130,10 +1149,14 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
                 wait 50
             endif
         endif
-    elseif mana < 55 and findbuff "actively meditating" 
+    elseif mana < 75 and findbuff "actively meditating" 
         // wait for mana
     elseif timer meditiationTimer < cdMeditationMini and findbuff "actively meditating" 
         // wait for mana
+    elseif not findbuff "actively meditating" and timer magicMushroomTimer >= cdMushroom and findtype "mushroom" backpack as mushy
+        overhead "Eatting shrooms" 66
+        dclick mushy
+        settimer magicMushroomTimer 0
     elseif spamMindBlastOverFlamestrike = 1 mana > 42
         while not targetexists and mana > 40
             if dead myKillTarget or diffhits >= 30
@@ -1176,10 +1199,6 @@ while not dead myKillTarget and find myKillTarget -1 -1 12 as killy
             target myKillTarget
             wait 500
         endif       
-    elseif not findbuff "actively meditating" and timer magicMushroomTimer >= cdMushroom and findtype "mushroom" backpack as mushy
-        overhead "Eatting shrooms" 66
-        dclick mushy
-        settimer magicMushroomTimer 0
     elseif not findbuff "actively meditating" and timer meditiationTimer >= cdMeditation
         useskill 'meditation'
         settimer meditiationTimer 0
