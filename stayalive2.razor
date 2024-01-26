@@ -80,7 +80,7 @@ while not dead
         continue
     endif
     
-    if onABoat = 1 and hits < 25
+    if onABoat = 1 and hits < 15
         say "[embark"
     endif
     
@@ -227,6 +227,7 @@ while not dead
         #check for disco buff
         if not findbuff "Song Of Discordance"
             overhead "Disco Buff"
+			wait 500
             while not targetexists 
                 skill "Discordance"
                 wait 200
