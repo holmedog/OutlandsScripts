@@ -11,10 +11,10 @@ endif
 @setvar! autoDisco 0
 
 #set to 1 to swap to Wild Swing on disarm
-@setvar! autoWildSwing 2
+@setvar! autoWildSwing 1
 
 #set to 1 to disable disarm on hits
-@setvar! autoDisarm 2
+@setvar! autoDisarm 0
 
 if not timerexists  'wildman'
     createtimer 'wildman'
@@ -113,12 +113,27 @@ while not dead
         endif
     endif
     
+    #swap stances to get most out of single target disarm
+    if autoAreaDiscord = 1
+        if not cooldown "Discordance"
+            skill "Discordance"
+            wft 1500
+            target self
+        endif       
+    endif
+    
     #yell about bombs
     if timer "overheadSpam" >= 500 and findtype '5188' ground -1 -1 8 as myBomb
         #overhead "Bomb down!!!" 147 myBomb
         overhead "Bomb down!!!" 147
         settimer "overheadSpam" 0
     endif    
+    
+    #Food check
+    if findbuff 'food satisfaction' <= 10 and timer "overheadSpam" >= 1500 
+        overhead  "EAT!"
+        settimer "overheadSpam" 0
+    endif
     
     if insysmsg 'you cannot move!'
         overhead 'Paralyzed!' 34
@@ -127,10 +142,22 @@ while not dead
 
     # Healing Survival
     if skill 'Healing' > 1 
-       if hits < maxhits and not bandaging
+        if hits < maxhits and not bandaging and not targetexists 
             hotkey 'Bandage Self'
         endif
     endif
+    
+    if timer "overheadSpam" >= 1500 and skill 'Peacemaking' > 20 and not findbuff "Song of Peacemaking"
+        overhead "Peace Buff" 22
+        settimer "overheadSpam" 0
+    endif
+            
+    
+    if timer "overheadSpam" >= 1500 and skill 'Discordance' > 20 and not findbuff "Song of Discordance"
+        overhead "Disco Buff" 22
+        settimer "overheadSpam" 0
+    endif
+    
 
  
     if not findtype 3852 backpack
@@ -220,24 +247,14 @@ while not dead
     endif
  
     if not queued and not cooldown 'Spyglass' and not targetexists and autoglass = 1 and not cooldown 'Casting' and not cooldown 'PVP'
+        overhead "Glassing"
         hotkey "Play Script: Spyglass Boat"
     endif
     
-    if skill 'Discordance' >= 50 
-        #check for disco buff
-        if not findbuff "Song Of Discordance"
-            overhead "Disco Buff"
-			wait 500
-            while not targetexists 
-                skill "Discordance"
-                wait 200
-            endwhile
-            target backpack
-        endif
-    endif
-            
+
     if autoDisco = 1 and timer 'discoTimer' >= 2600 and skill 'Discordance' > 50
         if not dead 'myKillTarget' and not cooldown 'Discordance'
+            overhead "Disco Shit!"
             getlabel myKillTarget desc2
             if "discord" in desc2
                 #do nothing

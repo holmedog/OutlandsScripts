@@ -1,14 +1,9 @@
-
-
-while not dead 
-    overhead "Click stuff to grab"
-    setvar releaseItem
-    wait 50
-    say "I wish to release this"
-    wft 500
-    target releaseItem
-    wait 200
-    lift releaseItem 60000
-    drop self -1 -1 0 
-    wait 400
-endwhile
+//right side rankings
+//gumpresponse 6
+//left side rankings
+gumpresponse 3
+waitforgump 724753076
+if ingump "Insalmonator" 724753076
+    stop
+endif
+replay  

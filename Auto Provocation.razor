@@ -1,9 +1,47 @@
-hotkey 'target closest non-friendly monster'
-unsetvar myKillTarget
-if insysmsg "no one matching"
-    overhead  "Nothing to attack" 34    
-    script "stayalive2"
-endif
+clearignore
+#valuable target list
+if not listexists 'stuffToKill'
+    createlist 'stuffToKill'
+    pushlist 'stuffToKill' 'a lich magus'
+    pushlist 'stuffToKill' 'an ancient oak'
+    #daemon body type
+    pushlist 'stuffToKill' '1'
+    pushlist 'stuffToKill' '27'
+    pushlist 'stuffToKill' '380'
+    pushlist 'stuffToKill' '25'
+    pushlist 'stuffToKill' 'a water spirit' 
+    pushlist 'stuffToKill' '280' 
+    pushlist 'stuffToKill' '970' 
+    pushlist 'stuffToKill' '54' 
+    pushlist 'stuffToKill' '281' 
+    pushlist 'stuffToKill' '375' 
+    pushlist 'stuffToKill' '173' 
+    pushlist 'stuffToKill' '1504' 
+    pushlist 'stuffToKill' '1419' 
+    pushlist 'stuffToKill' '138' 
+    pushlist 'stuffToKill' '310'
+    pushlist 'stuffToKill' '721'
+    pushlist 'stuffToKill' '281'
+    pushlist 'stuffToKill' '75'
+    pushlist 'stuffToKill' '18'
+    pushlist 'stuffToKill' '58'
+    pushlist 'stuffToKill' '15'
+    pushlist 'stuffToKill' '85'
+    pushlist 'stuffToKill' '86'
+    pushlist 'stuffToKill' '93'
+    pushlist 'stuffToKill' '94'
+    pushlist 'stuffToKill' '33'
+    pushlist 'stuffToKill' '36'
+    pushlist 'stuffToKill' '35'
+    pushlist 'stuffToKill' '34'
+    pushlist 'stuffToKill' '32'
+    pushlist 'stuffToKill' '9' 
+    pushlist 'stuffToKill' '16' 
+    pushlist 'stuffToKill' '14'
+    pushlist 'stuffToKill' 'an angelic stonework'
+    pushlist 'stuffToKill' 'a sunken sorcerer'
+    pushlist 'stuffToKill' 'an earth sorcerer'
+endif    
 
 #prime our provocation targets
 @setvar! mobOne 0 
@@ -11,7 +49,21 @@ endif
 @setvar! saveMob 0
 @setvar! discordTarget 0
 @setvar! firstTarget lasttarget 
-@setvar! myKillTarget lasttarget 
+foreach 'killThis' in 'stuffToKill'
+    if findtype 'killThis' ground any any 12 as found
+        @setvar! 'myKillTarget' 'found'
+        getlabel 'myKillTarget' myLabel
+        if noto 'lastserial' = hostile or noto 'lastserial' = criminal
+            overhead "Target aquired: [[{{myLabel}}]]"
+            settimer targetDeadTimer 0
+        else
+            overhead 'Bad Target: [[{{myLabel}}]]'
+            ignore 'found'
+            unsetvar 'lastserial'
+            settimer "newTargetCheck" 0
+        endif
+    endif
+endfor
 
 @setvar! loopDone 0
 while cooldown "Provocation" and cooldown "Discordance"
@@ -105,5 +157,3 @@ if skipDisco = 0 and not cooldown "Discordance" and not cooldown "Skill Lockout"
         target discordTarget
     endif
 endif
-
-script "stayalive2"

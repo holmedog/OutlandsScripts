@@ -1,0 +1,246 @@
+
+##################
+## If you are using this then you probably know how to contact Brozan on Discord if you have issues
+############
+
+#MAKE SURE your wizards satchel is in your backpack not on your char and open
+
+
+##################################################################
+# 
+#   Hopefully you do not have to edit after this :)
+#
+##################################################################
+clearsysmsg
+
+if not listexists 'firstRunSetup'
+    createlist 'firstRunSetup'
+    overhead "Select your runebook (relog to reset)"
+    setvar! runeBookFarm
+
+    getlabel runeBookFarm desc
+
+    if runebook in desc
+        overhead "Runebok in desc using those runes"
+        @setvar! usingRuneBook 1 
+    else
+        overhead "Using a Rune Tome"
+        @setvar! usingRuneBook 0
+    endif
+            
+endif
+
+#Create list of reagents
+if not listexists 'regTypes'    
+    createlist regTypes
+    @pushlist 'regTypes' 'Blood Moss'
+    @pushlist 'regTypes' 'Black Pearl%s%'
+    @pushlist 'regTypes' 'Ginseng'
+    @pushlist 'regTypes' 'Garlic'
+    @pushlist 'regTypes' 'Sulfurous Ash'
+    @pushlist 'regTypes' "Spider's Silk" 
+    @pushlist 'regTypes' 'Nightshade' 
+    @pushlist 'regTypes' 'Mandrake Root%s%' 
+endif
+# ' for formatting reasons
+
+#Populate our runes
+if not listexists 'runes'
+    createlist 'runes'
+endif
+if list runes <= 0
+    if usingRuneBook = 1
+        #gumps here for recall spell use
+        pushlist 'runes' 11
+        pushlist 'runes' 17
+        pushlist 'runes' 23
+        pushlist 'runes' 29
+        pushlist 'runes' 35
+        pushlist 'runes' 41
+        pushlist 'runes' 47
+        pushlist 'runes' 53
+        pushlist 'runes' 59
+        pushlist 'runes' 65
+        pushlist 'runes' 71
+        pushlist 'runes' 77
+        pushlist 'runes' 83
+        pushlist 'runes' 89
+        pushlist 'runes' 95
+    else
+        pushlist 'runes' 201
+        pushlist 'runes' 202
+        pushlist 'runes' 203
+        pushlist 'runes' 204
+        pushlist 'runes' 205
+        pushlist 'runes' 206
+        pushlist 'runes' 207
+        pushlist 'runes' 208
+        pushlist 'runes' 209
+        pushlist 'runes' 210
+        pushlist 'runes' 211
+        pushlist 'runes' 212
+        pushlist 'runes' 213
+        pushlist 'runes' 214
+        pushlist 'runes' 215
+        pushlist 'runes' 216
+        pushlist 'runes' 217
+        pushlist 'runes' 218
+        pushlist 'runes' 219
+        pushlist 'runes' 220
+        pushlist 'runes' 221
+        pushlist 'runes' 222
+        pushlist 'runes' 223
+        pushlist 'runes' 224
+        pushlist 'runes' 225
+        @setvar tomeSideSwitch 0
+    endif
+endif   
+
+foreach rune in runes
+    overhead "Brozan is the best! (Also I am recalling)" 34
+    
+    if poplist runes front
+        #Recall to next rune
+        overhead "Heading to Rune: [{{rune}}]"
+    endif
+    @setvar recallOnce 1
+    while insysmsg "Your concentration is disturbed" or insysmsg "book needs time" or recallOnce = 1                
+        @setvar recallOnce 0
+        say "All guard me"
+        dclick runeBookFarm
+        wait 200
+        clearsysmsg 
+        @setvar!  regStock 0
+        foreach reg in 'regTypes'
+            if counttype reg < 5
+                @setvar! regStock 1
+            endif
+        endfor
+        if diffweight <= 60 or regStock = 1
+            overhead "Too fat.  Dump Routine"
+            #Cast recall til you are home
+            cast "Recall"
+            while not targetexists and not insysmsg "Your concentration is disturbed" and not position 4007 909 0
+                wait 100
+            endwhile
+            target runeBookFarm
+            wait 1000
+            
+            if diffweight < 5
+                hotkey "Drink Strength"
+            endif
+            if findtype 'storage shelf' ground any any 2 as found
+                menu found 0 
+                wft 2500
+                target self
+                menu found 1                
+                gumpclose 3232825965        
+                if skill "Magery" > 50
+                    while counttype 29012 backpack < 35 and not insysmsg "cheese"
+                        cast "create food"
+                        wait 1000
+                        if mana < 70 and insysmsg "use another magic"
+                            dclicktype 29012
+                        endif
+                        menu found 1
+                    endwhile
+                endif
+                menu found 1
+            endif           
+
+            #If you need to open chests do so here
+            dclick 0x5B7C7BBD
+            wait 600
+
+            #"Starting Organizers"
+            organizer 1
+            while queued
+                wait 1000
+            endwhile
+            organizer 2
+            while queued
+                wait 1000
+            endwhile
+            organizer 3
+            while queued
+                wait 1000
+            endwhile
+            organizer 4
+            while queued
+                wait 1000
+            endwhile
+            organizer 5
+            while queued
+                wait 1000
+            endwhile
+            organizer 6
+            while queued
+                wait 1000
+            endwhile
+            organizer 7
+            while queued
+                wait 1000
+            endwhile
+            organizer 8
+            while queued
+                wait 1000
+            endwhile
+            organizer 9
+            while queued
+                wait 1000
+            endwhile
+            wait 1000
+
+            //dump all resources
+            if findtype 23035 ground as myStockpile
+                menu myStockpile 0
+                waitfortarget 1000
+                target 'self'
+            endif    
+
+            #drop gold on vault
+            if findtype 41518 ground as myVault
+                while findtype 3821 self as 'myGold'
+                    lift myGold 60000
+                    drop '0x40820133' -1 -1 0 
+                    wait 600
+                endwhile
+            endif
+            
+            #recycler for magic items
+            if findtype 11762 ground any any 4 as found                         
+                wait 500
+                menu found 1
+                wait 500
+                menu found 1
+            endif
+        #End weight check recall home routine              
+        else
+            #Go to next spot
+            overhead "Recall Now!"                        
+            if usingRuneBook = 1
+                if not gumpexists 1551740969
+                    dclick runeBookFarm
+                    wait 200
+                endif
+                gumpresponse rune 1551740969
+            else          
+                #rune tome recall  
+                if not gumpexists 167090027
+                    dclick runeBookFarm
+                    wait 200
+                endif    
+                gumpresponse rune 167090027
+                wait 500
+                if tomeSideSwitch = 0
+                    gumpresponse 20 167090027
+                    @setvar! tomeSideSwitch 1
+                else 
+                    gumpresponse 10 167090027
+                    @setvar! tomeSideSwitch 0
+                endif                               
+            endif
+        endif
+    endwhile     
+    break
+endfor    

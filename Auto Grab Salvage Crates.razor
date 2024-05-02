@@ -1,0 +1,11 @@
+overhead "Select container to drop crates in"
+@setvar! dropContainer
+
+while not dead
+    if findtype '3645' ground -1 -1 42 as pickThisUp
+        overhead "Grabbing this" 22 pickThisUp
+        lift pickThisUp 1
+        drop dropContainer 17 104 0
+        wait 700
+    endif
+endwhile

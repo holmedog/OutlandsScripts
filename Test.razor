@@ -1,6 +1,16 @@
-if findtype 16404 ground as myShip
-    getlabel myShip mylbl
-    overhead "mylbl"
-    overhead "{myShip}"
-    dclick myShip
+if findtype "Black Potion" as found
+    dclick found
+    wait 600
+    menu 0x4004288C 0
+    wft 600
+    target self
 endif
+if findtype "Black Potion" ground any any 1 as found
+    dclick found
+    wait 600
+    menu 0x4004288C 0
+    wft 600
+    target self
+endif
+wait 100
+replay

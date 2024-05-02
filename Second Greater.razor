@@ -1,11 +1,11 @@
-@setvar onABoat 1
 say [secondgreaterability
 while not targetexists 
-    wait 100
+    wait 25
 endwhile
 while targetexists 
-    wait 100
+    wait 25
 endwhile
 
-overhead "Secondary Greater!"
+overhead "Secondary Greater!"@setvar onABoat 1
+
 script "stayalive2"

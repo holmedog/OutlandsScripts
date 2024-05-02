@@ -3,14 +3,19 @@ overhead "Chiv Buffs" 43
 hotkey 'Target Closest Non-Friendly Monster'
 wait 100
 @setvar! myKillTarget lasttarget 
+if skill 'Peacemaking' > 50
+    hotkey 'Clear Target Queue'
+    skill 'Peacemaking'
+    wft 1500
+    target myKillTarget
+endif
 attack myKillTarget 
 say '[divinefury'
 wait 550
 say '[enemyofone'
 
-if skill 'Discordance' >= 50
-    script 'discoLastTarget'
-else 
-    script "stayalive2"
-endif
+getlabel myKillTarget desc
+overhead desc 33
+overhead "● ▼▼ HERE ▼▼ ●" 88 myKillTarget
+script "stayalive2"
  
