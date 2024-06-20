@@ -1,0 +1,44 @@
+@setvar! huntingType 1
+if not timerexists 'throwNet'
+    createtimer 'throwNet'
+    settimer 'throwNet' 9999
+endif
+
+@setvar glassSwap 0
+
+overhead "Fishing Spot"
+gumpclose 2890020940
+dclicktype 'spyglass'
+waitfortarget 1200
+target 'self'
+waitforgump 2890020940
+gumpresponse 11
+waitforgump 2890020940
+gumpresponse 4
+waitforgump 2890020940
+if ingump "a fishing" 2890020940 
+        overhead "FISHING SPOT" 43
+        wait 250
+        overhead "FISHING SPOT" 43
+        wait 250
+        overhead "FISHING SPOT" 43
+        say "[kiss"
+endif
+settimer "glass" 0
+@setvar glassSwap 1
+
+while not dead
+    if timer 'throwNet' > 3500 and findtype rowboat|barrel|horn|25769|rock|foliage|rowboat|mushroom|basket|18824|28933|swordfish|rocks|bedroll ground as fishingSpot
+        overhead "Throwing Net" 15
+        settimer 'throwNet' 0
+        dclicktype 3530 self
+        while not targetexists  
+            wait 20
+        endwhile
+        if targetexists 'Neutral'
+            target self
+            settimer 'throwNet' 0
+        endif
+    endif
+endwhile
+        

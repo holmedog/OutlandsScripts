@@ -5,9 +5,15 @@ if skill 'Magery' > 80
     overhead "Mana Drain!"
 elseif skill 'Magery' < 50 
     dclicktype 3617
+    while not targetexists 
+        wait 20
+    endwhile
+    while targetexists 
+        wait 20
+    endwhile
 else 
     overhead "Why you push me?"
 endif
 
 
-script "SpyglassBoat"
+script "stayalive2"

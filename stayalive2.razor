@@ -1,7 +1,10 @@
 # Clear sys messaages 
-overhead "Background Scripts Engaged" 44
+#overhead "Background Scripts Engaged" 44
 if not varexist  wildBool
     @setvar! wildBool 0
+endif
+if not varexist  autoTarget
+    @setvar! autoTarget 0
 endif
 
 #set to 1 to auto pot
@@ -11,10 +14,16 @@ endif
 @setvar! autoDisco 0
 
 #set to 1 to swap to Wild Swing on disarm
-@setvar! autoWildSwing 1
+@setvar! autoWildSwing 0
 
 #set to 1 to disable disarm on hits
 @setvar! autoDisarm 0
+
+#set to 1 to auto cast Rouse every second
+@setvar! autoRouse 0
+
+#set to 1 to heal crew if on a boat
+@setvar! healMyCrew 0
 
 if not timerexists  'wildman'
     createtimer 'wildman'
@@ -24,6 +33,17 @@ endif
 if not timerexists  'potion recovery'
     createtimer 'potion recovery'
     settimer  'potion recovery' 20000
+endif
+
+if not timerexists  'attackShit'
+    createtimer 'attackShit'
+    settimer  'attackShit' 20000
+endif
+
+
+if not timerexists  'finishHim'
+    createtimer 'finishHim'
+    settimer  'finishHim' 20000
 endif
 
 
@@ -92,10 +112,19 @@ while not dead
         endif
     endif
     
+    if skill 'fishing' >= 50 and timer 'finishHim' > 2000 and autoRouse = 1
+        say "[weaponability1"
+        settimer 'finishHim' 0
+    endif
+    
+    if insysmsg "motivation effect has ended"
+        skill "begging"
+    endif
+    
     #swap stances to get most out of single target disarm
     if autoWildSwing = 1
         #go back to Sunder if we are in Wild
-        if timer 'wildman' > 10500 and wildBool = 1
+        if timer 'wildman' > 15500 and wildBool = 1
             overhead "SUNDER THE EARTH" 44
             yell '[macingstance5'
             settimer 'wildman' 0
@@ -141,9 +170,56 @@ while not dead
     endif
 
     # Healing Survival
-    if skill 'Healing' > 1 
+    if skill 'Healing' > 1 and onABoat = 0
         if hits < maxhits and not bandaging and not targetexists 
-            hotkey 'Bandage Self'
+            if findtype "clean bandage%s%" self as item
+                dclick item
+                wft 500
+                target self
+            endif
+        endif
+    elseif skill 'Healing' > 1 and onABoat = 1
+        if diffhits > 25 and not bandaging and not targetexists 
+            if findtype "clean bandage%s%" self as item
+                dclick item
+                wft 500
+                target self
+            endif
+        elseif healMyCrew = 1
+                if skill 'Healing' > 50 and diffhits <= 10
+                    if not bandaging 
+                        gumpresponse 20 1722920179
+                        wait 35 
+                    endif
+                    if not bandaging 
+                        gumpresponse 21 1722920179
+                        wait 35 
+                    endif
+                    if not bandaging 
+                        gumpresponse 22 1722920179
+                        wait 35 
+                    endif
+                    if not bandaging 
+                        gumpresponse 23 1722920179
+                        wait 35 
+                    endif
+                    if not bandaging 
+                        gumpresponse 24 1722920179
+                        wait 35 
+                    endif
+                    if not bandaging 
+                        gumpresponse 25 1722920179
+                        wait 35 
+                    endif  
+                    if not bandaging 
+                        gumpresponse 26 1722920179
+                        wait 35 
+                    endif  
+                    if not bandaging 
+                        gumpresponse 27 1722920179
+                        wait 35 
+                    endif  
+                endif
         endif
     endif
     
@@ -264,6 +340,11 @@ while not dead
             endif
         endif
         settimer 'discoTimer' 0
+    endif
+    
+    if autoTarget = 1 and timer 'attackShit' >= 750
+        settimer 'attackShit' 0
+        hotkey "Play Script: chiv attack"
     endif
     
 endwhile

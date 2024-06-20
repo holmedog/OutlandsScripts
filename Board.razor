@@ -10,15 +10,15 @@ endif
 
 //Get ready to sail
 overhead "Target Tillerman"
-@setvar! tillerguy 
+@setvar tillerguy 
 
 //get on boat
 dclick tillerguy
 wait 250
-gumpresponse 21 4216593270
+gumpresponse 201 4216593270
 wait 255
 //load pets
-gumpresponse 22 4216593270
+gumpresponse 202 4216593270
 wait 255
 gumpclose 4216593270
 wait 255
@@ -42,13 +42,9 @@ wait 250
 say '[ShipHotbars'
 unsetvar noidBag
 
-//Get ready to sail
-overhead "Move to hold and target status bar" 43
-setvar! shipStatusBar
-dclick shipStatusBar
-wait 255
-gumpclose 4216593270
-
 @setvar onABoat 1
+
+overhead "Go to hull target top hp bar"
+@setvar shipStatusBar
 
 hotkey "Play Script: Full dump boat"

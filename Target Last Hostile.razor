@@ -1,22 +1,3 @@
-overhead "Targeting last hostile!"
-@setvar! checkLastTarget lasttarget
-@setvar! checkSelf self
-
-if noto last = hostile and checkLastTarget != checkSelf
-    if targetexists harmful or targetexists neutral
-        target last
-    elseif targetexists beneficial 
-        while targetexists 
-            overhead "Good/Neutral SPELL ON CURSOR" 33
-            wait 100
-        endwhile
-    else 
-        overhead "No Cursor Existed" 25
-    endif
-elseif checkLastTarget = checkSelf
-    overhead "You would really kill yourself???" 20
-else
-    overhead "wtf are we doing here???" 17
+if findtype 21751|16468 as carrack
+    target carrack
 endif
-
-script "SpyglassBoat"

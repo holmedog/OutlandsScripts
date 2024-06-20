@@ -1,7 +1,9 @@
-overhead "Chiv Buffs" 43
-
+#overhead "Chiv Buffs" 43
+while targetexists 
+    wait 20
+endwhile
+hotkey 'Clear Target Queue'
 hotkey 'Target Closest Non-Friendly Monster'
-wait 100
 @setvar! myKillTarget lasttarget 
 if skill 'Peacemaking' > 50
     hotkey 'Clear Target Queue'
@@ -9,13 +11,19 @@ if skill 'Peacemaking' > 50
     wft 1500
     target myKillTarget
 endif
+
+if noto 'myKillTarget' != hostile 
+    #overhead "STOP!" 33
+    script "stayalive2"
+endif
+
 attack myKillTarget 
-say '[divinefury'
-wait 550
-say '[enemyofone'
+#say '[divinefury'
+#wait 550
+#say '[enemyofone'
 
 getlabel myKillTarget desc
-overhead desc 33
-overhead "● ▼▼ HERE ▼▼ ●" 88 myKillTarget
+#overhead desc 33
+#overhead "● ▼▼ HERE ▼▼ ●" 88 myKillTarget
 script "stayalive2"
  

@@ -1,15 +1,18 @@
+clearsysmsg
 if not varexist tillerguy 
     overhead "Click your tillerman"
     setvar! tillerguy 
     wait 300
 endif
 
+@setvar! autoTarget 1
+
 #close previous rope menus
 gumpclose  2881168634
 say [sendboarding
 waitforgump 2881168634
 gumpresponse 5 2881168634
-wait 300
+wait 100
 if skill 'Necromancy' >= 50
     say [EvilOmen
     wait 600
@@ -19,11 +22,16 @@ if skill 'Necromancy' >= 50
 elseif skill 'Chivalry' >= 50
     say [consecrateweapon
 endif
-
 while targetexists 
     wait 100
 endwhile
 
 overhead "Roped"
+if insysmsg "You successfully board the" 
+    say "[weaponability2"
+    wait 100
+endif
+
+say "[embarkfollowers"
 
 script "stayalive2"

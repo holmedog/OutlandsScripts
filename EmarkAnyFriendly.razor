@@ -9,7 +9,7 @@ while findtype 'status bar' ground 150 as enemyTiller
     else
         dclick enemyTiller
         wait 200
-        gumpresponse 21 4216593270
+        gumpresponse 201 4216593270
         wait 200
         if insysmsg "You are too far"
             #Ignore this one
@@ -34,7 +34,7 @@ while findtype 'tiller man' ground as enemyTiller
     else
         dclick enemyTiller
         wait 200
-        gumpresponse 21 4216593270
+        gumpresponse 201 4216593270
         wait 200
         if insysmsg "You are too far"
             #Ignore this one
@@ -44,12 +44,12 @@ while findtype 'tiller man' ground as enemyTiller
         endif
         wait 250
     endif
-    gumpresponse 21 4216593270
+    gumpresponse 201 4216593270
     @ignore enemyTiller 
 endwhile
 
 wait 100
-gumpresponse 21 4216593270
+gumpresponse 201 4216593270
 
 
 clearignore 
