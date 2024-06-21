@@ -179,7 +179,7 @@ while not dead
             endif
         endif
     elseif skill 'Healing' > 1 and onABoat = 1
-        if diffhits > 25 and not bandaging and not targetexists 
+        if diffhits > 5 and not bandaging and not targetexists 
             if findtype "clean bandage%s%" self as item
                 dclick item
                 wft 500

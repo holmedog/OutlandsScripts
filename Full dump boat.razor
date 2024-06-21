@@ -1,3 +1,4 @@
+clearignore 
 #Start Dump
 setvar myShipHold lasttarget 
 #Check for a ship hold
@@ -13,6 +14,21 @@ else
     overhead "Cannot find hold, target"
     @setvar! myShipHold
 endif    
+
+if counttype 5188 > 10
+    overhead "Should dump bombs" 23
+    lifttype 5188 20
+    drop myShipHold -1 -1 0 
+    wait 600
+endif
+
+if findtype 3699 as found
+    overhead "Dropping cannon shot"
+    lift found 9999
+    drop myShipHold -1 -1 0 
+    wait 600
+endif
+
 
 overhead "Gold Dump"
 #Gold in subpacks routine
@@ -56,6 +72,70 @@ clearlist regTypes
 @pushlist 'regTypes' 3903
 @pushlist 'regTypes' 7163
 @pushlist 'regTypes' 2545
+@pushlist 'regTypes' 0x1f3f
+@pushlist 'regTypes' 0x1f6c
+@pushlist 'regTypes' 0x1f4a
+@pushlist 'regTypes' 0x1f66
+@pushlist 'regTypes' 0x1f39
+@pushlist 'regTypes' 0x1f5b
+@pushlist 'regTypes' 0x1f38
+@pushlist 'regTypes' 0x1f45
+@pushlist 'regTypes' 0x1f60
+@pushlist 'regTypes' 0x1f69
+@pushlist 'regTypes' 0x1f67
+@pushlist 'regTypes' 0x1f61
+@pushlist 'regTypes' 0x1f51
+@pushlist 'regTypes' 0x1f5d
+@pushlist 'regTypes' 0x1f50
+@pushlist 'regTypes' 0x1f62
+@pushlist 'regTypes' 0x1f49
+@pushlist 'regTypes' 0x1f4c
+@pushlist 'regTypes' 0x1f2d
+@pushlist 'regTypes' 0x1f54
+@pushlist 'regTypes' 0x1f65
+@pushlist 'regTypes' 0x1f5c
+@pushlist 'regTypes' 0x1f3d
+@pushlist 'regTypes' 0x1f33
+@pushlist 'regTypes' 0x1f2e
+@pushlist 'regTypes' 0x1f5d
+@pushlist 'regTypes' 0x1f58
+@pushlist 'regTypes' 0x1f5a
+@pushlist 'regTypes' 0x1f3c
+@pushlist 'regTypes' 0x1f4f
+@pushlist 'regTypes' 0x1f48
+@pushlist 'regTypes' 0x1f2f
+@pushlist 'regTypes' 0x1f52
+@pushlist 'regTypes' 0x1f4d
+@pushlist 'regTypes' 0x1f37
+@pushlist 'regTypes' 0x1f6a
+@pushlist 'regTypes' 0x1f56
+@pushlist 'regTypes' 0x1f40
+@pushlist 'regTypes' 0x1f4b
+@pushlist 'regTypes' 0x1f59
+@pushlist 'regTypes' 0x1f63
+@pushlist 'regTypes' 0x1f5f
+@pushlist 'regTypes' 0x1f64
+@pushlist 'regTypes' 0x1f47
+@pushlist 'regTypes' 0x1f44
+@pushlist 'regTypes' 0x1f41
+@pushlist 'regTypes' 0x1f35
+@pushlist 'regTypes' 0x1f42
+@pushlist 'regTypes' 0x1f57
+@pushlist 'regTypes' 0x1f4e
+@pushlist 'regTypes' 0x1f55
+@pushlist 'regTypes' 0x1f3a
+@pushlist 'regTypes' 0x1f6b
+@pushlist 'regTypes' 0x1f31
+@pushlist 'regTypes' 0x1f53
+@pushlist 'regTypes' 0x1f36
+@pushlist 'regTypes' 0x1f30
+@pushlist 'regTypes' 0x1f3b
+@pushlist 'regTypes' 0x1f6a
+@pushlist 'regTypes' 0x1f46
+@pushlist 'regTypes' 0x1f3e
+@pushlist 'regTypes' 0x1f43
+@pushlist 'regTypes' 0x1f34
+@pushlist 'regTypes' 0x1f32
 foreach x in regTypes
   while findtype x backpack any any 1 as found
     lift found 9999
@@ -308,8 +388,6 @@ foreach x in ItemTypes
     wait 100
     @getlabel 'myVariable' myLabel
     if 'unidentified' in myLabel
-        #sysmsg 'Dumping: ' 33
-        #sysmsg  myLabel 65
         lift myVariable 1
         drop noidBag -1 -1 0 
     else 
@@ -320,5 +398,35 @@ foreach x in ItemTypes
     wait 400
   endwhile
 endfor
+
+//Gem Dump
+
+//Gems
+clearlist 'ItemTypes'
+@pushlist 'ItemTypes' 0xF10 
+@pushlist 'ItemTypes' 0xF13 
+@pushlist 'ItemTypes' 0xF19 
+@pushlist 'ItemTypes' 0x0F21 
+@pushlist 'ItemTypes' 0xF25 
+@pushlist 'ItemTypes' 0xF2D 
+@pushlist 'ItemTypes' 0x0F15
+@pushlist 'ItemTypes' 0x0F26
+@pushlist 'ItemTypes' 0x0F16
+
+overhead "Gems!" 55
+foreach x in ItemTypes
+  while findtype x backpack as found
+      lift found 999
+    drop noidBag -1 -1 0 
+    wait 600
+  endwhile
+endfor
+
 overhead "Done Dumping" 17
+
+if counttype 5188 < 2
+    overhead "Should resteock bombs" 23
+    overhead "Should resteock bombs" 23
+    overhead "Should resteock bombs" 23
+endif
 script "stayalive2"
