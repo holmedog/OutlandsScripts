@@ -1,5 +1,7 @@
-skill 'tasteid'
-wft 1500
-target lasttarget 
-wait 1000
-replay
+if skill 'anatomy' < 90
+    skill 'anatomy'
+    waitfortarget 500
+    target lasttarget 
+    wait 1000
+    loop
+endif    

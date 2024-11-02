@@ -1,0 +1,22 @@
+@clearignore
+overhead "Target Bag To search"
+setvar! crewChest
+
+dclick crewChest
+while findtype 8455|8454 crewChest as crew
+    dclick crew
+    waitforgump 189348675
+    if ingump 'speed' 189348675
+        lift crew
+        wait 500
+        drop backpack index index 0
+    else
+        ignore crew
+        gumpclose 189348675
+    endif
+   ignore crew
+   gumpclose 189348675
+   wait 500 
+endwhile
+    
+@clearignore    

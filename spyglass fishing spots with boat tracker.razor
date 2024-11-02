@@ -96,7 +96,7 @@ while not dead
         endif
         
         
-        if timer "timeToFish" > 9000
+        if STOP = 1 and timer "timeToFish" > 9000
             #Equip pole if not equipped
             if findtype 3520 lefthand
             else
