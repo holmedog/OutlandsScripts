@@ -35,14 +35,19 @@ foreach x in goldTypes
     lift found 60000
     drop vaultVar -1 -1 0 
     @ignore myVariable
-    wait 600
+    wait 650
+    ignore found
   endwhile
 endfor
+clearignore 
 foreach x in regTypes
   while findtype x ground any any 1 as found
       lift found 60000
     drop dumpBox -1 -1 0 
     @ignore myVariable
-    wait 600
+    wait 650
+    ignore found
   endwhile
 endfor
+
+clearignore 

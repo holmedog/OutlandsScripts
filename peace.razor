@@ -1,14 +1,11 @@
-dclicktype '3763'
-wait 100
-skill 'Discordance'
-waitfortarget
-hotkey 'Target Self'
-wait 5200
+if not cooldown "Provocation"
+    wait 100
+    dclicktype '3763'
 
-dclicktype '3763'
-wait 100
-skill 'Peacemaking'
-waitfortarget
-hotkey 'Target Self'
-wait 5200
+    wait 100
+    skill 'Peacemaking'
+    waitfortarget 500
+    hotkey 'Target Self' 
+    wait 255
+endif
 loop

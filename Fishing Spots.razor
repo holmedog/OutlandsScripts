@@ -1,10 +1,19 @@
+#set this to 1 to spyglass for ships using a gold spyglass every 6s
+@setvar glassShips 1
+#set this to 1 to constantly heal crew 
+@setvar! healMyCrew 1
+#set this to 1 to cut fish automagically
+@setvar! cutFish 1
+#set this to 1 to recycle nets at 3 charges
+@setvar! recycleNets 1
+
 clearignore 
 if not timerexists 'throwNet'
     createtimer 'throwNet'
     settimer 'throwNet' 9999
 endif
 
-@setvar glassSwap 0
+cooldown "Spyglass" 8000
 
 overhead "Fishing Spot"
 gumpclose 2890020940
@@ -17,12 +26,12 @@ waitforgump 2890020940
 gumpresponse 4
 waitforgump 2890020940
 settimer "glass" 0
-@setvar glassSwap 1
 
-@setvar! healMyCrew 1
+@setvar blueFound 0
+
 
 while not dead
-    if timer 'throwNet' > 3500 and findtype rowboat|barrel|horn|25769|rock|foliage|rowboat|mushroom|basket|18824|28933|swordfish|rocks|bedroll ground as fishingSpot
+    if timer 'throwNet' > 3500 and findtype 39349|18824|39434|28820|rowboat|barrel|horn|25769|rock|foliage|rowboat|mushroom|basket|18824|28933|swordfish|rocks|bedroll ground any any 12 as fishingSpot
         overhead "Throwing Net" 15
         settimer 'throwNet' 0
         dclick fishingSpot
@@ -30,7 +39,16 @@ while not dead
     if insysmsg "Someone is currently fishing"
         settimer 'throwNet' 3500
     endif
-        # Healing Survival
+    
+    
+    #Food check
+    if findbuff 'food satisfaction' <= 10 and timer "overheadSpam" >= 1500 
+        overhead  "EAT!"
+        settimer "overheadSpam" 0
+    endif
+    
+    
+    # Healing Survival
     if skill 'Healing' > 1
         if diffhits > 10 and not bandaging and not targetexists 
             if findtype "clean bandage%s%" self as item
@@ -74,6 +92,125 @@ while not dead
                 endif  
             endif
         endif
+    endif
+    if glassShips = 1 and not cooldown 'Spyglass' and findtype 5365 backpack 2213 any any as foundGlass
+        if not targetexists
+            gumpclose 2890020940
+            gumpclose 2890020940
+                
+            dclick foundGlass
+            
+            while not targetexists 
+                wait 20
+            endwhile
+            if targetexists neutral
+                target 'self'
+            endif
+            waitforgump 2890020940
+            gumpresponse 4 2890020940
+            waitforgump 2890020940
+            
+            @setvar blueFound 0
+            if ingump "a small ship" 2890020940 or  ingump "a ship of the line" 2890020940 or   ingump "a longship" 2890020940 or  ingump "a small dragon ship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragon ship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragon ship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
+                    @setvar blueFound 1
+            endif
+            while ingump "Next" 2890020940 and blueFound = 0
+                gumpresponse 3 2890020940
+                wait 350
+                if ingump "a small ship" 2890020940 or   ingump "a ship of the line" 2890020940 or   ingump "a longship" 2890020940 or  ingump "a small dragon ship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragon ship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragon ship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
+                    @setvar blueFound 1
+                endif
+            endwhile    
+            cooldown 'Spyglass' 6500
+        endif
+
+        while ingump "Previous" 2890020940 and blueFound = 0
+            gumpresponse 2 2890020940
+            wait 350
+            if ingump "a small ship" 2890020940 or   ingump "a ship of the line" 2890020940 or   ingump "a longship" 2890020940 or  ingump "a small dragon ship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragon ship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragon ship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
+                @setvar blueFound 1
+            endif
+        endwhile    
+    endif
+    
+    while blueFound = 1
+        overhead "player ship!"
+        wait 500
+    endwhile
+    
+    #cutting fish routine
+    if not queued and cutFish = 1 and timer 'throwNet' > 2000 and findtype 'fish' 'self' as fish
+        @getlabel 'fish' myLabel
+        if 'anemone' in myLabel
+            overhead "COTW FISH IN BAG"
+        elseif 'sawfish' in myLabel
+            overhead "COTW FISH IN BAG"
+        else 
+            dclicktype 'dagger'
+            wft 1000
+            target 'fish'
+        endif
+        elseif not queued and cutFish = 1 and timer 'throwNet' > 1000 and findtype 28820|17157|28825|28823|15124|28829|17606|28845|28821|28828|7710|28819|28822 'self' as fish
+        @getlabel 'fish' myLabel
+        if 'anemone' in myLabel
+            overhead "COTW FISH IN BAG"
+        elseif 'sawfish' in myLabel
+            overhead "COTW FISH IN BAG"
+        else 
+            dclicktype 'dagger'
+            wft 1000
+            target 'fish'
+        endif
+    endif
+    #hotkey 'Cancel Current Target'
+    
+    if timer 'throwNet' > 700 and cooldown 'Spyglass' and recycleNets = 1 
+        @setvar! recycleTarget 1
+        clearignore 
+        #verehide = 2207
+        #avarhide = 1763
+        #valehide = 2219
+        while findtype 3530 backpack 2207 any any as myNet
+            getlabel myNet myNetLbl
+            if "(3 uses remaining)" in myNetLbl
+                overhead myNetLbl
+                @setvar! recycleTarget  myNet
+            endif 
+            ignore myNet
+        endwhile  
+        while findtype 3530 backpack 1763 any any as myNet
+            getlabel myNet myNetLbl
+            if "(3 uses remaining)" in myNetLbl
+                overhead myNetLbl
+                @setvar! recycleTarget  myNet
+            endif 
+            ignore myNet
+        endwhile  
+        while findtype 3530 backpack 2219 any any as myNet
+            getlabel myNet myNetLbl
+            if "(3 uses remaining)" in myNetLbl
+                overhead myNetLbl
+                @setvar! recycleTarget  myNet
+            endif 
+            ignore myNet
+        endwhile    
+        clearignore
+        if  recycleTarget != 1 
+            if findtype 3997 self 
+                dclicktype 3997
+                waitforgump 949095101
+                gumpresponse 3 949095101
+                wft 500
+                target recycleTarget
+                gumpclose 949095101
+            else 
+                while not dead 
+                    overhead "No sewing kits to recycle!"
+                    wait 500
+                endwhile
+            endif
+        endif    
+        clearignore
     endif
 endwhile
         

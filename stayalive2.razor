@@ -23,7 +23,7 @@ endif
 @setvar! autoRouse 0
 
 #set to 1 to heal crew if on a boat
-@setvar! healMyCrew 0
+@setvar! healMyCrew 1
 
 if not timerexists  'wildman'
     createtimer 'wildman'
@@ -173,18 +173,14 @@ while not dead
     if skill 'Healing' > 1 and onABoat = 0
         if hits < maxhits and not bandaging and not targetexists 
             if findtype "clean bandage%s%" self as item
-                dclick item
-                wft 500
-                target self
+                hotkey 'Bandage Self'
             endif
         endif
     elseif skill 'Healing' > 1 and onABoat = 1
         if diffhits > 5 and not bandaging and not targetexists 
             wait 500
             if not bandaging and findtype "clean bandage%s%" self as item
-                dclick item
-                wft 500
-                target self
+                hotkey 'Bandage Self'
             endif
         elseif healMyCrew = 1
                 if skill 'Healing' > 50 and diffhits <= 10
@@ -237,9 +233,9 @@ while not dead
     
 
  
-    if not findtype 3852 self
+    if timer "overheadSpam" >= 5000 and not findtype 3852 self
         overhead 'Out of heal potions!' 34 
-        wait 500
+        settimer "overheadSpam" 0
     endif
     
 
@@ -347,5 +343,37 @@ while not dead
         settimer 'attackShit' 0
         hotkey "Play Script: healsinglecrew"
     endif
+    
+    
+    #check buffs
+    #Food check
+    if findbuff 'food satisfaction' <= 10
+        if not findtype tray backpack
+            overhead   "I am out of food!"
+            wait 500
+            overhead  "I am out of food!"
+            wait 500
+        else
+            dclicktype tray backpack
+            wait 350
+        endif
+    endif
+    #Bless
+    if timer "overheadSpam" >= 1500 and skill 'Inscription' >= 10 and skill 'Magery' > 50 and findbuff 'Strength'  <= 25
+        overhead 'Bless time'
+        settimer "overheadSpam" 0
+        
+    endif
+    #Bless
+    if timer "overheadSpam" >= 1500 and skill 'Magery' > 50 and not findbuff 'Reactive Armor' 
+        overhead 'React!'
+        settimer "overheadSpam" 0
+    endif
+    #Protection
+    if timer "overheadSpam" >= 1500 and skill 'Inscription' >= 10 and skill 'Magery' > 50 and findbuff 'Protection' <= 25
+        overhead 'Protection time'
+        settimer "overheadSpam" 0
+    endif
+    
     
 endwhile

@@ -2,12 +2,31 @@ clearignore
 
 while 1 = 1
     if findtype 'fish' 'self' as fish
-    dclicktype 'dagger'
-        wft 1000
-        target fish
-        elseif findtype 28828|7710|28819 'self' as fish
+        @getlabel 'fish' myLabel
+        wait 200
+        if 'lanternfish' in myLabel
+            overhead "COTW FISH IN BAG"
+        elseif 'cuttlefish' in myLabel
+            overhead "COTW FISH IN BAG"
+        else 
             dclicktype 'dagger'
-        wft 1000
-        target fish
+            wft 1000
+            target 'fish'
+        endif
+    elseif findtype 17606|28845|28821|28828|7710|28819 'self' as fish
+        @getlabel 'fish' myLabel
+        wait 200
+        if 'lanternfish' in myLabel
+            overhead "COTW FISH IN BAG"
+        elseif 'cuttlefish' in myLabel
+            overhead "COTW FISH IN BAG"
+        else 
+            dclicktype 'dagger'
+            wft 1000
+            target 'fish'
+        endif
     endif
+    wait 200
+    hotkey 'Cancel Current Target'
 endwhile
+    

@@ -1,0 +1,42 @@
+@setvar! currentTarget 0
+@setvar! foundTarget 0
+
+removelist peacedCreatures
+createlist peacedCreatures
+
+
+#********* AUTO-SELECT NEW TARGET *********
+
+sysmsg "Peace Start.." 65
+hotkey 'target closest grey monster'
+wait 25
+
+if not find lasttarget ground -1 -1 12
+    overhead 'No target found' 33
+else
+    getlabel lasttarget targetLabel
+    overhead targetLabel 33
+                        
+    if "pacified" in targetLabel or "provoked" in targetLabel
+        #disco and sick pets
+        if not cooldown "Discordance"
+            skill 'discordance' 
+            waitfortarget 650  
+            target lasttarget 
+            while targetexists
+                wait 10
+            endwhile
+        endif
+        say 'all kill'
+        waitfortarget 650  
+        target lasttarget 
+    else 
+        skill 'peacemaking'
+        waitfortarget 650  
+        target lasttarget
+    endif
+endif
+
+
+
+script "stayalive2"    
