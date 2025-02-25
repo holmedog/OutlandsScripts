@@ -6,6 +6,9 @@ endif
 if not varexist  autoTarget
     @setvar! autoTarget 0
 endif
+if not varexist  healingSelf
+    @setvar! healingSelf 0
+endif
 
 #set to 1 to auto pot
 @setvar! autoPot 1
@@ -86,14 +89,15 @@ if not varexist onABoat
     @setvar onABoat 0
 endif
 
-while not dead
-    #while queued
-    #    wait 20
-    #    if timer "overheadSpam" >= 500 
-    #        overhead "Looting" 77
-    #        settimer "overheadSpam" 0
-    #    endif
-    #endwhile
+while not dead 
+    if skill 'fishing' > 80 and lhandempty  and timer "overheadSpam" >= 1500 
+        overhead "Is you Disarmed?" 15
+        sysmsg "Is you Disarmed?" 15
+        overhead "Is you Disarmed?" 15
+        sysmsg  "Is you Disarmed?" 15
+        settimer "overheadSpam" 0
+    endif
+        
         
     # If hidden, skip
     if hidden
@@ -168,8 +172,14 @@ while not dead
         overhead 'Paralyzed!' 34
         say [pouch
     endif
-
+    
     # Healing Survival
+    if insysmsg 'finish applying'
+        @setvar! healingSelf 0
+    endif
+    if insysmsg 'heal what little'
+        @setvar! healingSelf 0
+    endif
     if skill 'Healing' > 1 and onABoat = 0
         if hits < maxhits and not bandaging and not targetexists 
             if findtype "clean bandage%s%" self as item
@@ -178,43 +188,50 @@ while not dead
         endif
     elseif skill 'Healing' > 1 and onABoat = 1
         if diffhits > 5 and not bandaging and not targetexists 
-            wait 500
+            getlabel backpack ping
             if not bandaging and findtype "clean bandage%s%" self as item
                 hotkey 'Bandage Self'
+                @setvar! healingSelf 1
+            endif
+        elseif diffhits > 10 and healingSelf = 0 and not targetexists 
+            getlabel backpack ping
+            if findtype "clean bandage%s%" self as item
+                hotkey 'Bandage Self'
+                @setvar! healingSelf 1
             endif
         elseif healMyCrew = 1
                 if skill 'Healing' > 50 and diffhits <= 10
                     if not bandaging 
                         gumpresponse 20 1722920179
-                        wait 35 
+                        wait 25 
                     endif
                     if not bandaging 
                         gumpresponse 21 1722920179
-                        wait 35 
+                        wait 25 
                     endif
                     if not bandaging 
                         gumpresponse 22 1722920179
-                        wait 35 
+                        wait 25 
                     endif
                     if not bandaging 
                         gumpresponse 23 1722920179
-                        wait 35 
+                        wait 25 
                     endif
                     if not bandaging 
                         gumpresponse 24 1722920179
-                        wait 35 
+                        wait 25 
                     endif
                     if not bandaging 
                         gumpresponse 25 1722920179
-                        wait 35 
+                        wait 25 
                     endif  
                     if not bandaging 
                         gumpresponse 26 1722920179
-                        wait 35 
+                        wait 25 
                     endif  
                     if not bandaging 
                         gumpresponse 27 1722920179
-                        wait 35 
+                        wait 25 
                     endif  
                 endif
         endif
@@ -267,6 +284,21 @@ while not dead
         endif
     endif
     
+    # Cure Survival
+    if skill 'Chivalry' >= 70 and not targetexists any and diffhits > 40
+        if poisoned 'self' and timer 'next free cure' >= 30000 and timer 'potion recovery' > 1000
+            if findtype 3847 self
+                overhead '[Used: Cure Pot]' 68
+                hotkey 'Drink Cure'
+                # Set timer for free cure
+                if insysmsg 'receive a free cure potion'
+                    settimer 'next free cure' 0
+                endif
+                settimer 'potion recovery' 0
+            endif
+        endif
+    endif
+    
          
     # Heal Potion
     if not timerexists 'healpot recovery'
@@ -301,13 +333,14 @@ while not dead
         endif
     endif
     
-    if hits < 40 and not poisoned 'self'
+    if hits < 45 and not poisoned 'self'
         if timer 'healpot recovery' >= 10500 and timer 'potion recovery' > 1000
             if findtype 3852 self
                 overhead '[Used: GHeal Pot]' 68
                 hotkey 'Drink Heal'
                 settimer 'healpot recovery' 0
                 settimer 'potion recovery' 0
+                getlabel backpack ping
             endif
         elseif skill 'Magery' > 50
             overhead "HEAL DAMMIT HEAL"
@@ -315,11 +348,28 @@ while not dead
         endif
     endif
     
+    #Swap to Frost if we're getting smashed
+    if hits < 30 and not cooldown "Aspect"
+        say "[aspectarmor Frost"
+        overhead "Swapped into Frost!  Fix it later!" 77
+        sysmsg "Swapped into Frost!  Fix it later!" 77
+        overhead "Swapped into Frost!  Fix it later!" 77
+        sysmsg "Swapped into Frost!  Fix it later!" 77
+        overhead "Swapped into Frost!  Fix it later!" 77
+        sysmsg "Swapped into Frost!  Fix it later!" 77
+    endif
+    
+    if findbuff "weaken"
+        if findtype 'Wite Potion' self as myPot
+            dclick myPot
+        endif
+    endif
+    
     if insysmsg 'concentration is disturbed'
         cooldown 'Casting' 0
     endif
  
-    if not queued and not cooldown 'Spyglass' and not targetexists and autoglass = 1 and not cooldown 'Casting' and not cooldown 'PVP'
+    if not queued and not cooldown 'Spyglass' and not targetexists and autoglass = 1 and not cooldown 'Casting' and not cooldown 'PVP' and onABoat = 1
         overhead "Glassing"
         hotkey "Play Script: Spyglass Boat"
     endif

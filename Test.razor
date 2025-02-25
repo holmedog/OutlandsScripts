@@ -1,1 +1,6 @@
-say "--whoon"
+# Initialize variables if they don't exist
+foreach varName in ['wildBool', 'autoTarget', 'healingSelf', 'onABoat']
+    if not varexist varName
+        @setvar! varName 0
+    endif
+endforeach

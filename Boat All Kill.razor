@@ -2,24 +2,40 @@ unsetvar allkill_target
 overhead '[All Kill]' 44
 @setvar! 'allkill_target'
 
-say "[crewattack"
-wft 300
-target 'allkill_target'
-menu 'pet1' 1
-wft 300
-target 'allkill_target'
-menu 'pet2' 1
-wft 300
-target 'allkill_target'
-menu 'pet3' 1
-wft 300
-target 'allkill_target'
-menu 'pet4' 1
-wft 300
-target 'allkill_target'
-menu 'pet5' 1
-wft 300
-target 'allkill_target'
+if onABoat = 1
+    say "[crewattack"
+    wft 300
+    target 'allkill_target'
+endif
+
+if find pet1     
+    menu 'pet1' 1
+    wft 300
+    target 'allkill_target'
+endif    
+if find pet1     
+    menu 'pet2' 1
+    wft 300
+    target 'allkill_target'
+endif    
+if find pet1     
+    menu 'pet3' 1
+    wft 300
+    target 'allkill_target'
+endif    
+    if find pet1     
+    menu 'pet4' 1
+    wft 300
+    target 'allkill_target'
+endif    
+if find pet1     
+    menu 'pet5' 1
+    wft 300
+    target 'allkill_target'
+endif    
+
 say "all kill"
 wft 300
 target 'allkill_target'
+
+script "stayalive2"

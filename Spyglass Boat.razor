@@ -40,7 +40,9 @@ if onABoat = 1
         endif
     endwhile    
 else 
-    hotkey "Play Script: greaterhealself"
+	if diffhits > 3 and skill 'Magery' >= 20
+		hotkey "Play Script: greaterhealself"
+	endif
 endif
 
 script "stayalive2"

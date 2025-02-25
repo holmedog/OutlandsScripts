@@ -1,0 +1,66 @@
+@clearignore 
+//pop pouch and throw at feet
+#find trapped pouch
+if findtype 'pouch' backpack 38 as bag
+    setvar lootBag bag
+    #pop pouch
+    dclick lootBag
+else
+    overhead 'No trapped pouch! Set loot container!'
+    setvar lootBag
+endif
+
+#drop pouch
+lift lootBag 1
+wait 250
+droprelloc 0 0
+dclick lootBag
+
+//set hatch var
+#set hatch
+setvar lootChest
+wait 250
+#dclick hatch 
+dclick lootChest
+wait 250
+//dig loot from hatch
+#open all hatch bags
+while findtype 3701|3705|3702 lootChest as nestedBag
+    dclick nestedBag
+    @ignore nestedBag
+endwhile
+#while loop moving loot to pouch
+while findtype 2539|3821|3891|5360|16898|576|2472|2475|2594|2597|2744|4025|2750|2760|2771|2778|2799|3648|3649|3650|3651|3708|3712|3735|3736|3737|3738|3827|3836|3838|3839|3842|3843|3985|4026|4248|5356|5359|5981|8826|12686|15296|15297|17087|17686|19717|22244|22336|23996|23997|24343|24434|29025|29036|29040|29832|29833|43166|43179|43206|48405|48407 lootChest as booty
+    lift booty 60000
+    wait 300
+    drop lootBag -1 -1 -1
+    wait 300
+    sysmsg 'checked hatch' 38
+    @ignore booty
+endwhile
+while queued = true
+    //wait 
+endwhile
+//drop bomb
+if findtype 'barrel' backpack as bomb
+    dclick bomb
+else 
+    overhead'No Bombs!' 38
+endif
+//pick up bag and embark
+#lift pouch
+@clearall
+lift lootBag 1
+wait 250
+#embark back
+if varexist myTillerman
+    dclick myTillerman
+    waitforgump 4216593270
+    gumpresponse 201 4216593270
+else
+    say '[embark'
+endif
+#drop pouch at feet
+wait 250
+droprelloc 0 0
+dclick lootBag

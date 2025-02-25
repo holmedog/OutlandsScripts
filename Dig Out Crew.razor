@@ -6,7 +6,7 @@ dclick crewChest
 while findtype 8455|8454 crewChest as crew
     dclick crew
     waitforgump 189348675
-    if ingump 'speed' 189348675
+    if ingump 'Movement' 189348675
         lift crew
         wait 500
         drop backpack index index 0
@@ -18,5 +18,6 @@ while findtype 8455|8454 crewChest as crew
    gumpclose 189348675
    wait 500 
 endwhile
-    
+overhead "Done"
+overhead "Done"    
 @clearignore    
