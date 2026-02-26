@@ -1,12 +1,3 @@
-#set up timers
-if not timerexists  'discoSong'
-    createtimer 'discoSong'
-    settimer  'discoSong' 11000
-endif
-
-#set this to 1 to use bard songs to reset cds if possible
-@setvar! useSongs 1
-
 #prime our provocation targets
 @setvar! mobOne 0 
 @setvar! mobTwo 0
@@ -14,43 +5,31 @@ endif
 @setvar! discordTarget 0
 @setvar! firstTarget lasttarget 
 @setvar! myKillTarget lasttarget 
-
 @setvar! loopDone 0
+
+if not varexist resetLoops
+    @setvar! resetLoop 0
+endif
 while cooldown "Provocation" and cooldown "Discordance"
     overhead "Cooldowns!" 34
-    wait 200    
+    getlabel backpack ping
     if hits < 30
         overhead "GTFO!!!"
         script "stayalive2"
     endif
 endwhile
 
-
-#try to force discord songs to get free resets
-if useSongs = 1
-    #try Discord if Provo/Peace is on cooldown
-    if cooldown "Provocation" and not cooldown "Discordance" and timer 'discoSong' > 11000 
-        overhead "Discordance!"
-        useskill 'Discordance'
-        wft 500
-        if targetexists 
-            target backpack
-        endif
-        settimer  'discoSong' 0
-    endif    
-
-    hotkey 'target closest non-friendly monster'
-    unsetvar myKillTarget
-    if insysmsg "no one matching"
-        overhead  "Nothing to attack" 34    
-        script "stayalive2"
-    endif
-endif    
-
+hotkey 'target closest non-friendly monster'
+unsetvar myKillTarget
+getlabel backpack ping
+if insysmsg "no one matching"
+    overhead  "Nothing to attack" 34    
+    script "stayalive2"
+endif
 
 #cycle all targets and see if one is not provoked, mark one for discord too
 while loopDone = 0
-    if hits < 30
+    if hits < 50
         overhead "GTFO!!!"
         script "stayalive2"
     endif
@@ -64,17 +43,15 @@ while loopDone = 0
         overhead desc2 66 myKillTarget
         if "provoked" in desc2             
             #already provoked but not does not work because it is stupid
+        elseif "break" in desc2
+                overhead desc2 35
         else 
-            if "break" in desc2
-                #same shit
-            else
-                if mobOne = 0
-                    @setvar! mobOne myKillTarget
-                elseif mobTwo = 0
-                    @setvar! mobTwo myKillTarget
-                    @setvar! loopDone 1
-                endif
-            endif   
+            if mobOne = 0
+                @setvar! mobOne myKillTarget
+            elseif mobTwo = 0
+                @setvar! mobTwo myKillTarget
+                @setvar! loopDone 1
+            endif
         endif
         #check if discorded
         if "discord" in desc2
@@ -82,6 +59,10 @@ while loopDone = 0
         else
             if discordTarget = 0
                 @setvar! discordTarget myKillTarget
+                #break out if we cannot provo
+                if cooldown "Provocation"
+                   @setvar! loopDone 1
+                endif 
             endif
         endif
     endif
@@ -120,8 +101,9 @@ if mobOne != 0 and mobOne != mobTwo
         endif
     endif
 endif
+
 #No provocation we are just discording 
-wait 100
+getlabel backpack ping
 if skipDisco = 0 and not cooldown "Discordance" and not cooldown "Skill Lockout" and discordTarget != 0
     overhead "Discordance!"
     useskill 'Discordance'
@@ -131,4 +113,11 @@ if skipDisco = 0 and not cooldown "Discordance" and not cooldown "Skill Lockout"
     endif
 endif
 
-script "stayalive2"
+getlabel backpack ping
+if cooldown "Bard Reset"
+    cooldown "Bard Reset" 0
+    overhead "Got a reset, SPIN TO WIN!"
+    hotkey "Play Script: Auto Provocation" 
+else 
+    hotkey "Play Script: stayalive2" 
+endif
