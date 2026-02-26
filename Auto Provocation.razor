@@ -7,6 +7,25 @@ endif
 #set this to 1 to use bard songs to reset cds if possible
 @setvar! useSongs 1
 
+#prime our provocation targets
+@setvar! mobOne 0 
+@setvar! mobTwo 0
+@setvar! saveMob 0
+@setvar! discordTarget 0
+@setvar! firstTarget lasttarget 
+@setvar! myKillTarget lasttarget 
+
+@setvar! loopDone 0
+while cooldown "Provocation" and cooldown "Discordance"
+    overhead "Cooldowns!" 34
+    wait 200    
+    if hits < 30
+        overhead "GTFO!!!"
+        script "stayalive2"
+    endif
+endwhile
+
+
 #try to force discord songs to get free resets
 if useSongs = 1
     #try Discord if Provo/Peace is on cooldown
@@ -28,23 +47,6 @@ if useSongs = 1
     endif
 endif    
 
-#prime our provocation targets
-@setvar! mobOne 0 
-@setvar! mobTwo 0
-@setvar! saveMob 0
-@setvar! discordTarget 0
-@setvar! firstTarget lasttarget 
-@setvar! myKillTarget lasttarget 
-
-@setvar! loopDone 0
-while cooldown "Provocation" and cooldown "Discordance"
-    overhead "Cooldowns!" 34
-    wait 200    
-    if hits < 30
-        overhead "GTFO!!!"
-        script "stayalive2"
-    endif
-endwhile
 
 #cycle all targets and see if one is not provoked, mark one for discord too
 while loopDone = 0
