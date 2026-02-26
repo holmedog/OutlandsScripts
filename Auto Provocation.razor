@@ -1,9 +1,32 @@
-hotkey 'target closest non-friendly monster'
-unsetvar myKillTarget
-if insysmsg "no one matching"
-    overhead  "Nothing to attack" 34    
-    script "stayalive2"
+#set up timers
+if not timerexists  'discoSong'
+    createtimer 'discoSong'
+    settimer  'discoSong' 11000
 endif
+
+#set this to 1 to use bard songs to reset cds if possible
+@setvar! useSongs 1
+
+#try to force discord songs to get free resets
+if useSongs = 1
+    #try Discord if Provo/Peace is on cooldown
+    if cooldown "Provocation" and not cooldown "Discordance" and timer 'discoSong' > 11000 
+        overhead "Discordance!"
+        useskill 'Discordance'
+        wft 500
+        if targetexists 
+            target backpack
+        endif
+        settimer  'discoSong' 0
+    endif    
+
+    hotkey 'target closest non-friendly monster'
+    unsetvar myKillTarget
+    if insysmsg "no one matching"
+        overhead  "Nothing to attack" 34    
+        script "stayalive2"
+    endif
+endif    
 
 #prime our provocation targets
 @setvar! mobOne 0 
