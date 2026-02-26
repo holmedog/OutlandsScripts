@@ -84,7 +84,7 @@ overhead 'Dropping Stackable Items' 100
 
 foreach x in stackItems
     while findtype x containerToSplit as this
-        sysmsg 'Lifting...' 44
+        #sysmsg 'Lifting...' 44
 		drop backpack
         lift this 60000
         drop containerToSplitTwo -1 -1

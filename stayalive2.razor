@@ -11,7 +11,7 @@ if not varexist  healingSelf
 endif
 
 #set to 1 to auto pot
-@setvar! autoPot 1
+@setvar! autoPot 0
 
 #set to 1 to auto discord
 @setvar! autoDisco 0
@@ -24,6 +24,9 @@ endif
 
 #set to 1 to auto cast Rouse every second
 @setvar! autoRouse 0
+
+#set to 1 to auto use Scourge
+@setvar! autoWeap 0
 
 #set to 1 to heal crew if on a boat
 @setvar! healMyCrew 1
@@ -43,6 +46,12 @@ if not timerexists  'attackShit'
     settimer  'attackShit' 20000
 endif
 
+
+# Heal Potion
+if not timerexists 'healpot recovery'
+    createtimer 'healpot recovery'
+    settimer 'healpot recovery' 20000
+endif
 
 if not timerexists  'finishHim'
     createtimer 'finishHim'
@@ -89,7 +98,7 @@ if not varexist onABoat
     @setvar onABoat 0
 endif
 
-while not dead 
+while hits > 1
     if skill 'fishing' > 80 and lhandempty  and timer "overheadSpam" >= 1500 
         overhead "Is you Disarmed?" 15
         sysmsg "Is you Disarmed?" 15
@@ -102,6 +111,12 @@ while not dead
     # If hidden, skip
     if hidden
         continue
+    endif
+    
+    #check weapon ability 
+    if cooldown 'WepAbility' and autoWeap = 1
+        say "[weaponability2"
+        cooldown 'WepAbility' 0
     endif
     
     if onABoat = 1 and hits < 15
@@ -299,16 +314,9 @@ while not dead
         endif
     endif
     
-         
-    # Heal Potion
-    if not timerexists 'healpot recovery'
-        createtimer 'healpot recovery'
-        settimer 'healpot recovery' 20000
-    endif
-    
     #Auto Pot 
     if autoPot = 1
-        if diffhits < 15 and timer 'healpot recovery' >= 1500 and skill "Alchemy" >= 25 and  findbuff 'Agility' < 13
+        if diffhits < 15 and timer 'healpot recovery' >= 1500 and  findbuff 'Agility' < 13
             wait 510
             potion 'agility'
             if findbuff 'magic resist potion'  < 25
@@ -321,12 +329,12 @@ while not dead
             endif
             settimer 'healpot recovery' 0
         endif
-        if  diffhits < 15 and timer 'healpot recovery' >= 1500 and skill "Alchemy" >= 25 and  findbuff 'magic resist potion'  < 10
+        if  diffhits < 15 and timer 'healpot recovery' >= 1500 and  findbuff 'magic resist potion'  < 10
             wait 510
             potion 'nightsight'
             settimer 'healpot recovery' 0
         endif    
-        if diffhits < 15 and timer 'healpot recovery' >= 1500 and skill "Alchemy" >= 25 and  findbuff 'Strength' < 10
+        if diffhits < 15 and timer 'healpot recovery' >= 1500 and  findbuff 'Strength' < 10
             wait 510
             potion 'strength'
             settimer 'healpot recovery' 0
@@ -341,22 +349,13 @@ while not dead
                 settimer 'healpot recovery' 0
                 settimer 'potion recovery' 0
                 getlabel backpack ping
+                getlabel backpack ping
             endif
         elseif skill 'Magery' > 50
             overhead "HEAL DAMMIT HEAL"
             hotkey "Play Script: greaterhealself"
         endif
-    endif
-    
-    #Swap to Frost if we're getting smashed
-    if hits < 30 and not cooldown "Aspect"
-        say "[aspectarmor Frost"
-        overhead "Swapped into Frost!  Fix it later!" 77
-        sysmsg "Swapped into Frost!  Fix it later!" 77
-        overhead "Swapped into Frost!  Fix it later!" 77
-        sysmsg "Swapped into Frost!  Fix it later!" 77
-        overhead "Swapped into Frost!  Fix it later!" 77
-        sysmsg "Swapped into Frost!  Fix it later!" 77
+        
     endif
     
     if findbuff "weaken"
@@ -369,12 +368,6 @@ while not dead
         cooldown 'Casting' 0
     endif
  
-    if not queued and not cooldown 'Spyglass' and not targetexists and autoglass = 1 and not cooldown 'Casting' and not cooldown 'PVP' and onABoat = 1
-        overhead "Glassing"
-        hotkey "Play Script: Spyglass Boat"
-    endif
-    
-
     if autoDisco = 1 and timer 'discoTimer' >= 2600 and skill 'Discordance' > 50
         if not dead 'myKillTarget' and not cooldown 'Discordance'
             overhead "Disco Shit!"
@@ -391,6 +384,8 @@ while not dead
     
     if not cooldown 'PVP' and skill "Chivalry" >= 25 and autoTarget = 1 and timer 'attackShit' >= 750
         settimer 'attackShit' 0
+        say "[enemyofone"
+        say  "[dispelevil"
         hotkey "Play Script: healsinglecrew"
     endif
     

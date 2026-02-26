@@ -1,5 +1,3 @@
-#set this to 1 to spyglass for ships using a gold spyglass every 6s
-@setvar glassShips 1
 #set this to 1 to constantly heal crew 
 @setvar! healMyCrew 1
 #set this to 1 to cut fish automagically
@@ -13,25 +11,11 @@ if not timerexists 'throwNet'
     settimer 'throwNet' 9999
 endif
 
-cooldown "Spyglass" 8000
-
-overhead "Fishing Spot"
-gumpclose 2890020940
-dclicktype 'spyglass'
-waitfortarget 1200
-target 'self'
-waitforgump 2890020940
-gumpresponse 11
-waitforgump 2890020940
-gumpresponse 4
-waitforgump 2890020940
-settimer "glass" 0
-
 @setvar blueFound 0
 
 
 while not dead
-    if timer 'throwNet' > 3500 and findtype 39349|18824|39434|28820|rowboat|barrel|horn|25769|rock|foliage|rowboat|mushroom|basket|18824|28933|swordfish|rocks|bedroll ground any any 12 as fishingSpot
+    if timer 'throwNet' > 3500 and findtype 1217|39349|18824|39434|28820|rowboat|barrel|horn|25769|rock|foliage|rowboat|mushroom|basket|18824|28933|swordfish|rocks|bedroll ground any any 12 as fishingSpot
         overhead "Throwing Net" 15
         settimer 'throwNet' 0
         dclick fishingSpot
@@ -93,57 +77,13 @@ while not dead
             endif
         endif
     endif
-    if glassShips = 1 and not cooldown 'Spyglass' and findtype 5365 backpack 2213 any any as foundGlass
-        if not targetexists
-            gumpclose 2890020940
-            gumpclose 2890020940
-                
-            dclick foundGlass
-            
-            while not targetexists 
-                wait 20
-            endwhile
-            if targetexists neutral
-                target 'self'
-            endif
-            waitforgump 2890020940
-            gumpresponse 4 2890020940
-            waitforgump 2890020940
-            
-            @setvar blueFound 0
-            if ingump "a small ship" 2890020940 or  ingump "a ship of the line" 2890020940 or   ingump "a longship" 2890020940 or  ingump "a small dragon ship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragon ship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragon ship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
-                    @setvar blueFound 1
-            endif
-            while ingump "Next" 2890020940 and blueFound = 0
-                gumpresponse 3 2890020940
-                wait 350
-                if ingump "a small ship" 2890020940 or   ingump "a ship of the line" 2890020940 or   ingump "a longship" 2890020940 or  ingump "a small dragon ship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragon ship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragon ship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
-                    @setvar blueFound 1
-                endif
-            endwhile    
-            cooldown 'Spyglass' 6500
-        endif
 
-        while ingump "Previous" 2890020940 and blueFound = 0
-            gumpresponse 2 2890020940
-            wait 350
-            if ingump "a small ship" 2890020940 or   ingump "a ship of the line" 2890020940 or   ingump "a longship" 2890020940 or  ingump "a small dragon ship" 2890020940 or   ingump "a medium ship" 2890020940 or    ingump "a medium dragon ship" 2890020940 or  ingump "a large ship" 2890020940 or     ingump "a large dragon ship" 2890020940 or   ingump "a carrack" 2890020940 or   ingump "a galleon" 2890020940
-                @setvar blueFound 1
-            endif
-        endwhile    
-    endif
-    
-    while blueFound = 1
-        overhead "player ship!"
-        wait 500
-    endwhile
-    
     #cutting fish routine
     if not queued and cutFish = 1 and timer 'throwNet' > 2000 and findtype 'fish' 'self' as fish
         @getlabel 'fish' myLabel
-        if 'anemone' in myLabel
+        if 'horse' in myLabel
             overhead "COTW FISH IN BAG"
-        elseif 'sawfish' in myLabel
+        elseif 'octopus' in myLabel
             overhead "COTW FISH IN BAG"
         else 
             dclicktype 'dagger'
@@ -152,9 +92,9 @@ while not dead
         endif
         elseif not queued and cutFish = 1 and timer 'throwNet' > 1000 and findtype 28820|17157|28825|28823|15124|28829|17606|28845|28821|28828|7710|28819|28822 'self' as fish
         @getlabel 'fish' myLabel
-        if 'anemone' in myLabel
+        if 'horse' in myLabel
             overhead "COTW FISH IN BAG"
-        elseif 'sawfish' in myLabel
+        elseif 'octopus' in myLabel
             overhead "COTW FISH IN BAG"
         else 
             dclicktype 'dagger'
@@ -164,7 +104,7 @@ while not dead
     endif
     #hotkey 'Cancel Current Target'
     
-    if timer 'throwNet' > 700 and cooldown 'Spyglass' and recycleNets = 1 
+    if timer 'throwNet' > 700 and recycleNets = 1 
         @setvar! recycleTarget 1
         clearignore 
         #verehide = 2207

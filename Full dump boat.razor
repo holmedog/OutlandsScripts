@@ -15,7 +15,7 @@ else
     @setvar! myShipHold
 endif    
 
-if counttype 5188 > 10
+if counttype 5188 > 12
     overhead "Should dump bombs" 23
     lifttype 5188 20
     drop myShipHold -1 -1 0 
@@ -33,19 +33,12 @@ endif
 overhead "Gold Dump"
 #Gold in subpacks routine
 clearignore  
-createlist coinTypes
-clearlist coinTypes
-@pushlist 'coinTypes' 2539
-@pushlist 'coinTypes' 3821
-@pushlist 'coinTypes' 3891
-foreach x in coinTypes
-  while findtype x backpack any any 1 as found
-    lift found 9999
-    drop myShipHold -1 -1 0 
-    @ignore myVariable
-    wait 600
-  endwhile
-endfor
+while findtype 4225|3891|3821|2539 backpack any any 1 as found
+lift found 9999
+drop myShipHold -1 -1 0 
+@ignore myVariable
+wait 600
+endwhile
 
 if not varexist noidBag
     overhead 'Target Item Dump Bag'

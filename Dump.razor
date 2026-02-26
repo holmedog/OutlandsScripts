@@ -1,13 +1,17 @@
 clearignore
 
-//dress 'bow'
 //open tome chest
 dclick 0x5B7C7BBD
 wait 600
 
-//dump gold
 
-while findtype 3821 self as 'myGold'
+//seeds
+menu 0x42C8FB09 0
+wft 2500
+target self
+
+//dump gold
+while findtype 3891|3821 self as 'myGold'
     lift myGold 60000
     drop '0x40820133' -1 -1 0 
     wait 600
@@ -17,7 +21,7 @@ endwhile
 while findtype 29104 0x5B7C7BBD as found
     //overhead "Book"
     menu found 0
-    wait 50
+    wait 75
     ignore found
 endwhile
 clearignore
@@ -81,28 +85,11 @@ while findtype "fish"  as found
 endwhile
 
 //dump all supply shelf
-if findtype 44997|44998 ground any any 2 as found
-    menu found 0 
-    wft 2500
-    target self
-    menu found 1                
-    gumpclose 3232825965 
-    if skill "Magery" > 50
-        if skill "Meditation"  >= 50 or skill "Evaluating Intelligence" >= 50
-            while counttype 29012 backpack < 35
-                cast "create food"
-                wait 1000
-                if mana < 70 and insysmsg "use another magic"
-                    dclicktype 29012
-                endif
-                menu found 1
-                if insysmsg "cheese"
-                    break
-                endif
-            endwhile
-        endif
-    endif
-endif        
+menu 0x407F8ACB 0 
+wft 2500
+target self
+menu 0x407F8ACB 1                
+gumpclose 3232825965 
 overhead "Done with shelf"     
 gumpclose 3232825965   
 
@@ -195,11 +182,55 @@ endwhile
 
 gumpclose 3232825965   
 
-//script 'Bag Dumper'
+
+if findtype 'crate' ground any any 1 as foundcrate
+    dclick foundcrate
+    menu 0x407F8ACB 0
+    waitfortarget 500
+    target foundcrate
+    wait 100
+    menu 0x4004288C 0
+    waitfortarget 500
+    target foundcrate 
+    while findtype 3891|3821 foundcrate as 'myGold'
+        lift myGold 60000
+        drop '0x40820133' -1 -1 0 
+        wait 600
+    endwhile
+    while findtype 'pouch' foundcrate as 'myGold'
+        lift myGold 60000
+        drop '0x465CE02E' -1 -1 0 
+        wait 600
+    endwhile
+endif    
+
+//Recycler
 wait 500
 menu 0x465CE02E 1
-wait 500
+dclick 0x465CE02E
+waitforgump 4045111101
+gumpresponse 7 4045111101
+waitforgump 4045111101
+gumpresponse 6 4045111101
+waitforgump 4045111101
+gumpresponse 6 4045111101
+waitforgump 4045111101
+menu 0x407F8ACB 0 
+wft 500
+target 0x465CE02E
+wait 100
+menu 0x42448EE2 0
+wft 500 
+target 0x465CE02E
+wait 100
+menu 0x4004288C 0
+wft 500 
+target 0x465CE02E
+
+wait 100
 menu 0x407F8ACB 1
+
+
 
 clearignore
 

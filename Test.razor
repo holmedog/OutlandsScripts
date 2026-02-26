@@ -1,6 +1,8 @@
-# Initialize variables if they don't exist
-foreach varName in ['wildBool', 'autoTarget', 'healingSelf', 'onABoat']
-    if not varexist varName
-        @setvar! varName 0
-    endif
-endforeach
+@clearignore
+overhead "Target Bag To search"
+setvar! crewChest
+
+dclick crewChest
+while findtype 781 crewChest as check
+    overhead "● ▼▼ HERE ▼▼ ●" 88 check
+endwhile

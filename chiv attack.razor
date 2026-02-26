@@ -5,23 +5,29 @@ endwhile
 
 hotkey 'Target Closest Non-Friendly Monster'
 @setvar! myKillTarget lasttarget 
-if skill 'Peacemaking' > 50
-    hotkey 'Clear Target Queue'
-    skill 'Peacemaking'
-    wft 1500
-    target myKillTarget
-endif
 
-#if noto 'myKillTarget' != hostile 
-#    #overhead "STOP!" 33
-#    script "stayalive2"
+
+#if skill 'Peacemaking' > 50
+    #hotkey 'Clear Target Queue'
+    #skill 'Peacemaking'
+    #wft 1500
+    #    target myKillTarget
 #endif
 
-attack myKillTarget 
-say '[divinefury'
-wait 550
-say '[enemyofone'
+if noto 'myKillTarget' != hostile 
+    #overhead "STOP!" 33
+    script "stayalive2"
+endif
+if noto 'myKillTarget' = hostile 
+    attack myKillTarget 
+endif
+
+#say '[divinefury'
+#wait 550
+#say '[enemyofone'
 #say '[consecrateweapon'
+
+#say '[disarm'
 
 #getlabel myKillTarget desc
 #overhead desc 33

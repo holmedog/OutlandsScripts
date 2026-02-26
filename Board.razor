@@ -46,9 +46,38 @@ wait 250
 say '[ShipHotbars'
 unsetvar noidBag
 
+waitforgump 455990628
+while not ingump "Accuracy" 455990628
+    gumpresponse 1 455990628
+    waitforgump 455990628
+endwhile    
+    
 @setvar onABoat 1
 
 overhead "Go to hull target top hp bar"
 @setvar shipStatusBar
+
+#Check for a ship hold
+if findtype '16019' ground any any 3 true as found
+    @setvar myShipHold found
+elseif findtype '16046' ground any any 3 true as found
+    @setvar myShipHold found
+elseif findtype '15973' ground any any 3 true as found
+    @setvar myShipHold found
+elseif findtype '16057' ground any any 3 true as found
+     setvar myShipHold found
+else 
+    overhead "Cannot find hold, target"
+    @setvar! myShipHold
+endif    
+
+if findtype 3705 self as foundbag
+    unsetvar noidBag
+    setvar! noidBag foundbag
+    @drop backpack
+    lift foundbag 9999
+    drop myShipHold -1 -1 0 
+    wait 600
+endif
 
 hotkey "Play Script: Full dump boat"
