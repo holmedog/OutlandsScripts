@@ -1,0 +1,31 @@
+if followers > 1 
+    say 'All release'
+    waitforgump 931181454
+    gumpresponse 2 931181454
+    waitforgump 931181454
+    gumpresponse 2 931181454
+    wait 1500
+endif    
+
+menu 0x49C08132 0
+wait 26000
+
+overhead "starting summons" 
+gumpclose 2785326818
+say '[vengefulspirit'
+wait 800
+say '[wither'
+wait 100
+
+cast 'Air Elemental'
+wait 5600
+cast 'Air Elemental'
+wait 5600
+cast 'Summ. Creature'
+wait 6100
+say 'all follow me'
+skill 'Provocation'
+wft 500
+target backpack
+
+menu 0x6176376F 0

@@ -1,15 +1,11 @@
-#prime our provocation targets
-@setvar! mobOne 0 
+# Prime vars
+@setvar! mobOne 0
 @setvar! mobTwo 0
 @setvar! saveMob 0
 @setvar! discordTarget 0
-@setvar! firstTarget lasttarget 
-@setvar! myKillTarget lasttarget 
 @setvar! loopDone 0
 
-if not varexist resetLoops
-    @setvar! resetLoop 0
-endif
+# Wait out cooldowns
 while cooldown "Provocation" and cooldown "Discordance"
     overhead "Cooldowns!" 34
     getlabel backpack ping
@@ -19,105 +15,163 @@ while cooldown "Provocation" and cooldown "Discordance"
     endif
 endwhile
 
+# Get initial target
 hotkey 'target closest non-friendly monster'
-unsetvar myKillTarget
+@setvar! myKillTarget lasttarget
+@setvar! firstTarget myKillTarget
 getlabel backpack ping
 if insysmsg "no one matching"
-    overhead  "Nothing to attack" 34    
+    overhead "Nothing to attack" 34
     script "stayalive2"
 endif
 
-#cycle all targets and see if one is not provoked, mark one for discord too
+
+# ============================
+#   TARGET SCAN LOOP
+# ============================
 while loopDone = 0
-    if hits < 50
+
+    if hits < 30
         overhead "GTFO!!!"
         script "stayalive2"
     endif
 
-    #range check
-    if not find myKillTarget ground -1 -1 9
-        #overhead "Target is more than 12 tiles, skip" 34
-    else    
-        #Check if provoked
-        getlabel myKillTarget desc2         
+    if find myKillTarget ground -1 -1 11
+
+        getlabel myKillTarget desc2
         overhead desc2 66 myKillTarget
-        if "provoked" in desc2             
-            #already provoked but not does not work because it is stupid
-        elseif "break" in desc2
-                overhead desc2 35
-        else 
-            if mobOne = 0
-                @setvar! mobOne myKillTarget
-            elseif mobTwo = 0
-                @setvar! mobTwo myKillTarget
-                @setvar! loopDone 1
-            endif
-        endif
-        #check if discorded
-        if "discord" in desc2
-            #see above for annoyance
+
+        # -------------------------
+        # PROVOCATION LOGIC
+        # -------------------------
+        # Valid provoke target = NOT provoked AND NOT break
+        if "provoked" in desc2
+            # skip provoke
         else
-            if discordTarget = 0
-                @setvar! discordTarget myKillTarget
-                #break out if we cannot provo
-                if cooldown "Provocation"
-                   @setvar! loopDone 1
-                endif 
+            if "break" in desc2
+                # skip provoke
+            elseif "pacified" in desc2
+                # skip provoke
+            else
+                if mobOne = 0
+                    @setvar! mobOne myKillTarget
+                else
+                    if mobTwo = 0
+                        @setvar! mobTwo myKillTarget
+                        @setvar! loopDone 1
+                    endif
+                endif
             endif
         endif
+
+        # -------------------------
+        # DISCORD LOGIC
+        # -------------------------
+        # Valid discord target = NOT discord (break allowed)
+        if discordTarget = 0
+            if "discord" in desc2
+                # skip
+            else
+                @setvar! discordTarget myKillTarget
+            endif
+        endif
+
+        # -------------------------
+        # SAVE FALLBACK PROVOKE TARGET
+        # -------------------------
+        # Only save if NOT break
+        if saveMob = 0
+            if "break" in desc2
+                # skip
+            else
+                @setvar! saveMob myKillTarget
+            endif
+        endif
+
     endif
-    
-    #Keep this in case firstTarget is only one not provoked 
-    @setvar! saveMob myKillTarget
-    
-    #go to the next target
+
+    # Next target
     hotkey 'Next Non-Friendly Monster Target'
-    @setvar! myKillTarget lasttarget 
+    @setvar! myKillTarget lasttarget
+
     if myKillTarget = firstTarget
         @setvar! loopDone 1
     endif
-endwhile    
 
+endwhile
+
+# ----------------------------
+# PROVOKE BLOCK
+# ----------------------------
 @setvar! skipDisco 0
-if mobOne != 0 and mobOne != mobTwo
-    if not cooldown "Provocation" and not cooldown "Skill Lockout"
-        @setvar! skipDisco 1
-        overhead "Provoking!"
-        useskill 'Provocation'
-        wft 500 
-        if targetexists 
-            target mobOne
-            wft 500
+
+# Cooldowns first
+if not cooldown "Provocation"
+    if not cooldown "Skill Lockout"
+        # Must have at least one clean provoke target
+        if mobOne != 0
+            # CASE 1: Two clean provoke targets
             if mobTwo != 0
-                target mobTwo   
-            else 
-                #This means we found one that is not provoked and others that are
-                if firstTarget = mobOne
-                    target saveMob
-                else
-                    target firstTarget
+
+                overhead "Provoking!"
+                useskill 'Provocation'
+                wft 500
+
+                if targetexists
+                    @setvar! skipDisco 1
+                    target mobOne
+                    wft 500
+                    target mobTwo
+                endif
+            else
+                # CASE 2: Fallback provoke
+                # Only valid if saveMob exists AND is not mobOne
+                if saveMob != 0
+                    if saveMob != mobOne
+                        overhead "Provoking!"
+                        useskill 'Provocation'
+                        wft 500
+
+                        if targetexists
+                            @setvar! skipDisco 1
+                            target mobOne
+                            wft 500
+                            target saveMob
+                        endif
+                    endif
                 endif
             endif
         endif
     endif
 endif
 
-#No provocation we are just discording 
-getlabel backpack ping
-if skipDisco = 0 and not cooldown "Discordance" and not cooldown "Skill Lockout" and discordTarget != 0
-    overhead "Discordance!"
-    useskill 'Discordance'
-    wft 500
-    if targetexists 
-        target discordTarget
+
+# ----------------------------
+# DISCORD BLOCK
+# ----------------------------
+if skipDisco = 0
+    if not cooldown "Discordance"
+        if not cooldown "Skill Lockout"
+            if discordTarget != 0
+                overhead "Discordance!"
+                useskill 'Discordance'
+                wft 500
+                if targetexists
+                    target discordTarget
+                endif
+            endif
+        endif
     endif
 endif
 
+# ----------------------------
+# FINAL EXIT / RESET LOGIC
+# ----------------------------
 getlabel backpack ping
 if cooldown "Bard Reset"
     cooldown "Bard Reset" 0
-    overhead "Got a reset, SPIN TO WIN!"
-    hotkey "Play Script: Auto Provocation" 
-else 
-    hotkey "Play Script: stayalive2" 
+    overhead "<<< GOT A RESET >>>" 33
+    hotkey "Play Script: Auto Provocation"
+else
+    hotkey "Play Script: stayalive2"
 endif
