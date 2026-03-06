@@ -5,16 +5,6 @@
 @setvar! discordTarget 0
 @setvar! loopDone 0
 
-# Wait out cooldowns
-while cooldown "Provocation" and cooldown "Discordance"
-    overhead "Cooldowns!" 34
-    getlabel backpack ping
-    if hits < 30
-        overhead "GTFO!!!"
-        script "stayalive2"
-    endif
-endwhile
-
 # Get initial target
 hotkey 'target closest non-friendly monster'
 @setvar! myKillTarget lasttarget
@@ -24,7 +14,6 @@ if insysmsg "no one matching"
     overhead "Nothing to attack" 34
     script "stayalive2"
 endif
-
 
 # ============================
 #   TARGET SCAN LOOP
@@ -36,58 +25,66 @@ while loopDone = 0
         script "stayalive2"
     endif
 
-    if find myKillTarget ground -1 -1 11
+    if find myKillTarget ground -1 -1 12
 
         getlabel myKillTarget desc2
         overhead desc2 66 myKillTarget
 
-        # -------------------------
-        # PROVOCATION LOGIC
-        # -------------------------
-        # Valid provoke target = NOT provoked AND NOT break
-        if "provoked" in desc2
-            # skip provoke
-        else
-            if "break" in desc2
-                # skip provoke
-            elseif "pacified" in desc2
+        # -----------------------------------------
+        # PROVOCATION LOGIC (ONLY IF PROVOKE READY)
+        # -----------------------------------------
+        if not cooldown "Provocation"
+
+            if "provoked" in desc2
                 # skip provoke
             else
-                if mobOne = 0
-                    @setvar! mobOne myKillTarget
+                if "break" in desc2
+                    # skip provoke
+                elseif "pacified" in desc2
+                    # skip provoke
                 else
-                    if mobTwo = 0
-                        @setvar! mobTwo myKillTarget
-                        @setvar! loopDone 1
+                    if mobOne = 0
+                        @setvar! mobOne myKillTarget
+                    else
+                        if mobTwo = 0
+                            @setvar! mobTwo myKillTarget
+                            @setvar! loopDone 1
+                        endif
                     endif
                 endif
             endif
-        endif
 
-        # -------------------------
-        # DISCORD LOGIC
-        # -------------------------
-        # Valid discord target = NOT discord (break allowed)
+            # Save fallback provoke target (only when provoke is ready)
+            if saveMob = 0
+                if "break" in desc2
+                    # skip
+                else
+                    @setvar! saveMob myKillTarget
+                endif
+            endif
+
+        endif  
+
+
+        # -----------------------------------------
+        # DISCORD LOGIC (ALWAYS VALID)
+        # -----------------------------------------
+        # But discord should be the ONLY logic when provoke is on cooldown
         if discordTarget = 0
             if "discord" in desc2
                 # skip
             else
                 @setvar! discordTarget myKillTarget
+                # If provoke is on cooldown, we can exit early
+                if cooldown "Provocation" 
+                    @setvar! loopDone 1
+                endif
+                # If discord is on cooldown and provoke is greater than 500 end early
+                if cooldown "Discordance"  and cooldown "Provocation" > 5100
+                    @setvar! loopDone 1
+                endif
             endif
         endif
-
-        # -------------------------
-        # SAVE FALLBACK PROVOKE TARGET
-        # -------------------------
-        # Only save if NOT break
-        if saveMob = 0
-            if "break" in desc2
-                # skip
-            else
-                @setvar! saveMob myKillTarget
-            endif
-        endif
-
     endif
 
     # Next target
@@ -97,8 +94,25 @@ while loopDone = 0
     if myKillTarget = firstTarget
         @setvar! loopDone 1
     endif
-
 endwhile
+
+
+# Wait out cooldowns
+while cooldown "Provocation" and cooldown "Discordance"
+    overhead "Cooldowns!" 34
+    getlabel backpack ping
+    if hits < 30
+        overhead "GTFO!!!"
+        script "stayalive2"
+    endif
+endwhile
+
+
+#make sure a cursor does not exist from before
+if targetexists
+    hotkey "Cancel Current Target"
+    wait 350
+endif   
 
 # ----------------------------
 # PROVOKE BLOCK

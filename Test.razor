@@ -1,8 +1,3 @@
-@clearignore
-overhead "Target Bag To search"
-setvar! crewChest
-
-dclick crewChest
-while findtype 781 crewChest as check
-    overhead "● ▼▼ HERE ▼▼ ●" 88 check
-endwhile
+                if cooldown "Provocation" < 3000
+                    overhead "We here"
+                endif
