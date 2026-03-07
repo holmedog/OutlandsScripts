@@ -17,6 +17,7 @@
 #
 # Script starts here...
 
+@clearignore 
 if findtype "3997|4148|4032|7864" backpack as breakdowntool
     hotkey "Cancel Current Target"
     if not find "ContainerIDWand" and findtype 20495 backpack as contIDwand
@@ -90,6 +91,24 @@ if findtype "3997|4148|4032|7864" backpack as breakdowntool
     if targetexists 
         hotkey "Cancel Current Target"
     endif
-    overhead "Recycle Complete." 88
+    overhead "Dropping Trash" 88
     @clearignore 
+    
+    while findtype 4225|7127|7154|3827 self as found
+        @drop self
+        lift found 60000
+        droprelloc 0 0 0
+        wait 600
+    endwhile
+    
+    overhead "Eating Essence" 88
+    if findtype 3901 self as found
+        dclick found
+        wft 900
+        target self
+    endif
+    
+    
+    overhead "Recycled" 88
+    
 endif

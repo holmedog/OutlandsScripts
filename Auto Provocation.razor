@@ -1,23 +1,48 @@
-# Prime vars
+# ============================================
+#   PRIME VARS / RESET
+# ============================================
 @setvar! mobOne 0
 @setvar! mobTwo 0
 @setvar! saveMob 0
 @setvar! discordTarget 0
 @setvar! loopDone 0
 
-# Get initial target
+@setvar! isProvoked 0
+@setvar! isBreak 0
+@setvar! isPacified 0
+@setvar! isDiscorded 0
+
+@setvar! skipDisco 0
+
+# distance bands (two slots each)
+@setvar! Dist2A 0
+@setvar! Dist2B 0
+@setvar! Dist4A 0
+@setvar! Dist4B 0
+@setvar! Dist6A 0
+@setvar! Dist6B 0
+@setvar! Dist8A 0
+@setvar! Dist8B 0
+@setvar! Dist10A 0
+@setvar! Dist10B 0
+@setvar! Dist12A 0
+@setvar! Dist12B 0
+
+# ============================================
+#   INITIAL TARGET
+# ============================================
 hotkey 'target closest non-friendly monster'
 @setvar! myKillTarget lasttarget
 @setvar! firstTarget myKillTarget
-getlabel backpack ping
+
 if insysmsg "no one matching"
     overhead "Nothing to attack" 34
     script "stayalive2"
 endif
 
-# ============================
-#   TARGET SCAN LOOP
-# ============================
+# ============================================
+#   TARGET SCAN LOOP (DISTANCE PRIORITY)
+# ============================================
 while loopDone = 0
 
     if hits < 30
@@ -25,82 +50,218 @@ while loopDone = 0
         script "stayalive2"
     endif
 
+    # Only consider mobs within 12 tiles
     if find myKillTarget ground -1 -1 12
 
         getlabel myKillTarget desc2
-        overhead desc2 66 myKillTarget
+
+        @setvar! isProvoked 0
+        @setvar! isBreak 0
+        @setvar! isPacified 0
+        @setvar! isDiscorded 0
+
+        if "provoked" in desc2
+            @setvar! isProvoked 1
+        endif
+        if "break" in desc2
+            @setvar! isBreak 1
+        endif
+        if "pacified" in desc2
+            @setvar! isPacified 1
+        endif
+        if "discord" in desc2
+            @setvar! isDiscorded 1
+        endif
+
+        if isBreak = 1
+            overhead desc2 66 myKillTarget
+        endif
 
         # -----------------------------------------
-        # PROVOCATION LOGIC (ONLY IF PROVOKE READY)
+        # DISCORD EARLY EXIT
         # -----------------------------------------
-        if not cooldown "Provocation"
+        if discordTarget = 0
+            if isDiscorded = 0
+                @setvar! discordTarget myKillTarget
 
-            if "provoked" in desc2
-                # skip provoke
-            else
-                if "break" in desc2
-                    # skip provoke
-                elseif "pacified" in desc2
-                    # skip provoke
-                else
-                    if mobOne = 0
-                        @setvar! mobOne myKillTarget
-                    else
-                        if mobTwo = 0
-                            @setvar! mobTwo myKillTarget
-                            @setvar! loopDone 1
+                # If provoke is impossible, exit early
+                if cooldown "Provocation" > 5100
+                    @setvar! loopDone 1
+                endif
+            endif
+        endif
+        
+        # -----------------------------------------
+        # Fallback logic
+        # -----------------------------------------
+        
+        # first clean fallback
+        if saveMob = 0 and isBreak = 0
+            @setvar! saveMob myKillTarget
+        endif
+
+        # -----------------------------------------
+        # CLEAN PROVOKE CANDIDATES BY DISTANCE BAND
+        # -----------------------------------------
+        if isProvoked = 0
+            if isBreak = 0
+                if isPacified = 0
+
+                    # ≤ 2 tiles
+                    if find myKillTarget ground -1 -1 2
+                        if Dist2A = 0
+                            @setvar! Dist2A myKillTarget
+                        elseif Dist2B = 0
+                            @setvar! Dist2B myKillTarget
+                        endif
+
+                    # ≤ 4 tiles
+                    elseif find myKillTarget ground -1 -1 4
+                        if Dist4A = 0
+                            @setvar! Dist4A myKillTarget
+                        elseif Dist4B = 0
+                            @setvar! Dist4B myKillTarget
+                        endif
+
+                    # ≤ 6 tiles
+                    elseif find myKillTarget ground -1 -1 6
+                        if Dist6A = 0
+                            @setvar! Dist6A myKillTarget
+                        elseif Dist6B = 0
+                            @setvar! Dist6B myKillTarget
+                        endif
+
+                    # ≤ 8 tiles
+                    elseif find myKillTarget ground -1 -1 8
+                        if Dist8A = 0
+                            @setvar! Dist8A myKillTarget
+                        elseif Dist8B = 0
+                            @setvar! Dist8B myKillTarget
+                        endif
+
+                    # ≤ 10 tiles
+                    elseif find myKillTarget ground -1 -1 10
+                        if Dist10A = 0
+                            @setvar! Dist10A myKillTarget
+                        elseif Dist10B = 0
+                            @setvar! Dist10B myKillTarget
+                        endif
+
+                    # ≤ 12 tiles
+                    elseif find myKillTarget ground -1 -1 12
+                        if Dist12A = 0
+                            @setvar! Dist12A myKillTarget
+                        elseif Dist12B = 0
+                            @setvar! Dist12B myKillTarget
                         endif
                     endif
-                endif
-            endif
-
-            # Save fallback provoke target (only when provoke is ready)
-            if saveMob = 0
-                if "break" in desc2
-                    # skip
-                else
-                    @setvar! saveMob myKillTarget
-                endif
-            endif
-
-        endif  
-
-
-        # -----------------------------------------
-        # DISCORD LOGIC (ALWAYS VALID)
-        # -----------------------------------------
-        # But discord should be the ONLY logic when provoke is on cooldown
-        if discordTarget = 0
-            if "discord" in desc2
-                # skip
-            else
-                @setvar! discordTarget myKillTarget
-                # If provoke is on cooldown, we can exit early
-                if cooldown "Provocation" 
-                    @setvar! loopDone 1
-                endif
-                # If discord is on cooldown and provoke is greater than 500 end early
-                if cooldown "Discordance"  and cooldown "Provocation" > 5100
-                    @setvar! loopDone 1
                 endif
             endif
         endif
     endif
 
-    # Next target
+    # Move to next mob
     hotkey 'Next Non-Friendly Monster Target'
     @setvar! myKillTarget lasttarget
 
+    # Full loop complete
     if myKillTarget = firstTarget
         @setvar! loopDone 1
     endif
+
 endwhile
 
+# ============================================
+#   PICK BEST PROVOKE TARGETS FROM BANDS
+# ============================================
+@setvar! mobOne 0
+@setvar! mobTwo 0
 
-# Wait out cooldowns
+# --------------------------------------------
+# mobOne: ONLY A slots, closest band first
+# --------------------------------------------
+if mobOne = 0 and Dist2A != 0
+    @setvar! mobOne Dist2A
+elseif mobOne = 0 and Dist4A != 0
+    @setvar! mobOne Dist4A
+elseif mobOne = 0 and Dist6A != 0
+    @setvar! mobOne Dist6A
+elseif mobOne = 0 and Dist8A != 0
+    @setvar! mobOne Dist8A
+elseif mobOne = 0 and Dist10A != 0
+    @setvar! mobOne Dist10A
+elseif mobOne = 0 and Dist12A != 0
+    @setvar! mobOne Dist12A
+endif
+
+# --------------------------------------------
+# mobTwo: B slots first (same/closer band), then A slots, then saveMob
+# --------------------------------------------
+
+# B slots (prefer second in same band / closer band)
+if mobTwo = 0 and Dist2B != 0 and Dist2B != mobOne
+    @setvar! mobTwo Dist2B
+elseif mobTwo = 0 and Dist4B != 0 and Dist4B != mobOne
+    @setvar! mobTwo Dist4B
+elseif mobTwo = 0 and Dist6B != 0 and Dist6B != mobOne
+    @setvar! mobTwo Dist6B
+elseif mobTwo = 0 and Dist8B != 0 and Dist8B != mobOne
+    @setvar! mobTwo Dist8B
+elseif mobTwo = 0 and Dist10B != 0 and Dist10B != mobOne
+    @setvar! mobTwo Dist10B
+elseif mobTwo = 0 and Dist12B != 0 and Dist12B != mobOne
+    @setvar! mobTwo Dist12B
+endif
+
+# A slots (remaining closest A, excluding mobOne)
+if mobTwo = 0 and Dist2A != 0 and Dist2A != mobOne
+    @setvar! mobTwo Dist2A
+elseif mobTwo = 0 and Dist4A != 0 and Dist4A != mobOne
+    @setvar! mobTwo Dist4A
+elseif mobTwo = 0 and Dist6A != 0 and Dist6A != mobOne
+    @setvar! mobTwo Dist6A
+elseif mobTwo = 0 and Dist8A != 0 and Dist8A != mobOne
+    @setvar! mobTwo Dist8A
+elseif mobTwo = 0 and Dist10A != 0 and Dist10A != mobOne
+    @setvar! mobTwo Dist10A
+elseif mobTwo = 0 and Dist12A != 0 and Dist12A != mobOne
+    @setvar! mobTwo Dist12A
+endif
+
+# Fallback: use saveMob if we still don't have a second target
+if mobTwo = 0
+    if saveMob != 0
+        if saveMob != mobOne
+            @setvar! mobTwo saveMob
+        endif
+    endif
+endif
+
+
+# ============================================
+#   EXIT IF NO TARGETS
+# ============================================
+if discordTarget = 0 and mobOne = 0
+    overhead "No valid targets!" 34
+    hotkey "Play Script: stayalive2"
+endif
+
+
+# ============================================
+#   WAIT OUT COOLDOWNS
+# ============================================
 while cooldown "Provocation" and cooldown "Discordance"
     overhead "Cooldowns!" 34
-    getlabel backpack ping
+    wait 20
+    if hits < 30
+        overhead "GTFO!!!"
+        script "stayalive2"
+    endif
+endwhile
+
+while cooldown "Skill Lockout"
+    overhead "Cooldowns!" 34
+    wait 20
     if hits < 30
         overhead "GTFO!!!"
         script "stayalive2"
@@ -108,80 +269,78 @@ while cooldown "Provocation" and cooldown "Discordance"
 endwhile
 
 
-#make sure a cursor does not exist from before
+# ============================================
+#   CLEAR CURSOR
+# ============================================
 if targetexists
     hotkey "Cancel Current Target"
-    wait 350
-endif   
+endif
 
-# ----------------------------
-# PROVOKE BLOCK
-# ----------------------------
-@setvar! skipDisco 0
 
-# Cooldowns first
-if not cooldown "Provocation"
-    if not cooldown "Skill Lockout"
-        # Must have at least one clean provoke target
-        if mobOne != 0
-            # CASE 1: Two clean provoke targets
-            if mobTwo != 0
+# ============================================
+#   PROVOKE BLOCK
+# ============================================
+if cooldown "Provocation" < 1000
+    if mobOne != 0
 
-                overhead "Provoking!"
-                useskill 'Provocation'
-                wft 500
-
-                if targetexists
-                    @setvar! skipDisco 1
-                    target mobOne
-                    wft 500
-                    target mobTwo
-                endif
-            else
-                # CASE 2: Fallback provoke
-                # Only valid if saveMob exists AND is not mobOne
-                if saveMob != 0
-                    if saveMob != mobOne
-                        overhead "Provoking!"
-                        useskill 'Provocation'
-                        wft 500
-
-                        if targetexists
-                            @setvar! skipDisco 1
-                            target mobOne
-                            wft 500
-                            target saveMob
-                        endif
-                    endif
+        # fallback: use saveMob if mobTwo missing
+        if mobTwo = 0
+            if saveMob != 0
+                if saveMob != mobOne
+                    @setvar! mobTwo saveMob
                 endif
             endif
+        endif
+
+        if mobTwo != 0
+
+            # wait for provoke if <500ms
+            if cooldown "Provocation" < 500
+                while cooldown "Provocation"
+                    wait 20
+                    if hits < 30
+                        overhead "GTFO!!!"
+                        script "stayalive2"
+                    endif
+                endwhile
+            endif
+
+            @setvar! skipDisco 1
+            overhead "Provoking!"
+            useskill 'Provocation'
+            wft 550
+            target mobOne
+            wft 550
+            target mobTwo
         endif
     endif
 endif
 
 
-# ----------------------------
-# DISCORD BLOCK
-# ----------------------------
+# ============================================
+#   DISCORD BLOCK
+# ============================================
 if skipDisco = 0
     if not cooldown "Discordance"
-        if not cooldown "Skill Lockout"
-            if discordTarget != 0
-                overhead "Discordance!"
+        if discordTarget != 0
+            overhead "Discordance!"
+            useskill 'Discordance'
+            wft 250
+
+            if insysmsg "must wait a moment"
                 useskill 'Discordance'
-                wft 500
-                if targetexists
-                    target discordTarget
-                endif
+                wft 550
             endif
+
+            target discordTarget
         endif
     endif
 endif
 
-# ----------------------------
-# FINAL EXIT / RESET LOGIC
-# ----------------------------
-getlabel backpack ping
+
+# ============================================
+#   FINAL EXIT / RESET LOGIC
+# ============================================
 if cooldown "Bard Reset"
     cooldown "Bard Reset" 0
     overhead "<<< GOT A RESET >>>" 33
