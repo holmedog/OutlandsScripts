@@ -1,0 +1,88 @@
+#Wizard Grimoire
+@setvar! castArrow 1
+@setvar! castHarm 1
+@setvar! castFireball 1
+@setvar! castLightning 1
+@setvar! moveShit 1
+@setvar! manaDrain 1
+@setvar! curseCast 1
+
+#Bard Stuff
+if skill 'Discordance' > 50
+    @setvar! isBard 1
+else 
+    @setvar! isBard 0
+endif
+
+# ============================================
+#   INITIAL TARGET
+# ============================================
+hotkey 'target closest non-friendly monster'
+@setvar! myKillTarget lasttarget
+@setvar! firstTarget myKillTarget
+
+if insysmsg "no one matching"
+    overhead "Nothing to attack" 34
+    @clearignore 
+    script "stayalive2"
+endif
+
+if moveShit = 1
+    #Move looted reagents to satchel
+    if findtype 3963|3980|3974|3973|3981|3962|3976|3972 backpack
+        if findtype "reagent satchel" self as 'WizardSatchel'
+            menu 'WizardSatchel' 0
+        endif
+    endif
+endif    
+
+
+if manaDrain = 1
+    cast 'Mana Drain'
+    wft 5500
+    target myKillTarget
+    wait 255
+endif    
+if curseCast = 1
+    cast 'Curse'
+    wft 5500
+    target myKillTarget
+    wait 255
+endif
+
+while mana > 12 and find myKillTarget ground -1 -1 12 as found
+    if hits < 70 
+        overhead "Heal!" 33
+        script "stayalive2"
+    endif
+    
+    if mana < 75 and not cooldown "Mushroom"
+        hotkey 'Eat Magic Mushroom'
+    endif
+    
+    #bard stuff
+    if isBard = 1 and not cooldown "Discordance" and not findbuff "actively meditating" 
+        overhead "Discordance!"
+        useskill 'Discordance'
+        wft 250
+        target found
+    endif
+    
+    if mana >= 40
+            cast 'Flamestrike'
+    elseif castFireball = 1 and mana >= 9 and not findbuff 'Fireball Cooldown'
+        cast 'fireball'
+    elseif castLightning = 1 and mana >= 11 and not findbuff 'Lightning Cooldown'
+        cast 'Lightning'
+    elseif castHarm = 1 and mana >= 6 and not findbuff 'Harm Cooldown'
+        cast 'harm'
+    elseif castArrow = 1 and mana >= 4 and not findbuff 'Magic Arrow Cooldown'
+        cast 'magic arrow'
+    else
+        cast 'Mind Blast'
+    endif
+    while casting 
+        wait 10
+    endwhile
+    target found
+endwhile    

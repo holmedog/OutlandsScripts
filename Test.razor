@@ -1,3 +1,11 @@
-                if cooldown "Provocation" < 3000
-                    overhead "We here"
-                endif
+while cooldown "Discordance"
+    wait 50
+endwhile
+if skill 'Discordance' < 100 and not cooldown 'Discordance'
+    hotkey 'Discordance'
+    waitfortarget 555
+    target 0x7E4D0
+    wait 550
+    dclicktype 3763
+endif    
+loop

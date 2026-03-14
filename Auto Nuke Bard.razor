@@ -1,0 +1,128 @@
+#Wizard Grimoire
+@setvar! castArrow 1
+@setvar! castHarm 1
+@setvar! castFireball 0
+@setvar! castLightning 1
+@setvar! moveShit 1
+@setvar! castExplo 1
+
+@setvar! isProvoked 0
+@setvar! isBreak 0
+@setvar! isDiscord 0
+@setvar! isPacified 0
+
+# ============================================
+#   INITIAL TARGET
+# ============================================
+overhead "Who we killing?"
+@setvar! myKillTarget
+
+while find myKillTarget ground -1 -1 12
+    if mana < 75 and not cooldown "Mushroom"
+        hotkey 'Eat Magic Mushroom'
+        overhead 'Magic Mushroom'
+    endif
+     
+    if hits < 65 
+        overhead '[Used: GHeal Pot]' 68
+        hotkey 'Drink Heal'
+        getlabel backpack ping
+    endif
+    if hits < 33
+        script "stayalive2"
+    endif
+    
+    getlabel myKillTarget desc2
+
+    @setvar! isProvoked 0
+    @setvar! isBreak 0
+    @setvar! isDiscord 0
+    @setvar! isPacified 0
+    
+    if "provoked" in desc2
+        @setvar! isProvoked 1
+        @setvar! isPacified 1
+    endif
+    if "pacified" in desc2
+        @setvar! isPacified 1
+    endif
+    if "barding break" in desc2
+        @setvar! isBreak 1
+    endif
+    if "discord" in desc2
+        @setvar! isDiscord 1
+    endif
+    
+    if isProvoked = 0 and isPacified = 0 and isBreak = 0 and not cooldown "Provocation"
+        overhead "Peace!"
+        useskill 'Peacemaking'
+        wft 550
+        target myKillTarget
+        getlabel backpack ping
+        if cooldown "Bard Reset" and insysmsg "pacifying your target"
+            cooldown 'Bard Reset' 0
+        elseif cooldown "Bard Reset" and insysmsg "you fail to pacify"
+            cooldown 'Bard Reset' 0
+        endif
+    endif
+    
+    if not cooldown "Discordance"
+        overhead desc2 66 myKillTarget
+    
+        overhead "Discordance!"
+        useskill 'Discordance'
+        wft 550
+        target myKillTarget
+    endif
+    
+    
+    getlabel myKillTarget desc2
+
+    @setvar! isProvoked 0
+    @setvar! isBreak 0
+    @setvar! isDiscord 0
+    @setvar! isPacified 0
+    
+    if "provoked" in desc2
+        @setvar! isProvoked 1
+        @setvar! isPacified 1
+    endif
+    if "pacified" in desc2
+        @setvar! isPacified 1
+    endif
+    if "break" in desc2
+        @setvar! isBreak 1
+    endif
+    if "discord" in desc2
+        @setvar! isDiscord 1
+    endif
+    
+    if not cooldown "Curse"  and isPacified = 1 
+        cast 'Curse'
+        cooldown "Curse" 60000
+    elseif not cooldown "Mana Drain"  and isPacified = 1 
+        cast 'Mana Drain'
+        cooldown "Mana Drain" 60000
+    elseif castFireball = 1 and mana >= 9 and not findbuff 'Fireball Cooldown' and isPacified = 1 and isDiscord = 1
+        cast 'fireball'
+    elseif castLightning = 1 and mana >= 11 and not findbuff 'Lightning Cooldown' and isPacified = 1 and isDiscord = 1
+        cast 'Lightning'
+    elseif castHarm = 1 and mana >= 6 and not findbuff 'Harm Cooldown' and isPacified = 1 and isDiscord = 1
+        cast 'harm'
+    elseif castArrow = 1 and mana >= 4 and not findbuff 'Magic Arrow Cooldown' and isPacified = 1 and isDiscord = 1
+        cast 'magic arrow'
+    elseif mana > 40 and isPacified = 1 and isDiscord = 1
+        cast 'Flamestrike'
+    elseif isPacified = 1 and isDiscord = 1
+        cast 'Mind Blast'
+    endif        
+        
+    while casting 
+        wait 10
+    endwhile
+    target myKillTarget
+endwhile    
+
+cooldown "Curse" 0
+cooldown "Mana Drain" 0
+script "stayalive2"

@@ -10,7 +10,7 @@
 
 ### Auto-stop when skill target is reached on 1st line ###
 
-while skill 'spiritspeak' < 120
+while skill 'focus' < 100
     if hp < 45
         wait 500 
         cast 'Greater Heal'
@@ -56,7 +56,6 @@ while skill 'spiritspeak' < 120
     endif
 
 ### Check for Ash to resupply ###
-    if counttype 'Sulfurous Ash' < 5
-        menu 0x407F8ACB 1
-    endif
+    menu 0x407F8ACB 1
+    
 endwhile

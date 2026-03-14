@@ -7,6 +7,7 @@ if not timerexists 'castspell recovery'
     createtimer 'castspell recovery'
     settimer 'castspell recovery' 20000
 endif
+hotkey 'Cancel Current Target'
 
 # Mana warnings
 if mana < 22  and timer 'low mana' > 3000 and mana > 10
