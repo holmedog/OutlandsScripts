@@ -4,13 +4,16 @@ while targetexists
 endwhile
 
 if not varexist myOverrideTarget
+    #overhead "No override variable"
     setvar myOverrideTarget 0
 endif
 if find myOverrideTarget ground -1 -1 10 as foundTarget
     @setvar! myKillTarget myOverrideTarget 
+    #overhead "Override found, going at it"
 else 
     hotkey 'Target Closest Non-Friendly Monster'
     @setvar! myKillTarget lasttarget 
+    #overhead "No Override found, Target Closest"
 endif    
 
 
@@ -22,7 +25,7 @@ endif
 #endif
 
 if noto 'myKillTarget' != hostile 
-    #overhead "STOP!" 33
+    overhead "STOP!" 33
     script "stayalive2"
 endif
 if noto 'myKillTarget' = hostile 

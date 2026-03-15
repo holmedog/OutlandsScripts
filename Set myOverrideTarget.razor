@@ -4,10 +4,8 @@ endwhile
 
 overhead "Who we killing?"
 @setvar! myOverrideTarget
-while not targetexists 
-    wait 20
-endwhile
 while targetexists 
     wait 20
 endwhile
-hotkey "Play Script: chiv attack"
+overhead "Target acquired"
+script "stayalive2"
