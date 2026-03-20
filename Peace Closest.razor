@@ -1,3 +1,17 @@
+#pain spike handling if no bard skills
+if skill 'Peacemaking' < 1
+    if findtype 8198 ground any any 10 as found
+        say '[painspike'
+        wft 500
+        target found
+    endif  
+
+    wait 200
+    script "stayalive2"
+endif
+
+#start peace stuff if bard skills    
+
 @setvar! currentTarget 0
 @setvar! foundTarget 0
 

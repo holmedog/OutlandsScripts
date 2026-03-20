@@ -1,5 +1,6 @@
 
-    if skill 'Healing' > 50 and diffhits <= 10
+if skill 'Healing' > 50 and diffhits <= 10
+    if not bandaging
         if not bandaging 
             gumpresponse 27 1722920179
             wait 35 
@@ -32,10 +33,10 @@
             gumpresponse 20 1722920179
             wait 35 
         endif
-    endif
-    
-    say "[enemyofone"
-    wait 100
-    
-    hotkey "Play Script: chiv attack"
-    
+    endif            
+endif
+
+say "[enemyofone"
+say  "[dispelevil"
+
+hotkey "Play Script: chiv attack"

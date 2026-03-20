@@ -3,6 +3,15 @@ if not timerexists 'low mana'
     createtimer 'low mana'
 endif
 
+
+#stop casting 
+hotkey 'Cancel Current Target'
+hotkey '> Interrupt'
+hotkey 'Cancel Current Target'
+hotkey '> Interrupt'
+hotkey 'Cancel Current Target'
+hotkey '> Interrupt'
+
 if not timerexists 'castspell recovery'
     createtimer 'castspell recovery'
     settimer 'castspell recovery' 20000
