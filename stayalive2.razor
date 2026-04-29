@@ -1,5 +1,6 @@
-# Clear sys messaages 
-#overhead "Background Scripts Engaged" 44
+#This is our background script 
+#Revision Date 2026-04-27
+
 if not varexist  wildBool
     @setvar! wildBool 0
 endif
@@ -12,22 +13,12 @@ endif
 
 #set to 1 to auto pot
 @setvar! autoPot 0
-
 #set to 1 to auto discord
 @setvar! autoDisco 0
-
 #set to 1 to swap to Wild Swing on disarm
 @setvar! autoWildSwing 0
-
 #set to 1 to disable disarm on hits
 @setvar! autoDisarm 0
-
-#set to 1 to auto cast Rouse every second
-@setvar! autoRouse 0
-
-#set to 1 to auto use Scourge
-@setvar! autoWeap 0
-
 #set to 1 to heal crew if on a boat
 @setvar! healMyCrew 1
 
@@ -35,7 +26,6 @@ if not timerexists  'wildman'
     createtimer 'wildman'
     settimer  'wildman' 20000
 endif
-
 if not timerexists  'potion recovery'
     createtimer 'potion recovery'
     settimer  'potion recovery' 20000
@@ -45,99 +35,72 @@ if not timerexists  'attackShit'
     createtimer 'attackShit'
     settimer  'attackShit' 20000
 endif
-
-
-# Heal Potion
 if not timerexists 'healpot recovery'
     createtimer 'healpot recovery'
     settimer 'healpot recovery' 20000
 endif
-
-if not timerexists  'finishHim'
-    createtimer 'finishHim'
-    settimer  'finishHim' 20000
-endif
-
-
 if not timerexists  'discoTimer'
     createtimer 'discoTimer'
     settimer  'discoTimer' 20000
-endif
-
-if not timerexists 'castspell recovery'
-    createtimer 'castspell recovery'
-    settimer 'castspell recovery' 20000
-endif
-if not timerexists 'next free cure'
-    createtimer 'next free cure'
-    settimer 'next free cure' 60000
-endif
-if not timerexists "ghealcast"
-    createtimer "ghealcast"
-    settimer "ghealcast" 8000
 endif
 if not timerexists "overheadSpam"
     createtimer "overheadSpam"
     settimer "overheadSpam" 8000
 endif
-if not timerexists "healpot"
-    createtimer "healpot"
-    settimer "healpot" 8000
-endif
-if not timerexists "aid time"
-    createtimer "aid time"
-    settimer "aid time" 8000
-endif
- 
-if not timerexists "shroomy"
-    createtimer "shroomy"
-    settimer "shroomy" 61000
+if not timerexists "chivBoatEnemy"
+    createtimer "chivBoatEnemy"
+    settimer "chivBoatEnemy" 8000
 endif
 
 if not varexist onABoat
     @setvar onABoat 0
 endif
 
-while hits > 1
+while not dead    
+    if onABoat = 1 and hits < 15  and timer "overheadSpam" >= 1500 
+        say "[embark"
+        settimer "overheadSpam" 0
+    endif
+    
     if skill 'fishing' > 80 and lhandempty  and timer "overheadSpam" >= 1500 
         overhead "Is you Disarmed?" 15
         sysmsg "Is you Disarmed?" 15
-        overhead "Is you Disarmed?" 15
-        sysmsg  "Is you Disarmed?" 15
         settimer "overheadSpam" 0
     endif
-        
         
     # If hidden, skip
     if hidden
         continue
     endif
     
-    #check weapon ability 
-    if cooldown 'WepAbility' and autoWeap = 1
-        say "[weaponability2"
-        cooldown 'WepAbility' 0
+    # Cure Survival
+    if skill 'Chivalry' < 70 and not targetexists any
+        if poisoned 'self' and timer 'potion recovery' > 1000
+            overhead '[Used: Cure Pot]' 68
+            hotkey 'Drink Cure'
+            settimer 'potion recovery' 0
+        endif
     endif
-    
-    if onABoat = 1 and hits < 15
-        say "[embark"
+        
+    if diffhits >= 25 and not poisoned 'self' and timer 'healpot recovery' >= 2500 and timer 'potion recovery' > 1000
+        overhead '[Used: GHeal Pot]' 68
+        hotkey 'Drink Heal'
+        settimer 'healpot recovery' 0
+        settimer 'potion recovery' 0
     endif
     
     #turn disarm off automagically
     if autoDisarm = 1
-        if insysmsg 'fail to disarm' say "[disarm"
+        if insysmsg 'fail to disarm'
             overhead "Disabling Disarm"
             say '[disarm'
         endif
-    endif
-    
-    if skill 'fishing' >= 50 and timer 'finishHim' > 2000 and autoRouse = 1
-        say "[weaponability1"
-        settimer 'finishHim' 0
-    endif
-    
-    if insysmsg "motivation effect has ended"
-        skill "begging"
+        if autoWildSwing != 1
+            if insysmsg 'disarms your target'
+                overhead "Disabling Disarm"
+                say '[disarm'
+            endif
+        endif
     endif
     
     #swap stances to get most out of single target disarm
@@ -156,18 +119,11 @@ while hits > 1
             settimer 'wildman' 0
             @setvar! wildBool 1
             wait 250
-            say "[disarm"
+            if autoDisarm = 1
+                say "[disarm"
+            endif
             overhead "Disabling Disarm"
         endif
-    endif
-    
-    #swap stances to get most out of single target disarm
-    if autoAreaDiscord = 1
-        if not cooldown "Discordance"
-            skill "Discordance"
-            wft 1500
-            target self
-        endif       
     endif
     
     #yell about bombs
@@ -177,78 +133,112 @@ while hits > 1
         settimer "overheadSpam" 0
     endif    
     
-    #Food check
-    if findbuff 'food satisfaction' <= 10 and timer "overheadSpam" >= 1500 
-        overhead  "EAT!"
-        settimer "overheadSpam" 0
-    endif
-    
     if insysmsg 'you cannot move!'
         overhead 'Paralyzed!' 34
         say [pouch
     endif
     
     # Healing Survival
-    if insysmsg 'finish applying'
-        @setvar! healingSelf 0
-    endif
-    if insysmsg 'heal what little'
-        @setvar! healingSelf 0
-    endif
-    if skill 'Healing' > 1 and onABoat = 0
-        if hits < maxhits and not bandaging and not targetexists 
-            if findtype "clean bandage%s%" self as item
+    
+    #This part checks if we are done doing a bandage and resets self heal flag
+    # Bandaging logic
+    if skill 'Healing' > 1
+        if onABoat = 0
+            if hits < maxhits and not bandaging and not targetexists
                 hotkey 'Bandage Self'
             endif
-        endif
-    elseif skill 'Healing' > 1 and onABoat = 1
-        if diffhits > 5 and not bandaging and not targetexists 
-            getlabel backpack ping
-            if not bandaging and findtype "clean bandage%s%" self as item
-                hotkey 'Bandage Self'
-                @setvar! healingSelf 1
-            endif
-        elseif diffhits > 10 and healingSelf = 0 and not targetexists 
-            getlabel backpack ping
-            if findtype "clean bandage%s%" self as item
-                hotkey 'Bandage Self'
-                @setvar! healingSelf 1
-            endif
-        elseif healMyCrew = 1
-                if skill 'Healing' > 50 and diffhits <= 10
-                    if not bandaging 
-                        gumpresponse 20 1722920179
-                        wait 25 
-                    endif
-                    if not bandaging 
-                        gumpresponse 21 1722920179
-                        wait 25 
-                    endif
-                    if not bandaging 
-                        gumpresponse 22 1722920179
-                        wait 25 
-                    endif
-                    if not bandaging 
-                        gumpresponse 23 1722920179
-                        wait 25 
-                    endif
-                    if not bandaging 
-                        gumpresponse 24 1722920179
-                        wait 25 
-                    endif
-                    if not bandaging 
-                        gumpresponse 25 1722920179
-                        wait 25 
-                    endif  
-                    if not bandaging 
-                        gumpresponse 26 1722920179
-                        wait 25 
-                    endif  
-                    if not bandaging 
-                        gumpresponse 27 1722920179
-                        wait 25 
-                    endif  
+        else
+            # Reset / initialize behavior per boat state
+            if autoTarget != 1
+                
+                if hits < maxhits and not bandaging and not targetexists
+                    hotkey 'Bandage Self'
+                    @setvar! healingSelf 1
+                elseif hits <= 75 and healingSelf = 0 and not targetexists
+                    hotkey 'Bandage Self'
+                    @setvar! healingSelf 1
                 endif
+
+                if healMyCrew = 1 and healingSelf != 0
+                    if skill 'Healing' > 50 and hits >= 75
+                        if not bandaging
+                            gumpresponse 20 1722920179
+                            wait 25
+                        endif
+                        if not bandaging
+                            gumpresponse 21 1722920179
+                            wait 25
+                        endif
+                        if not bandaging
+                            gumpresponse 22 1722920179
+                            wait 25
+                        endif
+                        if not bandaging
+                            gumpresponse 23 1722920179
+                            wait 25
+                        endif
+                        if not bandaging
+                            gumpresponse 24 1722920179
+                            wait 25
+                        endif
+                        if not bandaging
+                            gumpresponse 25 1722920179
+                            wait 25
+                        endif
+                        if not bandaging
+                            gumpresponse 26 1722920179
+                            wait 25
+                        endif
+                        if not bandaging
+                            gumpresponse 27 1722920179
+                            wait 25
+                        endif
+                    endif
+                endif
+            else
+                # NPC ship logic (simplified, reused crew block)
+                if hits <= 75 and healingSelf = 0 and not targetexists
+                    hotkey 'Bandage Self'
+                    @setvar! healingSelf 1
+                endif
+                if healMyCrew = 1 and healingSelf != 0
+                    if skill 'Healing' > 50 and hits >= 75
+                        if not bandaging
+                            gumpresponse 20 1722920179
+                            wait 25
+                        endif
+                        if not bandaging
+                            gumpresponse 21 1722920179
+                            wait 25
+                        endif
+                        if not bandaging
+                            gumpresponse 22 1722920179
+                            wait 25
+                        endif
+                        if not bandaging
+                            gumpresponse 23 1722920179
+                            wait 25
+                        endif
+                        if not bandaging
+                            gumpresponse 24 1722920179
+                            wait 25
+                        endif
+                        if not bandaging
+                            gumpresponse 25 1722920179
+                            wait 25
+                        endif
+                        if not bandaging
+                            gumpresponse 26 1722920179
+                            wait 25
+                        endif
+                        if not bandaging
+                            gumpresponse 27 1722920179
+                            wait 25
+                        endif
+                    endif
+                endif
+
+            endif
         endif
     endif
     
@@ -256,14 +246,16 @@ while hits > 1
         overhead "Peace Buff" 22
         settimer "overheadSpam" 0
     endif
-            
     
     if timer "overheadSpam" >= 1500 and skill 'Discordance' > 20 and not findbuff "Song of Discordance"
         overhead "Disco Buff" 22
         settimer "overheadSpam" 0
     endif
     
-
+    if timer "overheadSpam" >= 1500 and skill 'Provocation' > 20 and not findbuff "Song of Provocation"
+        overhead "Provo Buff" 22
+        settimer "overheadSpam" 0
+    endif
  
     if timer "overheadSpam" >= 5000 and not findtype 3852 self
         overhead 'Out of heal potions!' 34 
@@ -277,41 +269,6 @@ while hits > 1
         sysmsg "HEALING TIME" 33
         overhead "HEALING TIME" 22
         settimer 'overheadSpam' 0
-    endif
-    
-    # Monitor for free cure pot
-    if insysmsg 'receive a free cure potion'
-        settimer 'next free cure' 0
-    endif
-
-    # Cure Survival
-    if skill 'Chivalry' < 70 and not targetexists any
-        if poisoned 'self' and timer 'next free cure' >= 30000 and timer 'potion recovery' > 1000
-            if findtype 3847 self
-                overhead '[Used: Cure Pot]' 68
-                hotkey 'Drink Cure'
-                # Set timer for free cure
-                if insysmsg 'receive a free cure potion'
-                    settimer 'next free cure' 0
-                endif
-                settimer 'potion recovery' 0
-            endif
-        endif
-    endif
-    
-    # Cure Survival
-    if skill 'Chivalry' >= 70 and not targetexists any and diffhits > 40
-        if poisoned 'self' and timer 'next free cure' >= 30000 and timer 'potion recovery' > 1000
-            if findtype 3847 self
-                overhead '[Used: Cure Pot]' 68
-                hotkey 'Drink Cure'
-                # Set timer for free cure
-                if insysmsg 'receive a free cure potion'
-                    settimer 'next free cure' 0
-                endif
-                settimer 'potion recovery' 0
-            endif
-        endif
     endif
     
     #Auto Pot 
@@ -341,23 +298,6 @@ while hits > 1
         endif
     endif
     
-    if hits < 45 and not poisoned 'self'
-        if timer 'healpot recovery' >= 10500 and timer 'potion recovery' > 1000
-            if findtype 3852 self
-                overhead '[Used: GHeal Pot]' 68
-                hotkey 'Drink Heal'
-                settimer 'healpot recovery' 0
-                settimer 'potion recovery' 0
-                getlabel backpack ping
-                getlabel backpack ping
-            endif
-        elseif skill 'Magery' > 50
-            overhead "HEAL DAMMIT HEAL"
-            hotkey "Play Script: greaterhealself"
-        endif
-        
-    endif
-    
     if findbuff "weaken"
         if findtype 'Wite Potion' self as myPot
             dclick myPot
@@ -382,11 +322,17 @@ while hits > 1
         settimer 'discoTimer' 0
     endif
     
+    #Auto Attack Routine When On Ships
     if not cooldown 'PVP' and skill "Chivalry" >= 25 and autoTarget = 1 and timer 'attackShit' >= 750
         settimer 'attackShit' 0
+        #hotkey "Play Script: chiv attack"
+        
+        if timer 'chivBoatEnemy' >= 2000
+            say "[enemyofone"
+            settimer 'chivBoatEnemy' 0
+        endif
         hotkey "Play Script: healsinglecrew"
     endif
-    
     
     #check buffs
     #Food check
@@ -407,7 +353,7 @@ while hits > 1
         settimer "overheadSpam" 0
         
     endif
-    #Bless
+    #Reactive Armor
     if timer "overheadSpam" >= 1500 and skill 'Magery' > 50 and not findbuff 'Reactive Armor' 
         overhead 'React!'
         settimer "overheadSpam" 0
@@ -417,6 +363,4 @@ while hits > 1
         overhead 'Protection time'
         settimer "overheadSpam" 0
     endif
-    
-    
 endwhile

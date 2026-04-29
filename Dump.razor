@@ -1,3 +1,8 @@
+
+#We do not use this on boats!
+@setvar! onABoat 0
+
+
 clearignore
 
 //open tome chest
@@ -21,7 +26,7 @@ endwhile
 while findtype 29104 0x5B7C7BBD as found
     //overhead "Book"
     menu found 0
-    wait 75
+    getlabel backpack ping
     ignore found
 endwhile
 clearignore

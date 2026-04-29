@@ -2,7 +2,6 @@
 #We do not use this on boats!
 @setvar! onABoat 0
 
-
 #Wizard Grimoire
 @setvar! castArrow 1
 @setvar! castHarm 1
@@ -74,7 +73,7 @@ while mana > 12 and find myKillTarget ground -1 -1 12 as found
         script "stayalive2"
     endif
     
-    if mana < 75 and not cooldown "Mushroom" and not findbuff "Magic Mushroom Cooldown"
+    if mana < 75 and not cooldown "Mushroom"
         hotkey 'Eat Magic Mushroom'
     endif
     
@@ -101,8 +100,6 @@ while mana > 12 and find myKillTarget ground -1 -1 12 as found
         cast 'harm'
     elseif castArrow = 1 and mana >= 4 and not findbuff 'Magic Arrow Cooldown'
         cast 'magic arrow'
-    elseif mana >= 40
-        cast 'Flamestrike'
     else
         cast 'Mind Blast'
     endif

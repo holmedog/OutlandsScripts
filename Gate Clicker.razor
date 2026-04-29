@@ -1,3 +1,7 @@
+if findtype 3948
+    @setvar! onABoat = 0
+endif
+
 if onABoat = 0
     overhead "No boat, using moongates"
     say '[Moongate'
@@ -5,11 +9,6 @@ if onABoat = 0
     # Red moongate → Outpost
     waitforgump 3773199800
     gumpresponse 2
-
-    # Blue moongate → Shelter Island
-    waitforgump 3773199800
-    gumpresponse 2
-
 else
     overhead "BOAT EMBARK" 12
     script "Embark My Boat"
